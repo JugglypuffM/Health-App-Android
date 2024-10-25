@@ -2,12 +2,9 @@ package auth
 
 import io.github.cdimascio.dotenv.dotenv
 import io.grpc.ManagedChannelBuilder
-import io.grpc.StatusRuntimeException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.example.grpc.AuthProto.*
-import org.example.grpc.AuthServiceGrpc
-import org.example.grpc.AuthServiceGrpc.AuthServiceBlockingStub
+import grpc.AuthProto.*
+import grpc.AuthServiceGrpc
+import grpc.AuthServiceGrpc.AuthServiceBlockingStub
 
 /**
  * Реализация интерфейса [Authenticator] с использованием gRPC
@@ -47,24 +44,4 @@ class GrpcAuthenticator(
         val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
         stub.login(request)
     }
-
-    // Вспомогательная функция для выполнения gRPC вызовов с обработкой ошибок
-    private suspend fun executeGrpcCall(call: () -> AuthResponse): Result<String> =
-        withContext(Dispatchers.IO) {
-            try {
-                val response = call()
-                when (response.resultCode) {
-                    0 -> Result.success(response.message)
-                    1 -> Result.failure(Authenticator.UserAlreadyExistsException(response.message))
-                    2 -> Result.failure(Authenticator.InvalidCredentialsException(response.message))
-                    else -> Result.failure(Exception(response.message))
-                }
-            } catch (e: StatusRuntimeException) {
-                Result.failure(
-                    Authenticator.ServerConnectionException(
-                        "Failed to connect to the server: server is unavailable"
-                    )
-                )
-            }
-        }
 }
