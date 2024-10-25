@@ -20,7 +20,7 @@
 
         </activity>
         <activity
-            android:name="KotlinAndroidApp.MainActivity"
+            android:name="KotlinAndroidApp.LoginActivity"
             android:exported="true"
             tools:ignore="MissingClass">
             <intent-filter>
