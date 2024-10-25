@@ -19,13 +19,7 @@ class GrpcAuthenticator(
     )
 ) : Authenticator {
 
-    /**
-     * Функция для регистрации нового пользователя
-     * @param name имя пользователя - непустая строка
-     * @param login логин новой учетной записи - непустая строка
-     * @param password пароль новой учетной записи - строка длиннее 5и символов
-     * @return Result с сообщением об успехе или ошибке
-     */
+
     override suspend fun register(name: String, login: String, password: String): Result<String> =
         executeGrpcCall {
             val request =
@@ -34,12 +28,6 @@ class GrpcAuthenticator(
             stub.register(request)
         }
 
-    /**
-     * Функция авторизации пользователя
-     * @param login логин пользователя
-     * @param password пароль пользователя
-     * @return Result с сообщением об успехе или ошибке
-     */
     override suspend fun login(login: String, password: String): Result<String> = executeGrpcCall {
         val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
         stub.login(request)
