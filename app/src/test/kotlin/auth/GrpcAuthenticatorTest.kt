@@ -31,7 +31,7 @@ class GrpcAuthenticatorTest {
             .build()
 
         val response = AuthResponse.newBuilder()
-            .setSuccess(true)
+            .setResultCode(0)
             .setMessage("Registration successful")
             .build()
 
@@ -52,7 +52,7 @@ class GrpcAuthenticatorTest {
             .build()
 
         val response = AuthResponse.newBuilder()
-            .setSuccess(false)
+            .setResultCode(1)
             .setMessage("User already exists.")
             .build()
 
@@ -73,7 +73,7 @@ class GrpcAuthenticatorTest {
             .build()
 
         val response = AuthResponse.newBuilder()
-            .setSuccess(true)
+            .setResultCode(0)
             .setMessage("Login successful")
             .build()
 
@@ -93,7 +93,7 @@ class GrpcAuthenticatorTest {
             .build()
 
         val response = AuthResponse.newBuilder()
-            .setSuccess(false)
+            .setResultCode(2)
             .setMessage("Invalid login or password.")
             .build()
 
