@@ -37,13 +37,13 @@ interface Authenticator {
                 val response = call()
                 when (response.resultCode) {
                     0 -> Result.success(response.message)
-                    1 -> Result.failure(Authenticator.UserAlreadyExistsException(response.message))
-                    2 -> Result.failure(Authenticator.InvalidCredentialsException(response.message))
+                    1 -> Result.failure(UserAlreadyExistsException(response.message))
+                    2 -> Result.failure(InvalidCredentialsException(response.message))
                     else -> Result.failure(Exception(response.message))
                 }
             } catch (e: StatusRuntimeException) {
                 Result.failure(
-                    Authenticator.ServerConnectionException(
+                    ServerConnectionException(
                         "Failed to connect to the server: server is unavailable"
                     )
                 )
