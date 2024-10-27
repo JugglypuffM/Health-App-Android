@@ -1,10 +1,5 @@
 package auth
 
-import grpc.AuthProto.AuthResponse
-import io.grpc.StatusRuntimeException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
 /**
  * Интерфейс объекта для отправки запросов аутентификации на сервер
  */
@@ -29,24 +24,4 @@ interface Authenticator {
      * @return Result с сообщением об успехе или ошибке
      */
     suspend fun login(login: String, password: String): Result<String>
-
-    // Вспомогательная функция для выполнения gRPC вызовов с обработкой ошибок
-    suspend fun executeCallAsync(call: () -> AuthResponse): Result<String> =
-        withContext(Dispatchers.IO) {
-            try {
-                val response = call()
-                when (response.resultCode) {
-                    0 -> Result.success(response.message)
-                    1 -> Result.failure(UserAlreadyExistsException(response.message))
-                    2 -> Result.failure(InvalidCredentialsException(response.message))
-                    else -> Result.failure(Exception(response.message))
-                }
-            } catch (e: StatusRuntimeException) {
-                Result.failure(
-                    ServerConnectionException(
-                        "Failed to connect to the server: server is unavailable"
-                    )
-                )
-            }
-        }
 }
