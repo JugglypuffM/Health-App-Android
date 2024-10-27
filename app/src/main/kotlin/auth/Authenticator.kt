@@ -1,5 +1,7 @@
 package auth
 
+import java.io.Serializable
+
 /**
  * Интерфейс объекта для отправки запросов аутентификации на сервер
  */
