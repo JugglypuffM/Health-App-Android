@@ -16,11 +16,14 @@
             android:name="KotlinAndroidApp.RegistrationActivity">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.UserProfileActivity">
-
+            android:name="KotlinAndroidApp.LoginActivity">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.LoginActivity"
+                android:name="KotlinAndroidApp.UserProfileActivity">
+        </activity>
+
+        <activity
+            android:name="KotlinAndroidApp.SplashActivity"
             android:exported="true"
             tools:ignore="MissingClass">
             <intent-filter>

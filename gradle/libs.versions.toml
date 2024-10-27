@@ -19,6 +19,8 @@ mockk = "1.13.13"
 okio = "3.9.1"
 perfmarkApi = "0.27.0"
 junitJupiter = "5.11.2"
+activity = "1.8.0"
+constraintlayout = "2.1.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +45,8 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 perfmark-api = { module = "io.perfmark:perfmark-api", version.ref = "perfmarkApi" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
