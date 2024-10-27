@@ -1,24 +1,18 @@
 package KotlinAndroidApp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.AuthenticationWithValidation
-import auth.Authenticator
-import auth.GrpcAuthenticator
-import auth.GrpcAuthenticatorStub
 import com.project.kotlin_android_app.R
 import domain.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import utils.LocalDatabase
 
+@Suppress("DEPRECATION")
 class UserProfileActivity : AppCompatActivity() {
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
@@ -27,11 +21,10 @@ class UserProfileActivity : AppCompatActivity() {
         val userLoginTextView: TextView = findViewById(R.id.user_login)
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
-//        val userName = intent.getStringExtra("EXTRA_NAME")
-//        val userLogin = intent.getStringExtra("EXTRA_LOGIN")
+        val user = intent.getSerializableExtra("EXTRA_USER") as User
 
-//        userNameTextView.text = "Имя пользователя: $userName"
-//        userLoginTextView.text = "Логин: $userLogin"
+        userNameTextView.text = "Имя пользователя: ${user.name}"
+        userLoginTextView.text = "Логин: ${user.login}"
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)

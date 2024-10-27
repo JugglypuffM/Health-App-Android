@@ -3,20 +3,18 @@ package KotlinAndroidApp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import auth.AuthenticationWithValidation
 import auth.Authenticator
-import auth.GrpcAuthenticatorStub
 import com.project.kotlin_android_app.R
 import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import utils.LocalDatabase
+import kotlinx.coroutines.withContext
+import viewmodel.ViewModel
+import kotlin.coroutines.CoroutineContext
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
@@ -25,27 +23,38 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val authenticator = AuthenticationWithValidation(GrpcAuthenticatorStub())
-            val storage = LocalDatabase()
-            val user: User = storage.getUser()
+            val user = ViewModel.storage.getUser()
+            val result = ViewModel.authenticator.login(user.login, user.password)
 
-            val result = authenticator.login(user.login, user.password)
             result.fold(
                 onSuccess = {
-                    val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+                    val intent = Intent(this@SplashActivity, UserProfileActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    intent.putExtra("EXTRA_USER", user)
                     startActivity(intent)
                 },
                 onFailure = { error ->
-                    val message = when (error) {
-                        is Authenticator.InvalidCredentialsException -> "Неверный логин или пароль"
-                        is Authenticator.UserAlreadyExistsException -> "Пользователь уже существует"
-                        is Authenticator.ServerConnectionException -> "Ошибка связи с сервером"
-                        else -> "Неизвестная ошибка"
+                    when (error) {
+                        is Authenticator.InvalidCredentialsException -> {
+                            ViewModel.storage.dropUser()
+                        }
+
+                        is Authenticator.ServerConnectionException -> {
+                            val message = "Ошибка соединения с сервером"
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
-                    Toast.makeText(this@SplashActivity, message, Toast.LENGTH_SHORT).show()
+
+                    //TODO не должно возвращаться на экран загрузки
+                    val intent = Intent(this@SplashActivity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    startActivity(intent)
                 }
             )
         }
 
+        Log.d("SplashActivity", "onCreate: finished")
     }
 }
