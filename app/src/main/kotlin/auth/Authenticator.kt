@@ -31,7 +31,7 @@ interface Authenticator {
     suspend fun login(login: String, password: String): Result<String>
 
     // Вспомогательная функция для выполнения gRPC вызовов с обработкой ошибок
-    suspend fun executeGrpcCall(call: () -> AuthResponse): Result<String> =
+    suspend fun executeCallAsync(call: () -> AuthResponse): Result<String> =
         withContext(Dispatchers.IO) {
             try {
                 val response = call()

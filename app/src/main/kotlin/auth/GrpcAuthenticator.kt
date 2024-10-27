@@ -21,14 +21,14 @@ class GrpcAuthenticator(
 
 
     override suspend fun register(name: String, login: String, password: String): Result<String> =
-        executeGrpcCall {
+        executeCallAsync {
             val request =
                 RegisterRequest.newBuilder().setName(name).setLogin(login).setPassword(password)
                     .build()
             stub.register(request)
         }
 
-    override suspend fun login(login: String, password: String): Result<String> = executeGrpcCall {
+    override suspend fun login(login: String, password: String): Result<String> = executeCallAsync {
         val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
         stub.login(request)
     }
