@@ -5,8 +5,8 @@ import io.grpc.StatusRuntimeException
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import org.example.grpc.AuthServiceGrpc
-import org.example.grpc.AuthProto.*
+import grpc.AuthServiceGrpc
+import grpc.AuthProto.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
