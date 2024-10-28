@@ -1,12 +1,18 @@
 package utils
 
 import android.util.Log
+import domain.Either
 import domain.User
 
+/**
+ * Локальное хранилище
+ */
 //TODO реализовать базу данных для хранения и извлечения пользователей
 class LocalStorage {
-    fun getUser(): User {
-        return User("John Doe", "john_doe", "password123")
+    class UserNotFoundException(message: String) : Exception(message)
+
+    fun loadUser(): Either<Throwable, User> {
+        return Either.Right(User("John Doe", "john_doe", "password123"))
     }
 
     fun saveUser(user: User) {

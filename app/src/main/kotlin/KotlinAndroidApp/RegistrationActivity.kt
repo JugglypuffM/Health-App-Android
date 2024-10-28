@@ -9,13 +9,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import viewmodel.ViewModel
+import domain.Either
+import domain.Validate
 
+/**
+ * Активность для регистрации пользователя
+ */
 class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,35 +43,34 @@ class RegistrationActivity : AppCompatActivity() {
             val inputPassword = passwordField.text.toString()
             val inputConfirmPassword = confirmPasswordField.text.toString()
 
-            if(inputPassword != inputConfirmPassword) {
-                Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val user = User(inputName, inputLogin, inputPassword)
-
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModel.authenticator.register(inputName, inputLogin, inputPassword)
-
-                result.fold(
-                    onSuccess = {
-                        val intent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
-                        intent.putExtra("EXTRA_USER", user)
-                        startActivity(intent)
-                        ViewModel.storage.saveUser(user)
-                    },
-                    onFailure = { error ->
-                        val message = when (error) {
-                            is Authenticator.ServerConnectionException -> "Ошибка соединения с сервером"
-                            is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
-                            else -> "Непредвиденная ошибка"
+                val result = ViewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).flatMap { user ->
+                    ViewModel.register(user.name!!, user.login, user.password)
+                }
+                withContext(Dispatchers.Main) {
+                    when (result) {
+                        is Either.Right -> {
+                            val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
+                            userProfileIntent.putExtra("EXTRA_USER", result.value)
+                            startActivity(userProfileIntent)
                         }
 
-                        withContext(Dispatchers.Main) {
+                        is Either.Left -> {
+                            val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
+                            val message = when (result.error) {
+                                is Validate.InvalidNameException -> "Неверное имя пользователя"
+                                is Validate.InvalidLoginException -> "Неверный логин"
+                                is Validate.InvalidPasswordException -> "Неверный пароль"
+                                is Validate.NotEqualPasswordException -> "Пароли не совпадают"
+                                is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
+                                is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                                is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
+                                else -> "Непредвиденная ошибка"
+                            }
                             Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT).show()
                         }
                     }
-                )
+                }
             }
         }
     }

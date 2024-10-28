@@ -9,13 +9,18 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import auth.Authenticator
 import com.project.kotlin_android_app.R
+import domain.Either
 import domain.User
+import domain.Validate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import viewmodel.ViewModel
 
+/**
+ * Активность для входа в приложение
+ */
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,30 +44,32 @@ class LoginActivity : AppCompatActivity() {
             val user = User(null, inputLogin, inputPassword)
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModel.authenticator.login(user.login, user.password)
+                val result = ViewModel.validate(inputLogin, inputPassword).flatMap { user ->
+                    ViewModel.login(user.login, user.password)
+                }
 
-                result.fold(
-                    onSuccess = {
-                        val intent = Intent(this@LoginActivity, UserProfileActivity::class.java)
-                        intent.putExtra("EXTRA_USER", user)
-                        startActivity(intent)
-
-                        ViewModel.storage.saveUser(user)
-                    },
-                    onFailure = {error ->
-                        //TODO InvalidCredentialsException - это либо неверный логин либо не подходящий на сервере логин, что не очень то должно волновать, но всё же
-                        //TODO упразднить AuthenticationWithValidation
-                        val message = when (error) {
-                            is Authenticator.InvalidCredentialsException -> "Неверный логин или пароль"
-                            is Authenticator.ServerConnectionException -> "Ошибка соединения с сервером"
-                            else -> "Непредвиденная ошибка"
+                withContext(Dispatchers.Main) {
+                    when (result) {
+                        is Either.Right -> {
+                            val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+                            userProfileIntent.putExtra("EXTRA_USER", result.value)
+                            startActivity(userProfileIntent)
                         }
 
-                         withContext(Dispatchers.Main) {
+                        is Either.Left -> {
+                            val loginIntent = Intent(this@LoginActivity, LoginActivity::class.java)
+                            val message = when (result.error) {
+                                is Validate.InvalidNameException -> "Неверное имя пользователя"
+                                is Validate.InvalidLoginException -> "Неверный логин"
+                                is Validate.InvalidPasswordException -> "Неверный пароль"
+                                is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
+                                is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                                else -> "Непредвиденная ошибка"
+                            }
                             Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                         }
                     }
-                )
+                }
             }
         }
     }
