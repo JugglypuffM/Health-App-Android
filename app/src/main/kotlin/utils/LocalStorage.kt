@@ -11,14 +11,23 @@ import domain.User
 class LocalStorage {
     class UserNotFoundException(message: String) : Exception(message)
 
+    /**
+     * Загрузить пользователя
+     */
     fun loadUser(): Either<Throwable, User> {
         return Either.Right(User("John Doe", "john_doe", "password123"))
     }
 
+    /**
+     * Сохранить пользователя
+     */
     fun saveUser(user: User) {
         Log.d("DB", "User saved: $user")
     }
 
+    /**
+     * Удалить пользователя
+     */
     fun dropUser() {
         Log.d("DB", "user dropped")
     }
