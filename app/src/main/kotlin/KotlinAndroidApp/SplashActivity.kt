@@ -8,14 +8,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
+import domain.Either
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import viewmodel.ViewModel
-import kotlin.coroutines.CoroutineContext
 
+/**
+ * Активность загрузки
+ */
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,36 +25,38 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val user = ViewModel.storage.getUser()
-            val result = ViewModel.authenticator.login(user.login, user.password)
+            val result = ViewModel.loadUser().flatMap { user ->
+                ViewModel.login(user.login, user.password)
+            }
 
-            result.fold(
-                onSuccess = {
-                    val intent = Intent(this@SplashActivity, UserProfileActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    intent.putExtra("EXTRA_USER", user)
-                    startActivity(intent)
-                },
-                onFailure = { error ->
-                    when (error) {
-                        is Authenticator.InvalidCredentialsException -> {
-                            ViewModel.storage.dropUser()
-                        }
+            withContext(Dispatchers.Main) {
+                when (result) {
+                    is Either.Right -> {
+                        val userProfileIntent = Intent(this@SplashActivity, UserProfileActivity::class.java)
+                        userProfileIntent.putExtra("EXTRA_USER", result.value)
+                        startActivity(userProfileIntent)
+                    }
 
-                        is Authenticator.ServerConnectionException -> {
-                            val message = "Ошибка соединения с сервером"
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+                    is Either.Left -> {
+                        val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
+                        loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(loginIntent)
+                        when (result.error) {
+                            is Authenticator.ServerConnectionException -> {
+                                Toast.makeText(
+                                    this@SplashActivity,
+                                    "Ошибка соединения с сервером",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            is Authenticator.InvalidCredentialsException -> {
+                                ViewModel.dropUser()
                             }
                         }
                     }
-
-                    //TODO не должно возвращаться на экран загрузки
-                    val intent = Intent(this@SplashActivity, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
                 }
-            )
+            }
         }
 
         Log.d("SplashActivity", "onCreate: finished")

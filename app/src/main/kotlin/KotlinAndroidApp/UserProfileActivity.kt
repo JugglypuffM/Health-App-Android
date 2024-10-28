@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.project.kotlin_android_app.R
 import domain.User
 
+/**
+ * Активность для отображения профиля пользователя.
+ */
 @Suppress("DEPRECATION")
 class UserProfileActivity : AppCompatActivity() {
 
@@ -22,6 +25,7 @@ class UserProfileActivity : AppCompatActivity() {
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
         val user = intent.getSerializableExtra("EXTRA_USER") as User
+        //TODO добавить прогрузку имени есть name = null
 
         userNameTextView.text = "Имя пользователя: ${user.name}"
         userLoginTextView.text = "Логин: ${user.login}"
