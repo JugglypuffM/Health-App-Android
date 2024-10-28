@@ -1,5 +1,7 @@
 package auth
 
+import domain.Either
+import domain.User
 import io.github.cdimascio.dotenv.dotenv
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusRuntimeException
@@ -29,8 +31,8 @@ class GrpcAuthenticator(
      * @param password пароль новой учетной записи - строка длиннее 5и символов
      * @return Result с сообщением об успехе или ошибке
      */
-    override suspend fun register(name: String, login: String, password: String): Result<String> =
-        executeGrpcCall {
+    override suspend fun register(name: String, login: String, password: String): Either<Throwable, User> =
+        executeGrpcCall(User(name, login, password)){
             val request =
                 RegisterRequest.newBuilder().setName(name).setLogin(login).setPassword(password)
                     .build()
@@ -43,24 +45,24 @@ class GrpcAuthenticator(
      * @param password пароль пользователя
      * @return Result с сообщением об успехе или ошибке
      */
-    override suspend fun login(login: String, password: String): Result<String> = executeGrpcCall {
+    override suspend fun login(login: String, password: String): Either<Throwable, User> = executeGrpcCall(User(null, login, password)) {
         val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
         stub.login(request)
     }
 
     // Вспомогательная функция для выполнения gRPC вызовов с обработкой ошибок
-    private suspend fun executeGrpcCall(call: () -> AuthResponse): Result<String> =
+    private suspend fun executeGrpcCall(user: User, call: () -> AuthResponse): Either<Throwable, User> =
         withContext(Dispatchers.IO) {
             try {
                 val response = call()
                 when (response.resultCode) {
-                    0 -> Result.success(response.message)
-                    1 -> Result.failure(Authenticator.UserAlreadyExistsException(response.message))
-                    2 -> Result.failure(Authenticator.InvalidCredentialsException(response.message))
-                    else -> Result.failure(Exception(response.message))
+                    0 -> Either.Right(user)
+                    1 -> Either.Left(Authenticator.UserAlreadyExistsException(response.message))
+                    2 -> Either.Left(Authenticator.InvalidCredentialsException(response.message))
+                    else -> Either.Left(Exception(response.message))
                 }
             } catch (e: StatusRuntimeException) {
-                Result.failure(
+                Either.Left(
                     Authenticator.ServerConnectionException(
                         "Failed to connect to the server: server is unavailable"
                     )

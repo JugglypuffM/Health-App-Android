@@ -1,5 +1,7 @@
 package auth
 
+import domain.Either
+import domain.User
 import java.io.Serializable
 
 /**
@@ -10,6 +12,6 @@ interface Authenticator {
     class InvalidCredentialsException(message: String) : Exception(message)
     class UserAlreadyExistsException(message: String) : Exception(message)
 
-    suspend fun register(name: String, login: String, password: String): Result<String>
-    suspend fun login(login: String, password: String): Result<String>
+    suspend fun register(name: String, login: String, password: String): Either<Throwable, User>
+    suspend fun login(login: String, password: String): Either<Throwable, User>
 }
