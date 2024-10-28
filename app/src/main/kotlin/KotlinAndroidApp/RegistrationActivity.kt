@@ -53,10 +53,10 @@ class RegistrationActivity : AppCompatActivity() {
                             val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
                             userProfileIntent.putExtra("EXTRA_USER", result.value)
                             startActivity(userProfileIntent)
+                            ViewModel.saveUser(result.value)
                         }
 
                         is Either.Left -> {
-                            val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
                             val message = when (result.error) {
                                 is Validate.InvalidNameException -> "Неверное имя пользователя"
                                 is Validate.InvalidLoginException -> "Неверный логин"

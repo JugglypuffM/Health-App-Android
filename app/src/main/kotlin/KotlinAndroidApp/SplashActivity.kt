@@ -22,6 +22,7 @@ import viewmodel.ViewModel
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ViewModel.setContext(applicationContext)
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.IO).launch {

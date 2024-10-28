@@ -1,16 +1,15 @@
 package viewmodel
 
-import auth.Authenticator
+import android.content.Context
 import auth.GrpcAuthenticatorStub
 import domain.Either
 import domain.User
 import domain.Validate
-import kotlinx.coroutines.delay
 import utils.LocalStorage
 
 object ViewModel {
-    val authenticator = GrpcAuthenticatorStub()
     val storage = LocalStorage()
+    val authenticator = GrpcAuthenticatorStub()
 
     /**
      * Удалённый логин пользователя
@@ -113,7 +112,21 @@ object ViewModel {
     /**
      * Удалить пользователя из хранилища
      */
-    suspend fun dropUser(){
+    fun dropUser(){
         storage.dropUser()
+    }
+
+    /**
+     * Установка контекста приложения для работы с хранилищем
+     */
+    fun setContext(applicationContext: Context) {
+        storage.setContext(applicationContext)
+    }
+
+    /**
+     * Сохранение пользователя в хранилище
+     */
+    fun saveUser(value: User) {
+        storage.saveUser(value)
     }
 }
