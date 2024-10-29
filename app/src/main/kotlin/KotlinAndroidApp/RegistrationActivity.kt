@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModel
+import viewmodel.ViewModelProvider
 import domain.Either
 import domain.Validate
 
@@ -44,8 +44,8 @@ class RegistrationActivity : AppCompatActivity() {
             val inputConfirmPassword = confirmPasswordField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).flatMap { user ->
-                    ViewModel.register(user.name!!, user.login, user.password)
+                val result = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).flatMap { user ->
+                    ViewModelProvider.register(user.name!!, user.login, user.password)
                 }
                 withContext(Dispatchers.Main) {
                     when (result) {
@@ -53,7 +53,6 @@ class RegistrationActivity : AppCompatActivity() {
                             val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
                             userProfileIntent.putExtra("EXTRA_USER", result.value)
                             startActivity(userProfileIntent)
-                            ViewModel.saveUser(result.value)
                         }
 
                         is Either.Left -> {

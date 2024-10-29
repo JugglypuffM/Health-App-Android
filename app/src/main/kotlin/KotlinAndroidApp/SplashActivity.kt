@@ -13,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModel
+import viewmodel.ViewModelProvider
 
 /**
  * Активность загрузки
@@ -22,12 +22,12 @@ import viewmodel.ViewModel
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViewModel.setContext(applicationContext)
+        ViewModelProvider.setContext(applicationContext)
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val result = ViewModel.loadUser().flatMap { user ->
-                ViewModel.login(user.login, user.password)
+            val result = ViewModelProvider.loadUser().flatMap { user ->
+                ViewModelProvider.login(user.login, user.password)
             }
 
             withContext(Dispatchers.Main) {
@@ -40,8 +40,9 @@ class SplashActivity : AppCompatActivity() {
 
                     is Either.Left -> {
                         val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
-                        loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                        loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(loginIntent)
+                        finish()
                         when (result.error) {
                             is Authenticator.ServerConnectionException -> {
                                 Toast.makeText(
@@ -52,7 +53,7 @@ class SplashActivity : AppCompatActivity() {
                             }
 
                             is Authenticator.InvalidCredentialsException -> {
-                                ViewModel.dropUser()
+                                ViewModelProvider.dropUser()
                             }
                         }
                     }

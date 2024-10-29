@@ -16,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModel
+import viewmodel.ViewModelProvider
 
 /**
  * Активность для входа в приложение
@@ -44,8 +44,8 @@ class LoginActivity : AppCompatActivity() {
             val user = User(null, inputLogin, inputPassword)
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModel.validate(inputLogin, inputPassword).flatMap { user ->
-                    ViewModel.login(user.login, user.password)
+                val result = ViewModelProvider.validate(inputLogin, inputPassword).flatMap { user ->
+                    ViewModelProvider.login(user.login, user.password)
                 }
 
                 withContext(Dispatchers.Main) {

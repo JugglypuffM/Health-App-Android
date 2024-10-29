@@ -45,10 +45,12 @@ class LocalStorage {
     fun saveUser(user: User) {
         val editor = sharedPreferences.edit()
 
-        editor.putString("LOGIN", user.login)
-        editor.putString("PASSWORD", user.password)
+        editor.apply {
+            editor.putString(LOGIN, user.login)
+            editor.putString(PASSWORD, user.password)
+            apply()
+        }
 
-        editor.apply()
         Log.d("MYDB", "User saved: $user")
     }
 
@@ -57,8 +59,10 @@ class LocalStorage {
      */
     fun dropUser() {
         val editor = sharedPreferences.edit()
-        editor.clear() // Удаляет все данные
-        editor.apply() // Применяет изменения
+        editor.apply{
+            editor.clear()
+            apply()
+        }
         Log.d("MYDB", "user dropped")
     }
 

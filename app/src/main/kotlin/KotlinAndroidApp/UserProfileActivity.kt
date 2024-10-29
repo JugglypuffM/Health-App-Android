@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.project.kotlin_android_app.R
 import domain.User
+import viewmodel.ViewModelProvider
 
 /**
  * Активность для отображения профиля пользователя.
@@ -27,12 +28,13 @@ class UserProfileActivity : AppCompatActivity() {
         val user = intent.getSerializableExtra("EXTRA_USER") as User
         //TODO добавить прогрузку имени есть name = null
 
-        userNameTextView.text = "Имя пользователя: ${user.name}"
+        userNameTextView.text = "Имя пользователя: ${user.name ?: "Неизвестно"}"
         userLoginTextView.text = "Логин: ${user.login}"
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            ViewModelProvider.dropUser()
             startActivity(intent)
             finish()
         }
