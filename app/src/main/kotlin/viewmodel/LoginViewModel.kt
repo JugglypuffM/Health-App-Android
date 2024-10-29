@@ -2,13 +2,13 @@ package viewmodel
 
 import android.content.Context
 import android.util.Log
-import auth.Authenticator
+import auth.EitherAuthenticator
 import domain.Either
 import domain.User
 import domain.Validate
 import utils.LocalStorage
 
-class LoginViewModel(private val storage: LocalStorage, private val authenticator: Authenticator) : ViewModel{
+class LoginViewModel(private val storage: LocalStorage, private val authenticator: EitherAuthenticator) : ViewModel{
     /**
      * Удалённый логин пользователя
      * @param name Имя пользователя

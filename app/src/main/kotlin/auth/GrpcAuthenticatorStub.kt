@@ -7,13 +7,13 @@ import kotlinx.coroutines.delay
 /**
  * Реализация заглушки для gRPC-сервиса аутентификации
  */
-class GrpcAuthenticatorStub : Authenticator {
+class GrpcAuthenticatorStub : EitherAuthenticator {
     override suspend fun register(name: String, login: String, password: String): Either<Throwable, User> {
         delay(2000)
         return Either.Right(User(name, login, password))
     }
     override suspend fun login(login: String, password: String): Either<Throwable, User> {
         delay(2000)
-        return Either.Right(User(null, login, password))
+        return Either.Left(EitherAuthenticator.InvalidCredentialsException("Invalid credentials"))
     }
 }

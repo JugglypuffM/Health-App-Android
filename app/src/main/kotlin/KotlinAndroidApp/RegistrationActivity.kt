@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.Authenticator
+import auth.EitherAuthenticator
 import com.project.kotlin_android_app.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,9 +61,9 @@ class RegistrationActivity : AppCompatActivity() {
                                 is Validate.InvalidLoginException -> "Неверный логин"
                                 is Validate.InvalidPasswordException -> "Неверный пароль"
                                 is Validate.NotEqualPasswordException -> "Пароли не совпадают"
-                                is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
-                                is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
-                                is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
+                                is EitherAuthenticator.ServerConnectionException -> "Нет подключения к серверу"
+                                is EitherAuthenticator.InvalidCredentialsException -> "Пользователь не найден"
+                                is EitherAuthenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
                                 else -> "Непредвиденная ошибка"
                             }
                             Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT).show()

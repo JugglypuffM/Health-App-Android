@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.Authenticator
+import auth.EitherAuthenticator
 import com.project.kotlin_android_app.R
 import domain.Either
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +44,7 @@ class SplashActivity : AppCompatActivity() {
                         startActivity(loginIntent)
                         finish()
                         when (result.error) {
-                            is Authenticator.ServerConnectionException -> {
+                            is EitherAuthenticator.ServerConnectionException -> {
                                 Toast.makeText(
                                     this@SplashActivity,
                                     "Ошибка соединения с сервером",
@@ -52,7 +52,7 @@ class SplashActivity : AppCompatActivity() {
                                 ).show()
                             }
 
-                            is Authenticator.InvalidCredentialsException -> {
+                            is EitherAuthenticator.InvalidCredentialsException -> {
                                 ViewModelProvider.dropUser()
                             }
                         }

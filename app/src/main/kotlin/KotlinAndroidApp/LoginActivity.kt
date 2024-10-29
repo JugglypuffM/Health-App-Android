@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.Authenticator
+import auth.EitherAuthenticator
 import com.project.kotlin_android_app.R
 import domain.Either
 import domain.User
@@ -41,8 +41,6 @@ class LoginActivity : AppCompatActivity() {
             val inputLogin = loginField.text.toString()
             val inputPassword = passwordField.text.toString()
 
-            val user = User(null, inputLogin, inputPassword)
-
             CoroutineScope(Dispatchers.IO).launch {
                 val result = ViewModelProvider.validate(inputLogin, inputPassword).flatMap { user ->
                     ViewModelProvider.login(user.login, user.password)
@@ -57,13 +55,12 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         is Either.Left -> {
-                            val loginIntent = Intent(this@LoginActivity, LoginActivity::class.java)
                             val message = when (result.error) {
                                 is Validate.InvalidNameException -> "Неверное имя пользователя"
                                 is Validate.InvalidLoginException -> "Неверный логин"
                                 is Validate.InvalidPasswordException -> "Неверный пароль"
-                                is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
-                                is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                                is EitherAuthenticator.ServerConnectionException -> "Нет подключения к серверу"
+                                is EitherAuthenticator.InvalidCredentialsException -> "Пользователь не найден"
                                 else -> "Непредвиденная ошибка"
                             }
                             Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()

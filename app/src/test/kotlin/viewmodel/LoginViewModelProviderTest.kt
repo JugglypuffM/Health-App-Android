@@ -1,6 +1,6 @@
 package viewmodel
 
-import auth.Authenticator
+import auth.EitherAuthenticator
 import domain.Either
 import domain.User
 import domain.Validate
@@ -16,14 +16,14 @@ import org.junit.Test
 import utils.LocalStorage
 
 class LoginViewModelProviderTest {
-    private lateinit var authenticatorStub: Authenticator
+    private lateinit var authenticatorStub: EitherAuthenticator
     private lateinit var storageStub: LocalStorage
     private lateinit var loginViewModel: LoginViewModel
 
     @Before
     fun setUp() {
         storageStub = mockk<LocalStorage>()
-        authenticatorStub = mockk<Authenticator>()
+        authenticatorStub = mockk<EitherAuthenticator>()
         loginViewModel = LoginViewModel(storageStub, authenticatorStub)
     }
 
@@ -166,7 +166,6 @@ class LoginViewModelProviderTest {
             val name = "Гриша"
             val login = "MegaGrish1337"
             val password = "123456"
-            val confirmPassword = "123456"
 
             val expectedUser = User(name, login, password)
             val expected = Either.Right<Throwable, User>(expectedUser)

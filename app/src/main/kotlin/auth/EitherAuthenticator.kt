@@ -1,9 +1,12 @@
 package auth
 
+import domain.Either
+import domain.User
+
 /**
- * Интерфейс объекта для отправки запросов аутентификации на сервер
+ * Интерфейс объекта для отправки запросов аутентификации на сервер, написанный на Either
  */
-interface Authenticator {
+interface EitherAuthenticator {
     class ServerConnectionException(message: String): Exception(message)
     class InvalidCredentialsException(message: String) : Exception(message)
     class UserAlreadyExistsException(message: String) : Exception(message)
@@ -15,7 +18,7 @@ interface Authenticator {
      * @param password пароль новой учетной записи - строка длиннее 5и символов
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun register(name: String, login: String, password: String): Result<String>
+    suspend fun register(name: String, login: String, password: String): Either<Throwable, User>
 
     /**
      * Функция авторизации пользователя
@@ -23,5 +26,5 @@ interface Authenticator {
      * @param password пароль пользователя
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun login(login: String, password: String): Result<String>
+    suspend fun login(login: String, password: String): Either<Throwable, User>
 }
