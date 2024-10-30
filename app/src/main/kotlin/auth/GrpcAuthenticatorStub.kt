@@ -1,19 +1,17 @@
 package auth
 
-import domain.Either
-import domain.User
 import kotlinx.coroutines.delay
 
 /**
  * Реализация заглушки для gRPC-сервиса аутентификации
  */
-class GrpcAuthenticatorStub : EitherAuthenticator {
-    override suspend fun register(name: String, login: String, password: String): Either<Throwable, User> {
+class GrpcAuthenticatorStub : Authenticator {
+    override suspend fun register(name: String, login: String, password: String): Result<String> {
         delay(2000)
-        return Either.Right(User(name, login, password))
+        return Result.success("success server register")
     }
-    override suspend fun login(login: String, password: String): Either<Throwable, User> {
+    override suspend fun login(login: String, password: String): Result<String> {
         delay(2000)
-        return Either.Right(User(null, login, password))
+        return Result.success("success server login")
     }
 }

@@ -3,8 +3,8 @@ package utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import domain.Either
 import domain.User
+import domain.flatMap
 
 /**
  * Локальное хранилище
@@ -18,22 +18,18 @@ class LocalStorage {
     private val PASSWORD = "password"
     private val TABLE_NAME = "password"
 
-
-    private fun fromNullable(value: String?): Either<Throwable, String>{
-        return Either.fromNullable(value, UserNotFoundException("User has incorrectly saved"))
-    }
-
-    private fun get(key: String): String? {
-        return sharedPreferences.getString(key, null)
+    private fun getValue(key: String): Result<String> {
+        val value =  sharedPreferences.getString(key, null)
+        return if (value == null) Result.failure(UserNotFoundException("User has incorrect key: ${key}")) else Result.success(value)
     }
 
     /**
      * Загрузить пользователя
      */
-    suspend fun loadUser(): Either<Throwable, User> {
+    suspend fun loadUser(): Result<User> {
         Log.d("MYDB", "Loading user...")
-        return fromNullable(get(LOGIN)).flatMap { login ->
-            fromNullable(get(PASSWORD)).map { password ->
+        return getValue(LOGIN).flatMap { login ->
+            getValue(PASSWORD).map { password ->
                 User(null, login, password)
             }
         }
@@ -42,7 +38,7 @@ class LocalStorage {
     /**
      * Сохранить пользователя
      */
-    fun saveUser(user: User) {
+    fun saveUser(user: User): Result<String>{
         val editor = sharedPreferences.edit()
 
         editor.apply {
@@ -51,19 +47,21 @@ class LocalStorage {
             apply()
         }
 
-        Log.d("MYDB", "User saved: $user")
+        return Result.success("User saved")
     }
 
     /**
      * Удалить пользователя
      */
-    fun dropUser() {
+    fun dropUser(): Result<String>{
         val editor = sharedPreferences.edit()
+
         editor.apply{
             editor.clear()
             apply()
         }
-        Log.d("MYDB", "user dropped")
+
+        return Result.success("User dropped")
     }
 
     /**

@@ -7,11 +7,11 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.EitherAuthenticator
+import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.Either
 import domain.User
 import domain.Validate
+import domain.flatMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,29 +42,31 @@ class LoginActivity : AppCompatActivity() {
             val inputPassword = passwordField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModelProvider.validate(inputLogin, inputPassword).flatMap { user ->
-                    ViewModelProvider.login(user.login, user.password)
+                val result: Result<User> = ViewModelProvider.validate(inputLogin, inputPassword).flatMap { user ->
+                    ViewModelProvider.login(user.login, user.password).flatMap { _ ->
+                        ViewModelProvider.saveUser(user).map { _ ->
+                            user
+                        }
+                    }
                 }
 
                 withContext(Dispatchers.Main) {
-                    when (result) {
-                        is Either.Right -> {
-                            val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
-                            userProfileIntent.putExtra("EXTRA_USER", result.value)
-                            startActivity(userProfileIntent)
-                        }
+                    result.onSuccess { user ->
+                        val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+                        userProfileIntent.putExtra("EXTRA_USER", user)
+                        startActivity(userProfileIntent)
+                    }
 
-                        is Either.Left -> {
-                            val message = when (result.error) {
-                                is Validate.InvalidNameException -> "Неверное имя пользователя"
-                                is Validate.InvalidLoginException -> "Неверный логин"
-                                is Validate.InvalidPasswordException -> "Неверный пароль"
-                                is EitherAuthenticator.ServerConnectionException -> "Нет подключения к серверу"
-                                is EitherAuthenticator.InvalidCredentialsException -> "Пользователь не найден"
-                                else -> "Непредвиденная ошибка"
-                            }
-                            Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+                    result.onFailure { error ->
+                        val message = when (error) {
+                            is Validate.InvalidNameException -> "Неверное имя пользователя"
+                            is Validate.InvalidLoginException -> "Неверный логин"
+                            is Validate.InvalidPasswordException -> "Неверный пароль"
+                            is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
+                            is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                            else -> "Непредвиденная ошибка"
                         }
+                        Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

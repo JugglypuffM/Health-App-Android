@@ -1,7 +1,6 @@
 package viewmodel
 
-import auth.EitherAuthenticator
-import domain.Either
+import domain.ResultExtension
 import domain.User
 import domain.Validate
 import io.mockk.Runs
@@ -32,7 +31,7 @@ class LoginViewModelProviderTest {
     fun `valid parameters for registration`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             val name = "Гриша"
@@ -41,10 +40,10 @@ class LoginViewModelProviderTest {
             val confirmPassword = "123456"
 
             val expectedUser = User(name, login, password)
-            val expected = Either.Right<Throwable, User>(expectedUser)
+            val expected = ResultExtension.Right<Throwable, User>(expectedUser)
             val actual = loginViewModel.validate(name, login, password, confirmPassword)
 
-            assert(actual is Either.Right)
+            assert(actual is ResultExtension.Right)
             assertEquals(expected, actual)
         }
     }
@@ -55,17 +54,17 @@ class LoginViewModelProviderTest {
     fun `valid parameters for login`() {
         runBlocking {
             coEvery { authenticatorStub.login(any(), any()) } answers {
-                Either.Right(User(null, firstArg(), secondArg()))
+                ResultExtension.Right(User(null, firstArg(), secondArg()))
             }
 
             val login = "MegaGrish1337"
             val password = "123456"
 
             val expectedUser = User(null, login, password)
-            val expected = Either.Right<Throwable, User>(expectedUser)
+            val expected = ResultExtension.Right<Throwable, User>(expectedUser)
             val actual = loginViewModel.validate(login, password)
 
-            assert(actual is Either.Right)
+            assert(actual is ResultExtension.Right)
             assertEquals(expected, actual)
         }
     }
@@ -74,7 +73,7 @@ class LoginViewModelProviderTest {
     fun `blank username`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             val name = "   "
@@ -82,11 +81,11 @@ class LoginViewModelProviderTest {
             val password = "123456"
             val confirmPassword = "123456"
 
-            val expected = Either.Left<Throwable, User>(Validate.InvalidNameException("User name is empty"))
+            val expected = ResultExtension.Left<Throwable, User>(Validate.InvalidNameException("User name is empty"))
             val actual = loginViewModel.validate(name, login, password, confirmPassword)
 
-            assert(actual is Either.Left)
-            assertEquals(expected.error::class, (actual as Either.Left).error::class)
+            assert(actual is ResultExtension.Left)
+            assertEquals(expected.error::class, (actual as ResultExtension.Left).error::class)
             assertEquals(expected.error.message, actual.error.message)
         }
     }
@@ -95,7 +94,7 @@ class LoginViewModelProviderTest {
     fun `blank login`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             val name = "Гриша"
@@ -103,11 +102,11 @@ class LoginViewModelProviderTest {
             val password = "123456"
             val confirmPassword = "123456"
 
-            val expected = Either.Left<Throwable, User>(Validate.InvalidLoginException("Login is empty"))
+            val expected = ResultExtension.Left<Throwable, User>(Validate.InvalidLoginException("Login is empty"))
             val actual = loginViewModel.validate(name, login, password, confirmPassword)
 
-            assert(actual is Either.Left)
-            assertEquals(expected.error::class, (actual as Either.Left).error::class)
+            assert(actual is ResultExtension.Left)
+            assertEquals(expected.error::class, (actual as ResultExtension.Left).error::class)
             assertEquals(expected.error.message, actual.error.message)
         }
     }
@@ -116,7 +115,7 @@ class LoginViewModelProviderTest {
     fun `short password`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             val name = "Гриша"
@@ -124,11 +123,11 @@ class LoginViewModelProviderTest {
             val password = "12345"
             val confirmPassword = "12345"
 
-            val expected = Either.Left<Throwable, User>(Validate.InvalidPasswordException("The password must be at least 6 characters long"))
+            val expected = ResultExtension.Left<Throwable, User>(Validate.InvalidPasswordException("The password must be at least 6 characters long"))
             val actual = loginViewModel.validate(name, login, password, confirmPassword)
 
-            assert(actual is Either.Left)
-            assertEquals(expected.error::class, (actual as Either.Left).error::class)
+            assert(actual is ResultExtension.Left)
+            assertEquals(expected.error::class, (actual as ResultExtension.Left).error::class)
             assertEquals(expected.error.message, actual.error.message)
         }
     }
@@ -137,7 +136,7 @@ class LoginViewModelProviderTest {
     fun `password not equal confirmPassword`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             val name = "Гриша"
@@ -145,11 +144,11 @@ class LoginViewModelProviderTest {
             val password = "strongpassword"
             val confirmPassword = "srongpassword"
 
-            val expected = Either.Left<Throwable, User>(Validate.NotEqualPasswordException("Passwords do not match"))
+            val expected = ResultExtension.Left<Throwable, User>(Validate.NotEqualPasswordException("Passwords do not match"))
             val actual = loginViewModel.validate(name, login, password, confirmPassword)
 
-            assert(actual is Either.Left)
-            assertEquals(expected.error::class, (actual as Either.Left).error::class)
+            assert(actual is ResultExtension.Left)
+            assertEquals(expected.error::class, (actual as ResultExtension.Left).error::class)
             assertEquals(expected.error.message, actual.error.message)
         }
     }
@@ -158,7 +157,7 @@ class LoginViewModelProviderTest {
     fun `save user before register`() {
         runBlocking {
             coEvery { authenticatorStub.register(any(), any(), any()) } answers {
-                Either.Right(User(firstArg(), secondArg(), thirdArg()))
+                ResultExtension.Right(User(firstArg(), secondArg(), thirdArg()))
             }
 
             coEvery { storageStub.saveUser(any()) } just Runs
@@ -168,13 +167,13 @@ class LoginViewModelProviderTest {
             val password = "123456"
 
             val expectedUser = User(name, login, password)
-            val expected = Either.Right<Throwable, User>(expectedUser)
+            val expected = ResultExtension.Right<Throwable, User>(expectedUser)
             val actual = loginViewModel.register(name, login, password)
 
             coVerify(exactly = 1){ authenticatorStub.register(name, login, password) }
             coVerify(exactly = 1){ storageStub.saveUser(expectedUser) }
 
-            assert(actual is Either.Right)
+            assert(actual is ResultExtension.Right)
             assertEquals(expected, actual)
         }
     }
@@ -183,19 +182,19 @@ class LoginViewModelProviderTest {
     fun `correct login`() {
         runBlocking {
             coEvery { authenticatorStub.login(any(), any()) } answers {
-                Either.Right(User(null, firstArg(), secondArg()))
+                ResultExtension.Right(User(null, firstArg(), secondArg()))
             }
 
             val login = "MegaGrish1337"
             val password = "123456"
 
             val expectedUser = User(null, login, password)
-            val expected = Either.Right<Throwable, User>(expectedUser)
+            val expected = ResultExtension.Right<Throwable, User>(expectedUser)
             val actual = loginViewModel.login(login, password)
 
             coVerify(exactly = 1){ authenticatorStub.login(login, password) }
 
-            assert(actual is Either.Right)
+            assert(actual is ResultExtension.Right)
             assertEquals(expected, actual)
         }
     }

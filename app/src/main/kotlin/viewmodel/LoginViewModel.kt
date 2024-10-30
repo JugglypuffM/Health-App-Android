@@ -2,19 +2,19 @@ package viewmodel
 
 import android.content.Context
 import android.util.Log
-import auth.EitherAuthenticator
-import domain.Either
+import auth.Authenticator
 import domain.User
 import domain.Validate
+import domain.flatMap
 import utils.LocalStorage
 
-class LoginViewModel(private val storage: LocalStorage, private val authenticator: EitherAuthenticator) : ViewModel{
+class LoginViewModel(private val storage: LocalStorage, private val authenticator: Authenticator) : ViewModel{
     /**
      * Удалённый логин пользователя
      * @param name Имя пользователя
      * @param password Пароль пользователя
      */
-    override suspend fun login(name: String, password: String): Either<Throwable, User> {
+    override suspend fun login(name: String, password: String): Result<String> {
         return authenticator.login(name, password)
     }
 
@@ -24,41 +24,38 @@ class LoginViewModel(private val storage: LocalStorage, private val authenticato
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    override suspend fun register(name: String, login: String, password: String): Either<Throwable, User> {
-        return authenticator.register(name, login, password).map {user ->
-            storage.saveUser(user)
-            user
-        }
+    override suspend fun register(name: String, login: String, password: String): Result<String> {
+        return authenticator.register(name, login, password)
     }
 
     /**
      * Валидация имени
      * @param name имя пользователя
      */
-    private fun validateName(name: String): Either<Throwable, String> {
+    private fun validateName(name: String): Result<String> {
         return if (name.isBlank())
-            Either.Left(Validate.InvalidNameException("User name is empty"))
-        else Either.Right(name)
+            Result.failure(Validate.InvalidNameException("User name is empty"))
+        else Result.success(name)
     }
 
     /**
      * Валидация логина
      * @param login логин пользователя
      */
-    private fun validateLogin(login: String): Either<Throwable, String> {
+    private fun validateLogin(login: String): Result<String> {
         return if (login.isBlank())
-            Either.Left(Validate.InvalidLoginException("Login is empty"))
-        else Either.Right(login)
+            Result.failure(Validate.InvalidLoginException("Login is empty"))
+        else Result.success(login)
     }
 
     /**
      * Валидация пароля пользователя
      * @param password пароль пользователя
      */
-    private fun validatePassword(password: String): Either<Throwable, String> {
+    private fun validatePassword(password: String): Result<String> {
         return if (password.length < 6)
-            Either.Left(Validate.InvalidPasswordException("The password must be at least 6 characters long"))
-        else Either.Right(password)
+            Result.failure(Validate.InvalidPasswordException("The password must be at least 6 characters long"))
+        else Result.success(password)
     }
 
     /**
@@ -66,10 +63,10 @@ class LoginViewModel(private val storage: LocalStorage, private val authenticato
      * @param password пароль пользователя
      * @param confirmPassword подтверждение пароля пользователя
      */
-    private fun validateConfirmPassword(password: String, confirmPassword: String): Either<Throwable, String> {
+    private fun validateConfirmPassword(password: String, confirmPassword: String): Result<String> {
         return if (password != confirmPassword)
-            Either.Left(Validate.NotEqualPasswordException("Passwords do not match"))
-        else Either.Right(password)
+            Result.failure(Validate.NotEqualPasswordException("Passwords do not match"))
+        else Result.success(password)
     }
 
     /**
@@ -77,7 +74,7 @@ class LoginViewModel(private val storage: LocalStorage, private val authenticato
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    override suspend fun validate(login: String, password: String): Either<Throwable, User> {
+    override suspend fun validate(login: String, password: String): Result<User> {
         return validateLogin(login).flatMap { _ ->
             validatePassword(password).map {_ ->
                 User(null, login, password)
@@ -92,7 +89,7 @@ class LoginViewModel(private val storage: LocalStorage, private val authenticato
      * @param password Пароль пользователя
      * @param confirmPassword Подтверждение пароля пользователя
      */
-    override suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Either<Throwable, User> {
+    override suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User> {
         return validateName(name).flatMap {_ ->
             validateLogin(login).flatMap { _ ->
                 validateConfirmPassword(password, confirmPassword).flatMap { _ ->
@@ -107,29 +104,28 @@ class LoginViewModel(private val storage: LocalStorage, private val authenticato
     /**
      * Загрузка пользователя из хранилища
      */
-    override suspend fun loadUser(): Either<Throwable, User> {
-        Log.d("MYDB", "loaded either: ${storage.loadUser()}")
+    override suspend fun loadUser(): Result<User> {
         return storage.loadUser()
     }
 
     /**
      * Удалить пользователя из хранилища
      */
-    override fun dropUser(){
-        storage.dropUser()
+    override fun dropUser(): Result<String>{
+        return storage.dropUser()
     }
 
     /**
      * Установка контекста приложения для работы с хранилищем
      */
     override fun setContext(applicationContext: Context) {
-        storage.setContext(applicationContext)
+        return storage.setContext(applicationContext)
     }
 
     /**
      * Сохранение пользователя в хранилище
      */
-    override fun saveUser(value: User) {
-        storage.saveUser(value)
+    override fun saveUser(value: User): Result<String> {
+        return storage.saveUser(value)
     }
 }

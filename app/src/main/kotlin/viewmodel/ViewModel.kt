@@ -1,10 +1,7 @@
 package viewmodel
 
 import android.content.Context
-import android.util.Log
-import domain.Either
 import domain.User
-import domain.Validate
 
 interface ViewModel {
     /**
@@ -12,7 +9,7 @@ interface ViewModel {
      * @param name Имя пользователя
      * @param password Пароль пользователя
      */
-    suspend fun login(name: String, password: String): Either<Throwable, User>
+    suspend fun login(name: String, password: String): Result<String>
 
     /**
      * Удалённая регистрация пользователя
@@ -20,14 +17,14 @@ interface ViewModel {
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    suspend fun register(name: String, login: String, password: String): Either<Throwable, User>
+    suspend fun register(name: String, login: String, password: String): Result<String>
 
     /**
      * Проверка валидности логина и пароля
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    suspend fun validate(login: String, password: String): Either<Throwable, User>
+    suspend fun validate(login: String, password: String): Result<User>
 
     /**
      * Проверка валидности имени, логина, пароля и подтверждения пароля
@@ -36,17 +33,17 @@ interface ViewModel {
      * @param password Пароль пользователя
      * @param confirmPassword Подтверждение пароля пользователя
      */
-    suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Either<Throwable, User>
+    suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User>
 
     /**
      * Загрузка пользователя из хранилища
      */
-    suspend fun loadUser(): Either<Throwable, User>
+    suspend fun loadUser(): Result<User>
 
     /**
      * Удалить пользователя из хранилища
      */
-    fun dropUser()
+    fun dropUser(): Result<String>
 
     /**
      * Установка контекста приложения для работы с хранилищем
@@ -56,5 +53,5 @@ interface ViewModel {
     /**
      * Сохранение пользователя в хранилище
      */
-    fun saveUser(value: User)
+    fun saveUser(value: User): Result<String>
 }
