@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import viewmodel.ViewModelProvider
-import domain.Validate
+import utils.Validator
 import domain.flatMap
 
 /**
@@ -60,10 +60,10 @@ class RegistrationActivity : AppCompatActivity() {
                     }
                     result.onFailure { error ->
                         val message = when (error) {
-                            is Validate.InvalidNameException -> "Неверное имя пользователя"
-                            is Validate.InvalidLoginException -> "Неверный логин"
-                            is Validate.InvalidPasswordException -> "Неверный пароль"
-                            is Validate.NotEqualPasswordException -> "Пароли не совпадают"
+                            is Validator.InvalidNameException -> "Неверное имя пользователя"
+                            is Validator.InvalidLoginException -> "Неверный логин"
+                            is Validator.InvalidPasswordException -> "Неверный пароль"
+                            is Validator.NotEqualPasswordException -> "Пароли не совпадают"
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
                             is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"

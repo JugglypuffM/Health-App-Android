@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import auth.Authenticator
 import com.project.kotlin_android_app.R
 import domain.User
-import domain.Validate
+import utils.Validator
 import domain.flatMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -59,9 +59,9 @@ class LoginActivity : AppCompatActivity() {
 
                     result.onFailure { error ->
                         val message = when (error) {
-                            is Validate.InvalidNameException -> "Неверное имя пользователя"
-                            is Validate.InvalidLoginException -> "Неверный логин"
-                            is Validate.InvalidPasswordException -> "Неверный пароль"
+                            is Validator.InvalidNameException -> "Неверное имя пользователя"
+                            is Validator.InvalidLoginException -> "Неверный логин"
+                            is Validator.InvalidPasswordException -> "Неверный пароль"
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
                             else -> "Непредвиденная ошибка"
