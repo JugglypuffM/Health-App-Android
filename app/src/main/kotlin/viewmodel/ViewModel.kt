@@ -5,17 +5,19 @@ import domain.User
 
 interface ViewModel {
     /**
-     * Удалённый логин пользователя
-     * @param name Имя пользователя
-     * @param password Пароль пользователя
+     * Функция авторизации пользователя
+     * @param login логин пользователя
+     * @param password пароль пользователя
+     * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun login(name: String, password: String): Result<String>
+    suspend fun login(login: String, password: String): Result<String>
 
     /**
-     * Удалённая регистрация пользователя
-     * @param name Имя пользователя
-     * @param login Логин пользователя
-     * @param password Пароль пользователя
+     * Функция для регистрации нового пользователя
+     * @param name имя пользователя - непустая строка
+     * @param login логин новой учетной записи - непустая строка
+     * @param password пароль новой учетной записи - строка длиннее 5и символов
+     * @return Result с сообщением об успехе или ошибке
      */
     suspend fun register(name: String, login: String, password: String): Result<String>
 
@@ -36,22 +38,22 @@ interface ViewModel {
     suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User>
 
     /**
-     * Загрузка пользователя из хранилища
+     * Загрузить пользователя
      */
     suspend fun loadUser(): Result<User>
 
     /**
-     * Удалить пользователя из хранилища
+     * Удалить пользователя
      */
     fun dropUser(): Result<String>
 
     /**
-     * Установка контекста приложения для работы с хранилищем
+     * Установить контекст
      */
     fun setContext(applicationContext: Context)
 
     /**
-     * Сохранение пользователя в хранилище
+     * Сохранить пользователя
      */
     fun saveUser(value: User): Result<String>
 }

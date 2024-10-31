@@ -7,9 +7,9 @@ import domain.User
 import domain.flatMap
 
 /**
- * Локальное хранилище
+ * Локальное хранилище для пользователя
  */
-class LocalStorage {
+class UserSerializer {
     class UserNotFoundException(message: String) : Exception(message)
 
     private lateinit var sharedPreferences: SharedPreferences

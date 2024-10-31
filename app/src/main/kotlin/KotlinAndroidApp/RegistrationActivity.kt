@@ -46,11 +46,9 @@ class RegistrationActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result: Result<User> = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).flatMap { user ->
-                    ViewModelProvider.register(user.name!!, user.login, user.password).flatMap { _ ->
-                        ViewModelProvider.saveUser(user).map {_ ->
-                            user
-                        }
-                    }
+                    ViewModelProvider.register(user.name!!, user.login, user.password)
+                        .flatMap { _ -> ViewModelProvider.saveUser(user)}
+                        .map {_ -> user }
                 }
                 withContext(Dispatchers.Main) {
                     result.onSuccess{ user ->
