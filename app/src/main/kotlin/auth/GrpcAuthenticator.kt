@@ -15,9 +15,9 @@ import grpc.AuthServiceGrpc.AuthServiceBlockingStub
  *             создает stub на канале по адресу SERVER_ADDRESS:SERVER_PORT из файла .env
  */
 class GrpcAuthenticator(
-    private val stub: AuthServiceGrpc.AuthServiceBlockingStub = AuthServiceGrpc.newBlockingStub(
+    private val stub: AuthServiceBlockingStub = AuthServiceGrpc.newBlockingStub(
         ManagedChannelBuilder.forAddress(
-            dotenv()["SERVER_ADDRESS"], dotenv()["SERVER_PORT"].toInt()
+            "192.168.1.74", 50051
         ).usePlaintext().build()
     )
 ) : Authenticator, AsyncCallExecutor {
