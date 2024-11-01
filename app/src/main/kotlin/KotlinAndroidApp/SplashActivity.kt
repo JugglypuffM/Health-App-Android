@@ -6,10 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
-import domain.flatMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,10 +26,10 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         CoroutineScope(Dispatchers.IO).launch {
-            val result: Result<User> = ViewModelProvider.loadUser().flatMap { user ->
-                ViewModelProvider.login(user.login, user.password).map {
-                    user
-                }
+            val result = result {
+                val user = ViewModelProvider.loadUser().bind()
+                ViewModelProvider.login(user.login, user.password)
+                user
             }
 
             withContext(Dispatchers.Main) {

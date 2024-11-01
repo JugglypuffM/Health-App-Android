@@ -48,6 +48,9 @@ dependencies {
     implementation(libs.dotenv.kotlin)
     implementation(libs.kotlinx.coroutines.core)
 
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
+
     implementation(libs.grpc.kotlin.stub)
     implementation(libs.grpc.okhttp.v1570)
     implementation(libs.grpc.protobuf.lite)

@@ -3,8 +3,8 @@ package utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import arrow.core.raise.result
 import domain.User
-import domain.flatMap
 
 /**
  * Локальное хранилище для пользователя
@@ -26,12 +26,12 @@ class UserSerializer {
     /**
      * Загрузить пользователя
      */
-    suspend fun loadUser(): Result<User> {
+    fun loadUser(): Result<User> {
         Log.d("MYDB", "Loading user...")
-        return getValue(LOGIN).flatMap { login ->
-            getValue(PASSWORD).map { password ->
-                User(null, login, password)
-            }
+        return result {
+            val login = getValue(LOGIN).bind()
+            val password = getValue(PASSWORD).bind()
+            User(null, login, password)
         }
     }
 

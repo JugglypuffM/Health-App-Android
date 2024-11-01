@@ -7,16 +7,15 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import viewmodel.ViewModelProvider
 import utils.Validator
-import domain.flatMap
 
 /**
  * Активность для регистрации пользователя
@@ -45,11 +44,13 @@ class RegistrationActivity : AppCompatActivity() {
             val inputConfirmPassword = confirmPasswordField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result: Result<User> = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).flatMap { user ->
-                    ViewModelProvider.register(user.name!!, user.login, user.password)
-                        .flatMap { _ -> ViewModelProvider.saveUser(user)}
-                        .map {_ -> user }
+                val result = result {
+                    val user = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    ViewModelProvider.register(user.name!!, user.login, user.password).bind()
+                    ViewModelProvider.saveUser(user).bind()
+                    user
                 }
+
                 withContext(Dispatchers.Main) {
                     result.onSuccess{ user ->
                         val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)

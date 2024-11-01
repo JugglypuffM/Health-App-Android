@@ -7,11 +7,10 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
 import utils.Validator
-import domain.flatMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,12 +41,10 @@ class LoginActivity : AppCompatActivity() {
             val inputPassword = passwordField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result: Result<User> = ViewModelProvider.validate(inputLogin, inputPassword).flatMap { user ->
-                    ViewModelProvider.login(user.login, user.password).flatMap { _ ->
-                        ViewModelProvider.saveUser(user).map { _ ->
-                            user
-                        }
-                    }
+                val result = result {
+                    val user = ViewModelProvider.validate(inputLogin, inputPassword).bind()
+                    ViewModelProvider.login(user.login, user.password).bind()
+                    user
                 }
 
                 withContext(Dispatchers.Main) {

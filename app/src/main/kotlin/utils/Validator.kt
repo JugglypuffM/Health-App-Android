@@ -1,7 +1,7 @@
 package utils
 
+import arrow.core.raise.result
 import domain.User
-import domain.flatMap
 
 class Validator {
     class InvalidNameException(message: String) : Exception(message)
@@ -15,7 +15,7 @@ class Validator {
      */
     private fun validateName(name: String): Result<String> {
         return if (name.isBlank())
-            Result.failure(Validator.InvalidNameException("User name is empty"))
+            Result.failure(InvalidNameException("User name is empty"))
         else Result.success(name)
     }
 
@@ -25,7 +25,7 @@ class Validator {
      */
     private fun validateLogin(login: String): Result<String> {
         return if (login.isBlank())
-            Result.failure(Validator.InvalidLoginException("Login is empty"))
+            Result.failure(InvalidLoginException("Login is empty"))
         else Result.success(login)
     }
 
@@ -35,7 +35,7 @@ class Validator {
      */
     private fun validatePassword(password: String): Result<String> {
         return if (password.length < 6)
-            Result.failure(Validator.InvalidPasswordException("The password must be at least 6 characters long"))
+            Result.failure(InvalidPasswordException("The password must be at least 6 characters long"))
         else Result.success(password)
     }
 
@@ -46,39 +46,37 @@ class Validator {
      */
     private fun validateConfirmPassword(password: String, confirmPassword: String): Result<String> {
         return if (password != confirmPassword)
-            Result.failure(Validator.NotEqualPasswordException("Passwords do not match"))
+            Result.failure(NotEqualPasswordException("Passwords do not match"))
         else Result.success(password)
     }
 
     /**
      * Проверка валидности логина и пароля
-     * @param login Логин пользователя
-     * @param password Пароль пользователя
+     * @param rawLogin Логин пользователя
+     * @param rawPassword Пароль пользователя
      */
-    fun check(login: String, password: String): Result<User> {
-        return validateLogin(login).flatMap { _ ->
-            validatePassword(password).map {_ ->
-                User(null, login, password)
-            }
+    fun check(rawLogin: String, rawPassword: String): Result<User> {
+        return result {
+            val login = validateLogin(rawLogin).bind()
+            val password = validatePassword(rawPassword).bind()
+            User(null, login, password)
         }
     }
 
     /**
      * Проверка валидности имени, логина, пароля и подтверждения пароля
-     * @param name Имя пользователя
-     * @param login Логин пользователя
-     * @param password Пароль пользователя
-     * @param confirmPassword Подтверждение пароля пользователя
+     * @param rawName Имя пользователя
+     * @param rawLogin Логин пользователя
+     * @param rawPassword Пароль пользователя
+     * @param rawConfirmPassword Подтверждение пароля пользователя
      */
-    fun check(name: String, login: String, password: String, confirmPassword: String): Result<User> {
-        return validateName(name).flatMap {_ ->
-            validateLogin(login).flatMap { _ ->
-                validateConfirmPassword(password, confirmPassword).flatMap { _ ->
-                    validatePassword(password).map {_ ->
-                        User(name, login, password)
-                    }
-                }
-            }
+    fun check(rawName: String, rawLogin: String, rawPassword: String, rawConfirmPassword: String): Result<User> {
+        return result {
+            val name = validateName(rawName).bind()
+            val login = validateLogin(rawLogin).bind()
+            validateConfirmPassword(rawPassword, rawConfirmPassword).bind()
+            val password = validatePassword(rawPassword).bind()
+            User(name, login, password)
         }
     }
 }
