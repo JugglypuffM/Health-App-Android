@@ -2,14 +2,24 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import arrow.core.raise.result
+import auth.Authenticator
 import com.project.kotlin_android_app.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import viewmodel.ViewModelProvider
+import utils.Validator
 
+/**
+ * Активность для регистрации пользователя
+ */
 class RegistrationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,28 +35,43 @@ class RegistrationActivity : AppCompatActivity() {
         textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-
         }
 
         registerButton.setOnClickListener {
-            val name = nameField.text.toString()
-            val login = loginField.text.toString()
-            val password = passwordField.text.toString()
-            val confirmPassword = confirmPasswordField.text.toString()
+            val inputName = nameField.text.toString()
+            val inputLogin = loginField.text.toString()
+            val inputPassword = passwordField.text.toString()
+            val inputConfirmPassword = confirmPasswordField.text.toString()
 
-            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(login) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
-                Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
-            } else if (password != confirmPassword) {
-                Toast.makeText(this, "Пароли не совпадают", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Успешная регистрация", Toast.LENGTH_SHORT).show()
-
-                val intent = Intent(this, LoginActivity::class.java).apply {
-                    putExtra("EXTRA_NAME", name)
-                    putExtra("EXTRA_LOGIN", login)
-                    putExtra("EXTRA_PASSWORD", password)
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = result {
+                    val user = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    ViewModelProvider.register(user.name!!, user.login, user.password).bind()
+                    ViewModelProvider.saveUser(user).bind()
+                    user
                 }
-                startActivity(intent)
+
+                withContext(Dispatchers.Main) {
+                    result.onSuccess{ user ->
+                        val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
+                        userProfileIntent.putExtra("EXTRA_USER", user)
+                        startActivity(userProfileIntent)
+                    }
+                    result.onFailure { error ->
+                        val message = when (error) {
+                            is Validator.InvalidNameException -> "Неверное имя пользователя"
+                            is Validator.InvalidLoginException -> "Неверный логин"
+                            is Validator.InvalidPasswordException -> "Неверный пароль"
+                            is Validator.NotEqualPasswordException -> "Пароли не совпадают"
+                            is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
+                            is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                            is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
+                            else -> "Непредвиденная ошибка"
+                        }
+                        Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
             }
         }
     }

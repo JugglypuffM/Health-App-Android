@@ -7,8 +7,19 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import arrow.core.raise.result
+import auth.Authenticator
 import com.project.kotlin_android_app.R
+import utils.Validator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import viewmodel.ViewModelProvider
 
+/**
+ * Активность для входа в приложение
+ */
 class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,10 +31,6 @@ class LoginActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.button)
         val textViewRegister: TextView = findViewById(R.id.textview_register)
 
-        val registeredLogin = intent.getStringExtra("EXTRA_LOGIN")
-        val registeredPassword = intent.getStringExtra("EXTRA_PASSWORD")
-        val registeredName = intent.getStringExtra("EXTRA_NAME")
-
         textViewRegister.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
@@ -33,15 +40,32 @@ class LoginActivity : AppCompatActivity() {
             val inputLogin = loginField.text.toString()
             val inputPassword = passwordField.text.toString()
 
-            if (inputLogin == registeredLogin && inputPassword == registeredPassword) {
-
-                val intent = Intent(this, UserProfileActivity::class.java).apply {
-                    putExtra("EXTRA_LOGIN", registeredLogin)
-                    putExtra("EXTRA_NAME", registeredName)
+            CoroutineScope(Dispatchers.IO).launch {
+                val result = result {
+                    val user = ViewModelProvider.validate(inputLogin, inputPassword).bind()
+                    ViewModelProvider.login(user.login, user.password).bind()
+                    user
                 }
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show()
+
+                withContext(Dispatchers.Main) {
+                    result.onSuccess { user ->
+                        val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
+                        userProfileIntent.putExtra("EXTRA_USER", user)
+                        startActivity(userProfileIntent)
+                    }
+
+                    result.onFailure { error ->
+                        val message = when (error) {
+                            is Validator.InvalidNameException -> "Неверное имя пользователя"
+                            is Validator.InvalidLoginException -> "Неверный логин"
+                            is Validator.InvalidPasswordException -> "Неверный пароль"
+                            is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
+                            is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
+                            else -> "Непредвиденная ошибка"
+                        }
+                        Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }
     }
