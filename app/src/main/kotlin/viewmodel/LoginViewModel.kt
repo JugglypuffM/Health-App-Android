@@ -2,11 +2,13 @@ package viewmodel
 
 import android.content.Context
 import auth.Authenticator
+import data.DataRequester
+import domain.BasicUserData
 import domain.User
 import utils.Validator
 import utils.UserSerializer
 
-class LoginViewModel(private val storage: UserSerializer, private val authenticator: Authenticator, private val validator: Validator) : ViewModel{
+class LoginViewModel(private val storage: UserSerializer, private val authenticator: Authenticator, private val dataRequester: DataRequester, private val validator: Validator) : ViewModel{
     override suspend fun login(login: String, password: String): Result<String> {
         return authenticator.login(login, password)
     }
@@ -37,5 +39,9 @@ class LoginViewModel(private val storage: UserSerializer, private val authentica
 
     override fun saveUser(value: User): Result<String> {
         return storage.saveUser(value)
+    }
+
+    override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
+        return dataRequester.getBasicUserData(login, password)
     }
 }

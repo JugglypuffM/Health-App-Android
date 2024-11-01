@@ -1,6 +1,7 @@
 package viewmodel
 
 import android.content.Context
+import domain.BasicUserData
 import domain.User
 
 interface ViewModel {
@@ -56,4 +57,10 @@ interface ViewModel {
      * Сохранить пользователя
      */
     fun saveUser(value: User): Result<String>
+
+    /**
+     * Функция для запроса BasicUserData
+     */
+    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData>
+
 }
