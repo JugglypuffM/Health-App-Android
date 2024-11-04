@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 import utils.Validator
 
 /**
@@ -32,6 +31,8 @@ class RegistrationActivity : AppCompatActivity() {
         val passwordField: EditText = findViewById(R.id.user_password2)
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
+        val viewModel = (application as MainApplication).viewModel
+
         textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -45,9 +46,9 @@ class RegistrationActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val user = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
-                    ViewModelProvider.register(user.name!!, user.login, user.password).bind()
-                    ViewModelProvider.saveUser(user).bind()
+                    val user = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    viewModel.register(user.name!!, user.login, user.password).bind()
+                    viewModel.saveUser(user).bind()
                     user
                 }
 

@@ -13,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 
 /**
  * Активность загрузки
@@ -22,13 +21,14 @@ import viewmodel.ViewModelProvider
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViewModelProvider.setContext(applicationContext)
         setContentView(R.layout.activity_splash)
+
+        val viewModel = (application as MainApplication).viewModel
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = result {
-                val user = ViewModelProvider.loadUser().bind()
-                ViewModelProvider.login(user.login, user.password)
+                val user = viewModel.loadUser().bind()
+                viewModel.login(user.login, user.password)
                 user
             }
 
@@ -40,9 +40,7 @@ class SplashActivity : AppCompatActivity() {
                 }
                 result.onFailure { error ->
                     val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
-                    loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(loginIntent)
-                    finish()
                     when (error) {
                         is Authenticator.ServerConnectionException -> {
                             Toast.makeText(
@@ -53,7 +51,7 @@ class SplashActivity : AppCompatActivity() {
                         }
 
                         is Authenticator.InvalidCredentialsException -> {
-                            ViewModelProvider.dropUser()
+                            viewModel.dropUser()
                         }
                     }
                 }

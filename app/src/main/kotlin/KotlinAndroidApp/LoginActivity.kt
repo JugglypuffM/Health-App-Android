@@ -15,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 
 /**
  * Активность для входа в приложение
@@ -31,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.button)
         val textViewRegister: TextView = findViewById(R.id.textview_register)
 
+        val viewModel = (application as MainApplication).viewModel
+
         textViewRegister.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
@@ -42,8 +43,8 @@ class LoginActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val user = ViewModelProvider.validate(inputLogin, inputPassword).bind()
-                    ViewModelProvider.login(user.login, user.password).bind()
+                    val user = viewModel.validate(inputLogin, inputPassword).bind()
+                    viewModel.login(user.login, user.password).bind()
                     user
                 }
 

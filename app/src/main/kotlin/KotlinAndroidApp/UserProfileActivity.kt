@@ -5,16 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import auth.Authenticator
 import com.project.kotlin_android_app.R
 import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import viewmodel.ViewModel
-import viewmodel.ViewModelProvider
 
 /**
  * Активность для отображения профиля пользователя.
@@ -32,10 +28,11 @@ class UserProfileActivity : AppCompatActivity() {
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
         var user = intent.getSerializableExtra("EXTRA_USER") as User
+        val viewModel = (application as MainApplication).viewModel
 
         if(user.name == null){
             CoroutineScope(Dispatchers.IO).launch {
-                val result = ViewModelProvider.getBasicUserData(user.login, user.password)
+                val result = viewModel.getBasicUserData(user.login, user.password)
 
                 result.onSuccess { basicUserData ->
                     //TODO обновлять через LiveMutable
@@ -53,10 +50,8 @@ class UserProfileActivity : AppCompatActivity() {
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            ViewModelProvider.dropUser()
             startActivity(intent)
-            finish()
+            viewModel.dropUser()
         }
     }
 }

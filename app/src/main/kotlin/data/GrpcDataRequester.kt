@@ -10,13 +10,7 @@ import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.github.cdimascio.dotenv.dotenv
 import io.grpc.ManagedChannelBuilder
 
-class GrpcDataRequester(
-    private val stub: DataServiceBlockingStub = DataServiceGrpc.newBlockingStub(
-        ManagedChannelBuilder.forAddress(
-            dotenv()["SERVER_ADDRESS"], dotenv()["SERVER_PORT"].toInt()
-        ).usePlaintext().build()
-    )
-) : DataRequester, AsyncCallExecutor {
+class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequester, AsyncCallExecutor {
     override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> =
         executeCallAsync(::processGrpcResponse) {
             val request =
