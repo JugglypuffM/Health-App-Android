@@ -2,6 +2,7 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -67,7 +68,10 @@ class RegistrationActivity : AppCompatActivity() {
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
                             is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
-                            else -> "Непредвиденная ошибка"
+                            else -> {
+                                Log.e("Unexpected error", "Unexpected error on RegisterActivity, error: ${error}")
+                                "Непредвиденная ошибка"
+                            }
                         }
                         Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT)
                             .show()

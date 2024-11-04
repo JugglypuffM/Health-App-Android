@@ -55,6 +55,10 @@ class SplashActivity : AppCompatActivity() {
                         is Authenticator.InvalidCredentialsException -> {
                             viewModel.dropUser()
                         }
+
+                        else ->{
+                            Log.e("Unexpected error", "Unexpected error on splash activity, error: $error")
+                        }
                     }
                 }
             }

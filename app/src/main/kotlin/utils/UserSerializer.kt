@@ -30,7 +30,6 @@ class UserSerializer(private val applicationContext: Context) {
      * Загрузить пользователя
      */
     fun loadUser(): Result<User> {
-        Log.d("MYDB", "Loading user...")
         return result {
             val login = getValue(LOGIN).bind()
             val password = getValue(PASSWORD).bind()

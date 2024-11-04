@@ -2,6 +2,7 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -66,7 +67,10 @@ class LoginActivity : AppCompatActivity() {
                             is Validator.InvalidPasswordException -> "Неверный пароль"
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
-                            else -> "Непредвиденная ошибка"
+                            else -> {
+                                Log.e("Unexpected error", "Unexpected error on loginActivity, error = ${error}")
+                                "Непредвиденная ошибка"
+                            }
                         }
                         Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                     }
