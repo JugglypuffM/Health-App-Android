@@ -1,6 +1,5 @@
 import auth.Authenticator
 import auth.GrpcAuthenticator
-import config.Config
 import data.DataRequester
 import data.GrpcDataRequester
 
