@@ -1,12 +1,11 @@
-# Инструкция по добавлению файла конфигурации
+# Инструкция по настройке конфигураций
 
-Файл должен лежать в директории app/src/main/res/values/server.xml
+Настройки по умолчанию лежат в файле `default.properties` в корне репозитория
 
-Содержание файла 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="server_url">{server_url}</string>
-    <integer name="server_port">{server_port}</integer>
-</resources>
+Для настройки своих (скрытых) настроек необходимо определить их в файле `local.properties`
+
+Возможное содержание `local.properties` 
+```properties
+serverUrl=localhost
+serverPort=69
 ```
