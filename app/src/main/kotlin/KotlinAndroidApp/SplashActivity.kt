@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
+import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,9 +28,10 @@ class SplashActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = result {
-                val user = viewModel.loadUser().bind()
-                viewModel.login(user.login, user.password)
-                user
+                val account = viewModel.loadUser().bind()
+                viewModel.login(account.login, account.password).bind()
+                val basicUserData = viewModel.getBasicUserData(account.login, account.password).bind()
+                User(basicUserData.name, account.login, account.password)
             }
 
             withContext(Dispatchers.Main) {

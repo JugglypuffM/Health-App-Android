@@ -30,22 +30,7 @@ class UserProfileActivity : AppCompatActivity() {
         var user = intent.getSerializableExtra("EXTRA_USER") as User
         val viewModel = (application as MainApplication).viewModel
 
-        if(user.name == null){
-            CoroutineScope(Dispatchers.IO).launch {
-                val result = viewModel.getBasicUserData(user.login, user.password)
-
-                result.onSuccess { basicUserData ->
-                    //TODO обновлять через LiveMutable
-                    user = User(basicUserData.name, user.login, user.password)
-                    userNameTextView.text = "Имя пользователя: ${user.name ?: "Неизвестно"}"
-                    userLoginTextView.text = "Логин: ${user.login}"
-                }
-
-                //TODO сделать что-нибудь с ошибками
-            }
-        }
-
-        userNameTextView.text = "Имя пользователя: ${user.name ?: "Неизвестно"}"
+        userNameTextView.text = "Имя пользователя: ${user.name}"
         userLoginTextView.text = "Логин: ${user.login}"
 
         logoutButton.setOnClickListener {

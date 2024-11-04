@@ -2,8 +2,10 @@ package KotlinAndroidApp
 
 import android.app.Application
 import auth.Authenticator
+import auth.AuthenticatorStub
 import auth.GrpcAuthenticator
 import config.Config
+import data.DataRequesterStub
 import data.GrpcDataRequester
 import utils.UserSerializer
 import utils.Validator
