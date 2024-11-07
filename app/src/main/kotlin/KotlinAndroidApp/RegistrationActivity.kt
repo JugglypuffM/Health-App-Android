@@ -48,8 +48,11 @@ class RegistrationActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
                     val user = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    Log.d("ATH", "user $user is correct")
                     viewModel.register(user.name!!, user.login, user.password).bind()
+                    Log.d("ATH", "user $user correct register")
                     viewModel.saveUser(user).bind()
+                    Log.d("ATH", "user $user saved")
                     user
                 }
 
@@ -68,11 +71,10 @@ class RegistrationActivity : AppCompatActivity() {
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
                             is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
-                            else -> {
-                                Log.e("Unexpected error", "Unexpected error on RegisterActivity, error: ${error}")
-                                "Непредвиденная ошибка"
-                            }
+                            else -> "Непредвиденная ошибка"
                         }
+
+                        Log.e("ATH", "throw user error: $error")
                         Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT)
                             .show()
                     }

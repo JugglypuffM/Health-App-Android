@@ -6,6 +6,6 @@
 
 Возможное содержание `local.properties` 
 ```properties
-serverUrl=localhost
+serverAddress=localhost
 serverPort=69
 ```

@@ -29,8 +29,11 @@ class SplashActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val result = result {
                 val account = viewModel.loadUser().bind()
+                Log.d("ATH","Successfully loaded user $account")
                 viewModel.login(account.login, account.password).bind()
+                Log.d("ATH","Successfully login into account")
                 val basicUserData = viewModel.getBasicUserData(account.login, account.password).bind()
+                Log.d("ATH","Successfully get data: $basicUserData")
                 User(basicUserData.name, account.login, account.password)
             }
 
@@ -55,11 +58,8 @@ class SplashActivity : AppCompatActivity() {
                         is Authenticator.InvalidCredentialsException -> {
                             viewModel.dropUser()
                         }
-
-                        else ->{
-                            Log.e("Unexpected error", "Unexpected error on splash activity, error: $error")
-                        }
                     }
+                    Log.d("ATH", "throw user error: $error")
                 }
             }
         }

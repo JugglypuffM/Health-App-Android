@@ -46,9 +46,13 @@ class LoginActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch {
                 val loginResult = result {
                     val account = viewModel.validate(inputLogin, inputPassword).bind()
+                    Log.d("ATH", "user $account is correct")
                     viewModel.login(account.login, account.password).bind()
+                    Log.d("ATH", "user $account is correct")
                     viewModel.saveUser(account).bind()
+                    Log.d("ATH", "correct save $account")
                     val basicUserData = viewModel.getBasicUserData(account.login, account.password).bind()
+                    Log.d("ATH", "correct get user data: $basicUserData")
                     User(basicUserData.name, account.login, account.password)
                 }
 
@@ -57,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
                         val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
                         userProfileIntent.putExtra("EXTRA_USER", user)
                         startActivity(userProfileIntent)
-                        viewModel.saveUser(user);
+                        viewModel.saveUser(user)
                     }
 
                     loginResult.onFailure { error ->
@@ -67,11 +71,10 @@ class LoginActivity : AppCompatActivity() {
                             is Validator.InvalidPasswordException -> "Неверный пароль"
                             is Authenticator.ServerConnectionException -> "Нет подключения к серверу"
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
-                            else -> {
-                                Log.e("Unexpected error", "Unexpected error on loginActivity, error = ${error}")
-                                "Непредвиденная ошибка"
-                            }
+                            else -> "Непредвиденная ошибка"
                         }
+
+                        Log.d("ATH", "throw user error:  $error")
                         Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                     }
                 }
