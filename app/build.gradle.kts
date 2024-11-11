@@ -47,6 +47,7 @@ dependencies {
 
     implementation(libs.dotenv.kotlin)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
 
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
