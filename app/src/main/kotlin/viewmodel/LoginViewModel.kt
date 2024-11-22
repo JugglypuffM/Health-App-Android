@@ -2,13 +2,18 @@ package viewmodel
 
 import android.content.Context
 import auth.Authenticator
-import data.DataRequester
+import data.OldDataRequester
 import domain.BasicUserData
 import domain.User
-import utils.Validator
 import utils.UserSerializer
+import utils.Validator
 
-class LoginViewModel(private val storage: UserSerializer, private val authenticator: Authenticator, private val dataRequester: DataRequester, private val validator: Validator) : ViewModel{
+class LoginViewModel(
+    private val storage: UserSerializer,
+    private val authenticator: Authenticator,
+    private val dataRequester: OldDataRequester,
+    private val validator: Validator
+) : ViewModel {
     override suspend fun login(login: String, password: String): Result<String> {
         return authenticator.login(login, password)
     }

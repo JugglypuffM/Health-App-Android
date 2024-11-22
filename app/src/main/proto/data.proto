@@ -4,15 +4,22 @@ option java_package = "grpc";
 option java_outer_classname = "DataProto";
 
 service DataService{
-  rpc getBasicUserData (BasicDataRequest) returns (BasicDataResponse);
+  rpc getUserData (UserDataRequest) returns (UserDataResponse);
 }
 
-message BasicDataRequest{
+message UserDataRequest{
   string login = 1;
   string password = 2;
 }
 
-message BasicDataResponse{
+message UserDataResponse{
   bool success = 1;
-  string name = 2;
+  UserData data = 2;
+}
+
+message UserData {
+  string name = 1;
+  int32 age = 2;
+  int32 weight = 3;
+  int32 total_distance = 4;
 }

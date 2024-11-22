@@ -1,10 +1,15 @@
 package viewmodel
 
 import auth.GrpcAuthenticator
-import data.GrpcDataRequester
+import data.OldGrpcDataRequester
 import utils.UserSerializer
 import utils.Validator
 /**
  * Провайдер ViewModel для всех активностей
  */
-object ViewModelProvider: ViewModel by LoginViewModel(UserSerializer(), GrpcAuthenticator(), GrpcDataRequester(), Validator())
+object ViewModelProvider : ViewModel by LoginViewModel(
+    UserSerializer(),
+    GrpcAuthenticator(),
+    OldGrpcDataRequester(),
+    Validator()
+)

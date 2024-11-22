@@ -2,38 +2,30 @@ package data
 
 import async.AsyncCallExecutor
 import auth.Authenticator
-import domain.UserInfo
-import grpc.DataProto.UserDataRequest
-import grpc.DataProto.UserDataResponse
+import domain.BasicUserData
+import grpc.DataProto
 import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 
-class GrpcDataRequester(
+@Deprecated("Use new GrpcDataRequester")
+class OldGrpcDataRequester(
     private val stub: DataServiceBlockingStub = DataServiceGrpc.newBlockingStub(
         ManagedChannelBuilder.forAddress(
             "192.168.1.74", 50051
         ).usePlaintext().build()
     )
-) : DataRequester, AsyncCallExecutor {
-    override suspend fun getUserData(login: String, password: String): Result<UserInfo> =
+) : OldDataRequester, AsyncCallExecutor {
+    override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> =
         executeCallAsync(::processGrpcResponse) {
             val request =
-                UserDataRequest.newBuilder().setLogin(login).setPassword(password).build()
+                DataProto.UserDataRequest.newBuilder().setLogin(login).setPassword(password).build()
             stub.getUserData(request)
         }
 
-    private fun processGrpcResponse(response: UserDataResponse): Result<UserInfo> =
+    private fun processGrpcResponse(response: DataProto.UserDataResponse): Result<BasicUserData> =
         when (response.success) {
-            true -> Result.success(
-                UserInfo(
-                    response.data.name,
-                    response.data.age,
-                    response.data.weight,
-                    response.data.totalDistance
-                )
-            )
-
+            true -> Result.success(BasicUserData(response.data.name))
             false ->
                 Result.failure(
                     Authenticator.InvalidCredentialsException(

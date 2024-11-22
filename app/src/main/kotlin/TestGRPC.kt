@@ -11,6 +11,6 @@ suspend fun main() {
     println(authenticator.login("jpf", "123456"))
     println(authenticator.register("stas", "jpf", "1234"))
     println(authenticator.login("jpf", "1234"))
-    println(dataRequester.getBasicUserData("jpf", "12345"))
-    println(dataRequester.getBasicUserData("jpf", "123456"))
+    println(dataRequester.getUserData("jpf", "12345"))
+    println(dataRequester.getUserData("jpf", "123456"))
 }

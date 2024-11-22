@@ -1,10 +1,9 @@
 package data
 
-import domain.BasicUserData
-import domain.User
+import domain.UserInfo
 
 class DataRequesterStub: DataRequester {
-    override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
-        return Result.success(BasicUserData("stubName"))
+    override suspend fun getUserData(login: String, password: String): Result<UserInfo> {
+        return Result.success(UserInfo("stubName", 1, 100, 10000000))
     }
 }

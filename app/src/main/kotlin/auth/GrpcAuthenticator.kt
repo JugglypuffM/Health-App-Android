@@ -3,11 +3,12 @@ package auth
 import async.AsyncCallExecutor
 import auth.Authenticator.InvalidCredentialsException
 import auth.Authenticator.UserAlreadyExistsException
-import io.github.cdimascio.dotenv.dotenv
-import io.grpc.ManagedChannelBuilder
-import grpc.AuthProto.*
+import grpc.AuthProto.AuthResponse
+import grpc.AuthProto.LoginRequest
+import grpc.AuthProto.RegisterRequest
 import grpc.AuthServiceGrpc
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
+import io.grpc.ManagedChannelBuilder
 
 /**
  * Реализация интерфейса [Authenticator] с использованием gRPC
@@ -26,7 +27,7 @@ class GrpcAuthenticator(
     override suspend fun register(name: String, login: String, password: String): Result<String> =
         executeCallAsync(::processGrpcResponse) {
             val request =
-                RegisterRequest.newBuilder().setName(name).setLogin(login).setPassword(password)
+                RegisterRequest.newBuilder().setLogin(login).setPassword(password)
                     .build()
             stub.register(request)
         }
