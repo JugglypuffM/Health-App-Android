@@ -1,17 +1,22 @@
 package viewmodel
 
-import android.content.Context
+import auth.Authenticator
+import data.DataRequester
 import domain.BasicUserData
 import domain.User
+import utils.Validator
+import utils.UserSerializer
 
-interface ViewModel {
+class ViewModel(private val userSerializer: UserSerializer, private val authenticator: Authenticator, private val dataRequester: DataRequester, private val validator: Validator){
     /**
      * Функция авторизации пользователя
      * @param login логин пользователя
      * @param password пароль пользователя
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun login(login: String, password: String): Result<String>
+    suspend fun login(login: String, password: String): Result<String> {
+        return authenticator.login(login, password)
+    }
 
     /**
      * Функция для регистрации нового пользователя
@@ -20,14 +25,18 @@ interface ViewModel {
      * @param password пароль новой учетной записи - строка длиннее 5и символов
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun register(name: String, login: String, password: String): Result<String>
+    suspend fun register(name: String, login: String, password: String): Result<String> {
+        return authenticator.register(name, login, password)
+    }
 
     /**
      * Проверка валидности логина и пароля
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    suspend fun validate(login: String, password: String): Result<User>
+    fun validate(login: String, password: String): Result<User> {
+        return validator.check(login, password)
+    }
 
     /**
      * Проверка валидности имени, логина, пароля и подтверждения пароля
@@ -36,31 +45,35 @@ interface ViewModel {
      * @param password Пароль пользователя
      * @param confirmPassword Подтверждение пароля пользователя
      */
-    suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User>
+    fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User> {
+        return validator.check(name, login, password, confirmPassword)
+    }
 
     /**
      * Загрузить пользователя
      */
-    suspend fun loadUser(): Result<User>
+    fun loadUser(): Result<User> {
+        return userSerializer.loadUser()
+    }
 
     /**
      * Удалить пользователя
      */
-    fun dropUser(): Result<String>
-
-    /**
-     * Установить контекст
-     */
-    fun setContext(applicationContext: Context)
+    fun dropUser(): Result<String> {
+        return userSerializer.dropUser()
+    }
 
     /**
      * Сохранить пользователя
      */
-    fun saveUser(value: User): Result<String>
+    fun saveUser(value: User): Result<String> {
+        return userSerializer.saveUser(value)
+    }
 
     /**
      * Функция для запроса BasicUserData
      */
-    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData>
-
+    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
+        return dataRequester.getBasicUserData(login, password)
+    }
 }

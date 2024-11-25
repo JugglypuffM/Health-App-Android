@@ -4,11 +4,16 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.protobuf") version "0.9.4"
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
     namespace = "com.project.kotlin_android_app"
     compileSdk = 34
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.project.kotlin_android_app"
@@ -40,7 +45,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -103,4 +107,14 @@ tasks.withType<Test>{
         events("passed", "skipped", "failed")
         showStandardStreams = true
     }
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.secrets.gradle.plugin)
+    }
+}
+
+secrets {
+    defaultPropertiesFileName = "default.properties"
 }

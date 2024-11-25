@@ -2,6 +2,7 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,7 +15,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 import utils.Validator
 
 /**
@@ -32,6 +32,8 @@ class RegistrationActivity : AppCompatActivity() {
         val passwordField: EditText = findViewById(R.id.user_password2)
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
+        val viewModel = (application as MainApplication).viewModel
+
         textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -45,9 +47,12 @@ class RegistrationActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val user = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
-                    ViewModelProvider.register(user.name!!, user.login, user.password).bind()
-                    ViewModelProvider.saveUser(user).bind()
+                    val user = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    Log.d("ATH", "user $user is correct")
+                    viewModel.register(user.name!!, user.login, user.password).bind()
+                    Log.d("ATH", "user $user correct register")
+                    viewModel.saveUser(user).bind()
+                    Log.d("ATH", "user $user saved")
                     user
                 }
 
@@ -68,6 +73,8 @@ class RegistrationActivity : AppCompatActivity() {
                             is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
                             else -> "Непредвиденная ошибка"
                         }
+
+                        Log.e("ATH", "throw user error: $error")
                         Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT)
                             .show()
                     }

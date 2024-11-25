@@ -9,25 +9,27 @@ import domain.User
 /**
  * Локальное хранилище для пользователя
  */
-class UserSerializer {
+class UserSerializer(private val applicationContext: Context) {
     class UserNotFoundException(message: String) : Exception(message)
 
-    private lateinit var sharedPreferences: SharedPreferences
+    val TABLE_NAME = "User"
+    val sharedPreferences = applicationContext.getSharedPreferences(TABLE_NAME, Context.MODE_PRIVATE)
 
     private val LOGIN = "login"
     private val PASSWORD = "password"
-    private val TABLE_NAME = "password"
 
     private fun getValue(key: String): Result<String> {
         val value =  sharedPreferences.getString(key, null)
-        return if (value == null) Result.failure(UserNotFoundException("User has incorrect key: ${key}")) else Result.success(value)
+        return if (value == null)
+            Result.failure(UserNotFoundException("User has incorrect key: ${key}"))
+        else
+            Result.success(value)
     }
 
     /**
      * Загрузить пользователя
      */
     fun loadUser(): Result<User> {
-        Log.d("MYDB", "Loading user...")
         return result {
             val login = getValue(LOGIN).bind()
             val password = getValue(PASSWORD).bind()
@@ -62,12 +64,5 @@ class UserSerializer {
         }
 
         return Result.success("User dropped")
-    }
-
-    /**
-     * Установить контекст
-     */
-    fun setContext(context: Context) {
-        sharedPreferences = context.getSharedPreferences(TABLE_NAME, Context.MODE_PRIVATE)
     }
 }
