@@ -1,7 +1,7 @@
 package viewmodel
 
 import auth.GrpcAuthenticator
-import data.OldGrpcDataRequester
+import data.GrpcDataRequester
 import utils.UserSerializer
 import utils.Validator
 /**
@@ -10,6 +10,6 @@ import utils.Validator
 object ViewModelProvider : ViewModel by LoginViewModel(
     UserSerializer(),
     GrpcAuthenticator(),
-    OldGrpcDataRequester(),
+    GrpcDataRequester(),
     Validator()
 )

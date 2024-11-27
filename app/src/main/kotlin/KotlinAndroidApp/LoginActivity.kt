@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
+import domain.User
 import utils.Validator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,9 +43,11 @@ class LoginActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val user = ViewModelProvider.validate(inputLogin, inputPassword).bind()
-                    ViewModelProvider.login(user.login, user.password).bind()
-                    user
+                    val account = ViewModelProvider.validate(inputLogin, inputPassword).bind()
+                    ViewModelProvider.login(account.login, account.password).bind()
+                    ViewModelProvider.saveAccount(account).bind()
+                    val userInfo = ViewModelProvider.getBasicUserData(account.login, account.password).bind()
+                    User(account, userInfo)
                 }
 
                 withContext(Dispatchers.Main) {

@@ -2,9 +2,8 @@ package utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import arrow.core.raise.result
-import domain.User
+import domain.Account
 
 /**
  * Локальное хранилище для пользователя
@@ -26,19 +25,18 @@ class UserSerializer {
     /**
      * Загрузить пользователя
      */
-    fun loadUser(): Result<User> {
-        Log.d("MYDB", "Loading user...")
+    fun loadAccount(): Result<Account> {
         return result {
             val login = getValue(LOGIN).bind()
             val password = getValue(PASSWORD).bind()
-            User(null, login, password)
+            Account(login, password)
         }
     }
 
     /**
      * Сохранить пользователя
      */
-    fun saveUser(user: User): Result<String>{
+    fun saveAccount(user: Account): Result<String>{
         val editor = sharedPreferences.edit()
 
         editor.apply {
@@ -53,7 +51,7 @@ class UserSerializer {
     /**
      * Удалить пользователя
      */
-    fun dropUser(): Result<String>{
+    fun dropAccount(): Result<String>{
         val editor = sharedPreferences.edit()
 
         editor.apply{

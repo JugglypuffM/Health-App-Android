@@ -1,7 +1,7 @@
 package utils
 
 import arrow.core.raise.result
-import domain.User
+import domain.Account
 
 class Validator {
     class InvalidNameException(message: String) : Exception(message)
@@ -55,11 +55,11 @@ class Validator {
      * @param rawLogin Логин пользователя
      * @param rawPassword Пароль пользователя
      */
-    fun check(rawLogin: String, rawPassword: String): Result<User> {
+    fun check(rawLogin: String, rawPassword: String): Result<Account> {
         return result {
             val login = validateLogin(rawLogin).bind()
             val password = validatePassword(rawPassword).bind()
-            User(null, login, password)
+            Account(login, password)
         }
     }
 
@@ -70,13 +70,13 @@ class Validator {
      * @param rawPassword Пароль пользователя
      * @param rawConfirmPassword Подтверждение пароля пользователя
      */
-    fun check(rawName: String, rawLogin: String, rawPassword: String, rawConfirmPassword: String): Result<User> {
+    fun check(rawName: String, rawLogin: String, rawPassword: String, rawConfirmPassword: String): Result<Account> {
         return result {
             val name = validateName(rawName).bind()
             val login = validateLogin(rawLogin).bind()
             validateConfirmPassword(rawPassword, rawConfirmPassword).bind()
             val password = validatePassword(rawPassword).bind()
-            User(name, login, password)
+            Account(login, password)
         }
     }
 }

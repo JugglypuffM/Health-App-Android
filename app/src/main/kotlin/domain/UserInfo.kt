@@ -1,5 +1,7 @@
 package domain
 
+import java.io.Serializable
+
 /**
  * Класс с информацией о пользователе
  */
@@ -8,4 +10,4 @@ data class UserInfo(
     val age: Int,
     val weight: Int,
     val distance: Int,
-)
+): Serializable

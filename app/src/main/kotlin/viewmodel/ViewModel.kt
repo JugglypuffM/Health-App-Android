@@ -1,8 +1,8 @@
 package viewmodel
 
 import android.content.Context
-import domain.BasicUserData
-import domain.User
+import domain.Account
+import domain.UserInfo
 
 interface ViewModel {
     /**
@@ -27,7 +27,7 @@ interface ViewModel {
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    suspend fun validate(login: String, password: String): Result<User>
+    suspend fun validate(login: String, password: String): Result<Account>
 
     /**
      * Проверка валидности имени, логина, пароля и подтверждения пароля
@@ -36,12 +36,12 @@ interface ViewModel {
      * @param password Пароль пользователя
      * @param confirmPassword Подтверждение пароля пользователя
      */
-    suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User>
+    suspend fun validate(name: String, login: String, password: String, confirmPassword: String): Result<Account>
 
     /**
      * Загрузить пользователя
      */
-    suspend fun loadUser(): Result<User>
+    suspend fun loadAccount(): Result<Account>
 
     /**
      * Удалить пользователя
@@ -56,11 +56,10 @@ interface ViewModel {
     /**
      * Сохранить пользователя
      */
-    fun saveUser(value: User): Result<String>
+    fun saveAccount(value: Account): Result<String>
 
     /**
      * Функция для запроса BasicUserData
      */
-    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData>
-
+    suspend fun getBasicUserData(login: String, password: String): Result<UserInfo>
 }
