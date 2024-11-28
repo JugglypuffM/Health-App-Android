@@ -30,24 +30,4 @@ interface Authenticator {
      * @return Result с сообщением об успехе или ошибке
      */
     suspend fun login(login: String, password: String): Result<String>
-
-    companion object {
-        /**
-         * Создает AuthServiceBlockingStub на канале по адресу url:port
-         */
-        fun createAuthServiceBlockingStub(url: String, port: Int): AuthServiceBlockingStub {
-            return AuthServiceGrpc.newBlockingStub(
-                ManagedChannelBuilder.forAddress(url, port).usePlaintext().build()
-            )
-        }
-
-        /**
-         * Создает DataServiceBlockingStub на канале по адресу url:port
-         */
-        fun createDataServiceBlockingStub(url: String, port: Int): DataServiceBlockingStub {
-            return DataServiceGrpc.newBlockingStub(
-                ManagedChannelBuilder.forAddress(url, port).usePlaintext().build()
-            )
-        }
-    }
 }

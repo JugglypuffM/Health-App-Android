@@ -9,6 +9,8 @@ import grpc.AuthProto.RegisterRequest
 import grpc.AuthServiceGrpc
 import grpc.AuthProto.*
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
+import grpc.DataServiceGrpc
+import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 
 /**
@@ -16,6 +18,11 @@ import io.grpc.ManagedChannelBuilder
  * @param stub обязательный параметр gRPC-stub
  */
 class GrpcAuthenticator(private val stub: AuthServiceBlockingStub) : Authenticator, AsyncCallExecutor {
+    constructor(address: String, port: Int):
+        this(AuthServiceGrpc.newBlockingStub(
+            ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+        ))
+
     override suspend fun register(name: String, login: String, password: String): Result<String> =
         executeCallAsync(::processGrpcResponse) {
             val request =

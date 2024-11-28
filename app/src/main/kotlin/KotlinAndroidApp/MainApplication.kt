@@ -26,8 +26,8 @@ class MainApplication : Application() {
 
         viewModel = ViewModel(
             UserSerializer(applicationContext),
-            AuthenticatorStub(),
-            DataRequesterStub(),
+            GrpcAuthenticator(BuildConfig.serverAddress, BuildConfig.serverPort.toInt()),
+            GrpcDataRequester(BuildConfig.serverAddress, BuildConfig.serverPort.toInt()),
             Validator()
         )
     }
