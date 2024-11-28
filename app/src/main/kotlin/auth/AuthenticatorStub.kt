@@ -12,6 +12,6 @@ class AuthenticatorStub : Authenticator {
     }
     override suspend fun login(login: String, password: String): Result<String> {
         delay(2000)
-        return Result.failure(Authenticator.InvalidCredentialsException("invalid credentials"))
+        return Result.success("success server login")
     }
 }

@@ -30,7 +30,7 @@ class UserProfileActivity : AppCompatActivity() {
         val (account, userInfo) = intent.getSerializableExtra("EXTRA_USER") as User
         val viewModel = (application as MainApplication).viewModel
 
-        userNameTextView.text = "Имя пользователя: ${userInfo.name ?: "Неизвестно"}"
+        userNameTextView.text = "Имя пользователя: ${userInfo.name}"
         userLoginTextView.text = "Логин: ${account.login}"
 
         logoutButton.setOnClickListener {
