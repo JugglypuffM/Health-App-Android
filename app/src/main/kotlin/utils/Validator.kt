@@ -72,7 +72,7 @@ class Validator {
      */
     fun check(rawName: String, rawLogin: String, rawPassword: String, rawConfirmPassword: String): Result<Account> {
         return result {
-            val name = validateName(rawName).bind()
+            validateName(rawName).bind()
             val login = validateLogin(rawLogin).bind()
             validateConfirmPassword(rawPassword, rawConfirmPassword).bind()
             val password = validatePassword(rawPassword).bind()

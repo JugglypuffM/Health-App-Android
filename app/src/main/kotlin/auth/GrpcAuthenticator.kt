@@ -18,6 +18,10 @@ import io.grpc.ManagedChannelBuilder
  * @param stub обязательный параметр gRPC-stub
  */
 class GrpcAuthenticator(private val stub: AuthServiceBlockingStub) : Authenticator, AsyncCallExecutor {
+    /**
+     * @param address Адреса сервера
+     * @param port Порт сервера
+     */
     constructor(address: String, port: Int):
         this(AuthServiceGrpc.newBlockingStub(
             ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()

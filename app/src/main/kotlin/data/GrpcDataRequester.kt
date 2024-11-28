@@ -10,6 +10,10 @@ import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 
 class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequester, AsyncCallExecutor {
+    /**
+     * @param address Адреса сервера
+     * @param port Порт сервера
+     */
     constructor(address: String, port: Int): this(DataServiceGrpc.newBlockingStub(
         ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
     ))
