@@ -9,13 +9,7 @@ import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 
-class GrpcDataRequester(
-    private val stub: DataServiceBlockingStub = DataServiceGrpc.newBlockingStub(
-        ManagedChannelBuilder.forAddress(
-            "192.168.1.74", 50051
-        ).usePlaintext().build()
-    )
-) : DataRequester, AsyncCallExecutor {
+class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequester, AsyncCallExecutor {
     override suspend fun getUserData(login: String, password: String): Result<UserInfo> =
         executeCallAsync(::processGrpcResponse) {
             val request =

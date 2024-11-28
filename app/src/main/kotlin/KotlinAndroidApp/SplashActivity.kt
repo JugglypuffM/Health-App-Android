@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 
 /**
  * Активность загрузки
@@ -23,14 +22,18 @@ import viewmodel.ViewModelProvider
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ViewModelProvider.setContext(applicationContext)
         setContentView(R.layout.activity_splash)
+
+        val viewModel = (application as MainApplication).viewModel
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = result {
-                val account = ViewModelProvider.loadAccount().bind()
-                ViewModelProvider.login(account.login, account.password).bind()
-                val userInfo = ViewModelProvider.getBasicUserData(account.login, account.password).bind()
+                val account = viewModel.loadAccount().bind()
+                Log.d("ATH","Successfully loaded user $account")
+                viewModel.login(account.login, account.password).bind()
+                Log.d("ATH","Successfully login into account")
+                val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                Log.d("ATH","Successfully get data: $userInfo")
                 User(account, userInfo)
             }
 
@@ -42,9 +45,7 @@ class SplashActivity : AppCompatActivity() {
                 }
                 result.onFailure { error ->
                     val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
-                    loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(loginIntent)
-                    finish()
                     when (error) {
                         is Authenticator.ServerConnectionException -> {
                             Toast.makeText(
@@ -55,9 +56,10 @@ class SplashActivity : AppCompatActivity() {
                         }
 
                         is Authenticator.InvalidCredentialsException -> {
-                            ViewModelProvider.dropUser()
+                            viewModel.dropAccount()
                         }
                     }
+                    Log.d("ATH", "throw user error: $error")
                 }
             }
         }

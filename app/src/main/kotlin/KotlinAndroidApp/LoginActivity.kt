@@ -2,6 +2,7 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -16,7 +17,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 
 /**
  * Активность для входа в приложение
@@ -32,6 +32,8 @@ class LoginActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.button)
         val textViewRegister: TextView = findViewById(R.id.textview_register)
 
+        val viewModel = (application as MainApplication).viewModel
+
         textViewRegister.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
@@ -42,22 +44,26 @@ class LoginActivity : AppCompatActivity() {
             val inputPassword = passwordField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                val result = result {
-                    val account = ViewModelProvider.validate(inputLogin, inputPassword).bind()
-                    ViewModelProvider.login(account.login, account.password).bind()
-                    ViewModelProvider.saveAccount(account).bind()
-                    val userInfo = ViewModelProvider.getBasicUserData(account.login, account.password).bind()
+                val loginResult = result {
+                    val account = viewModel.validate(inputLogin, inputPassword).bind()
+                    Log.d("ATH", "user $account is correct")
+                    viewModel.login(account.login, account.password).bind()
+                    Log.d("ATH", "correct loggin $account")
+                    viewModel.saveAccount(account).bind()
+                    Log.d("ATH", "correct save $account")
+                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
                     User(account, userInfo)
                 }
 
                 withContext(Dispatchers.Main) {
-                    result.onSuccess { user ->
+                    loginResult.onSuccess { user ->
                         val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
                         userProfileIntent.putExtra("EXTRA_USER", user)
                         startActivity(userProfileIntent)
+                        viewModel.saveAccount(user.account)
                     }
 
-                    result.onFailure { error ->
+                    loginResult.onFailure { error ->
                         val message = when (error) {
                             is Validator.InvalidNameException -> "Неверное имя пользователя"
                             is Validator.InvalidLoginException -> "Неверный логин"
@@ -66,6 +72,8 @@ class LoginActivity : AppCompatActivity() {
                             is Authenticator.InvalidCredentialsException -> "Пользователь не найден"
                             else -> "Непредвиденная ошибка"
                         }
+
+                        Log.d("ATH", "throw user error:  $error")
                         Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
                     }
                 }

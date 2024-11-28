@@ -2,6 +2,7 @@ package KotlinAndroidApp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -15,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import viewmodel.ViewModelProvider
 import utils.Validator
 
 /**
@@ -33,6 +33,8 @@ class RegistrationActivity : AppCompatActivity() {
         val passwordField: EditText = findViewById(R.id.user_password2)
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
+        val viewModel = (application as MainApplication).viewModel
+
         textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -46,10 +48,14 @@ class RegistrationActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val account = ViewModelProvider.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
-                    ViewModelProvider.register(inputName, account.login, account.password).bind()
-                    ViewModelProvider.saveAccount(account).bind()
-                    val userInfo = ViewModelProvider.getBasicUserData(account.login, account.password).bind()
+                    val account = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    Log.d("ATH", "user $account is correct")
+                    viewModel.register(inputName, account.login, account.password).bind()
+                    Log.d("ATH", "user $account correct register")
+                    viewModel.saveAccount(account).bind()
+                    Log.d("ATH", "user $account saved")
+                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                    Log.d("ATH", "correct get user data $userInfo")
                     User(account, userInfo)
                 }
 
@@ -70,6 +76,8 @@ class RegistrationActivity : AppCompatActivity() {
                             is Authenticator.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
                             else -> "Непредвиденная ошибка"
                         }
+
+                        Log.e("ATH", "throw user error: $error")
                         Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT)
                             .show()
                     }

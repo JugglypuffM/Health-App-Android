@@ -8,7 +8,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.project.kotlin_android_app.R
 import domain.User
-import viewmodel.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * Активность для отображения профиля пользователя.
@@ -26,16 +28,15 @@ class UserProfileActivity : AppCompatActivity() {
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
         val (account, userInfo) = intent.getSerializableExtra("EXTRA_USER") as User
+        val viewModel = (application as MainApplication).viewModel
 
         userNameTextView.text = "Имя пользователя: ${userInfo.name ?: "Неизвестно"}"
         userLoginTextView.text = "Логин: ${account.login}"
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            ViewModelProvider.dropUser()
             startActivity(intent)
-            finish()
+            viewModel.dropAccount()
         }
     }
 }
