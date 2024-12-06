@@ -1,5 +1,6 @@
 package utils
 
+import domain.Account
 import domain.User
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -20,7 +21,7 @@ class ValidatorTest {
             val password = "123456"
             val confirmPassword = "123456"
 
-            val expectedUser = User(name, login, password)
+            val expectedUser = Account(login, password)
             val expected = Result.success(expectedUser)
             val actual = validatorStub.check(name, login, password, confirmPassword)
             
@@ -34,7 +35,7 @@ class ValidatorTest {
             val login = "MegaGrish1337"
             val password = "123456"
 
-            val expectedUser = User(null, login, password)
+            val expectedUser = Account(login, password)
             val expected = Result.success(expectedUser)
             val actual = validatorStub.check(login, password)
             

@@ -27,16 +27,16 @@ class UserProfileActivity : AppCompatActivity() {
         val userLoginTextView: TextView = findViewById(R.id.user_login)
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
-        var user = intent.getSerializableExtra("EXTRA_USER") as User
+        val (account, userInfo) = intent.getSerializableExtra("EXTRA_USER") as User
         val viewModel = (application as MainApplication).viewModel
 
-        userNameTextView.text = "Имя пользователя: ${user.name}"
-        userLoginTextView.text = "Логин: ${user.login}"
+        userNameTextView.text = "Имя пользователя: ${userInfo.name}"
+        userLoginTextView.text = "Логин: ${account.login}"
 
         logoutButton.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-            viewModel.dropUser()
+            viewModel.dropAccount()
         }
     }
 }

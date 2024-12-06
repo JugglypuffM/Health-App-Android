@@ -1,9 +1,10 @@
-package auth
+package data
 
-import data.GrpcDataRequester
-import domain.BasicUserData
-import grpc.DataProto.BasicDataRequest
-import grpc.DataProto.BasicDataResponse
+import auth.Authenticator
+import domain.UserInfo
+import grpc.DataProto.UserData
+import grpc.DataProto.UserDataRequest
+import grpc.DataProto.UserDataResponse
 import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -29,50 +30,67 @@ class GrpcDataRequesterTest {
 
     @Test
     fun `successful data request`() = runBlocking {
-        val request = BasicDataRequest.newBuilder()
+        val request = UserDataRequest.newBuilder()
             .setLogin("test_login")
             .setPassword("password123")
             .build()
 
-        val response = BasicDataResponse.newBuilder()
-            .setSuccess(true)
+        val expectedData = UserData.newBuilder()
             .setName("Test")
+            .setAge(20)
+            .setWeight(200)
+            .setTotalDistance(1)
             .build()
 
-        `when`(mockStub.getBasicUserData(request)).thenReturn(response)
+        val response = UserDataResponse.newBuilder()
+            .setSuccess(true)
+            .setData(expectedData)
+            .build()
 
-        val result = dataRequester.getBasicUserData("test_login", "password123")
+        `when`(mockStub.getUserData(request)).thenReturn(response)
+
+        val result = dataRequester.getUserData("test_login", "password123")
 
         assertTrue(result.isSuccess)
-        assertEquals(BasicUserData("Test"), result.getOrNull())
+        assertEquals(UserInfo("Test", 20, 200, 1), result.getOrNull())
     }
 
     @Test
     fun `failed data request`() = runBlocking {
-        val request = BasicDataRequest.newBuilder()
+        val request = UserDataRequest.newBuilder()
             .setLogin("wrong_login")
             .setPassword("password123")
             .build()
 
-        val response = BasicDataResponse.newBuilder()
-            .setSuccess(false)
+        val expectedData = UserData.newBuilder()
             .setName("")
+            .setAge(0)
+            .setWeight(0)
+            .setTotalDistance(0)
             .build()
 
-        `when`(mockStub.getBasicUserData(request)).thenReturn(response)
+        val response = UserDataResponse.newBuilder()
+            .setSuccess(false)
+            .setData(expectedData)
+            .build()
 
-        val result = dataRequester.getBasicUserData("wrong_login", "password123")
+        `when`(mockStub.getUserData(request)).thenReturn(response)
+
+        val result = dataRequester.getUserData("wrong_login", "password123")
 
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is Authenticator.InvalidCredentialsException)
-        assertEquals("Failed to login user with provided credentials", result.exceptionOrNull()?.message)
+        assertEquals(
+            "Failed to login user with provided credentials",
+            result.exceptionOrNull()?.message
+        )
     }
 
     @Test
     fun `server connection failure`() = runBlocking {
-        `when`(mockStub.getBasicUserData(any())).thenThrow(StatusRuntimeException(Status.UNAVAILABLE))
+        `when`(mockStub.getUserData(any())).thenThrow(StatusRuntimeException(Status.UNAVAILABLE))
 
-        val result = dataRequester.getBasicUserData("test_login", "password123")
+        val result = dataRequester.getUserData("test_login", "password123")
 
         assertTrue(result.isFailure)
         assertEquals(

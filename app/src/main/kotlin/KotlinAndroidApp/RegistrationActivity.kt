@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
+import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,13 +48,15 @@ class RegistrationActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 val result = result {
-                    val user = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
-                    Log.d("ATH", "user $user is correct")
-                    viewModel.register(user.name!!, user.login, user.password).bind()
-                    Log.d("ATH", "user $user correct register")
-                    viewModel.saveUser(user).bind()
-                    Log.d("ATH", "user $user saved")
-                    user
+                    val account = viewModel.validate(inputName, inputLogin, inputPassword, inputConfirmPassword).bind()
+                    Log.d("ATH", "user $account is correct")
+                    viewModel.register(inputName, account.login, account.password).bind()
+                    Log.d("ATH", "user $account correct register")
+                    viewModel.saveAccount(account).bind()
+                    Log.d("ATH", "user $account saved")
+                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                    Log.d("ATH", "correct get user data $userInfo")
+                    User(account, userInfo)
                 }
 
                 withContext(Dispatchers.Main) {

@@ -49,11 +49,10 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("ATH", "user $account is correct")
                     viewModel.login(account.login, account.password).bind()
                     Log.d("ATH", "user $account is correct")
-                    viewModel.saveUser(account).bind()
+                    viewModel.saveAccount(account).bind()
                     Log.d("ATH", "correct save $account")
-                    val basicUserData = viewModel.getBasicUserData(account.login, account.password).bind()
-                    Log.d("ATH", "correct get user data: $basicUserData")
-                    User(basicUserData.name, account.login, account.password)
+                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                    User(account, userInfo)
                 }
 
                 withContext(Dispatchers.Main) {
@@ -61,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
                         val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
                         userProfileIntent.putExtra("EXTRA_USER", user)
                         startActivity(userProfileIntent)
-                        viewModel.saveUser(user)
+                        viewModel.saveAccount(user.account)
                     }
 
                     loginResult.onFailure { error ->
