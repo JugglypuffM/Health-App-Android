@@ -1,13 +1,13 @@
 package viewmodel
 
-import auth.Authenticator
-import data.DataRequester
+import services.auth.AuthenticatorService
+import services.data.DataService
 import domain.BasicUserData
 import domain.User
 import utils.Validator
 import utils.UserSerializer
 
-class ViewModel(private val userSerializer: UserSerializer, private val authenticator: Authenticator, private val dataRequester: DataRequester, private val validator: Validator){
+class ViewModel(private val userSerializer: UserSerializer, private val authenticatorService: AuthenticatorService, private val dataService: DataService, private val validator: Validator){
     /**
      * Функция авторизации пользователя
      * @param login логин пользователя
@@ -15,7 +15,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @return Result с сообщением об успехе или ошибке
      */
     suspend fun login(login: String, password: String): Result<String> {
-        return authenticator.login(login, password)
+        return authenticatorService.login(login, password)
     }
 
     /**
@@ -26,7 +26,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @return Result с сообщением об успехе или ошибке
      */
     suspend fun register(name: String, login: String, password: String): Result<String> {
-        return authenticator.register(name, login, password)
+        return authenticatorService.register(name, login, password)
     }
 
     /**
@@ -74,6 +74,6 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * Функция для запроса BasicUserData
      */
     suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
-        return dataRequester.getBasicUserData(login, password)
+        return dataService.getBasicUserData(login, password)
     }
 }

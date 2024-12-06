@@ -1,16 +1,17 @@
-package auth
+package services.auth
 
-import async.AsyncCallExecutor
-import auth.Authenticator.InvalidCredentialsException
-import auth.Authenticator.UserAlreadyExistsException
+import services.async.AsyncCallExecutor
+import services.auth.AuthenticatorService.InvalidCredentialsException
+import services.auth.AuthenticatorService.UserAlreadyExistsException
 import grpc.AuthProto.*
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
 
 /**
- * Реализация интерфейса [Authenticator] с использованием gRPC
+ * Реализация интерфейса [AuthenticatorService] с использованием gRPC
  * @param stub обязательный параметр gRPC-stub
  */
-class GrpcAuthenticator(private val stub: AuthServiceBlockingStub) : Authenticator, AsyncCallExecutor {
+class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : AuthenticatorService,
+    AsyncCallExecutor {
     override suspend fun register(name: String, login: String, password: String): Result<String> =
         executeCallAsync(::processGrpcResponse) {
             val request =

@@ -1,16 +1,14 @@
-package data
+package services.data
 
-import async.AsyncCallExecutor
-import auth.Authenticator
+import services.async.AsyncCallExecutor
+import services.auth.AuthenticatorService
 import domain.BasicUserData
 import grpc.DataProto.BasicDataRequest
 import grpc.DataProto.BasicDataResponse
-import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
-import io.github.cdimascio.dotenv.dotenv
-import io.grpc.ManagedChannelBuilder
 
-class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequester, AsyncCallExecutor {
+class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
+    AsyncCallExecutor {
     override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> =
         executeCallAsync(::processGrpcResponse) {
             val request =
@@ -23,7 +21,7 @@ class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequest
             true -> Result.success(BasicUserData(response.name))
             false ->
                 Result.failure(
-                    Authenticator.InvalidCredentialsException(
+                    AuthenticatorService.InvalidCredentialsException(
                         "Failed to login user with provided credentials"
                     )
                 )

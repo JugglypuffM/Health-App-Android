@@ -1,6 +1,6 @@
-package async
+package services.async
 
-import auth.Authenticator.ServerConnectionException
+import services.auth.AuthenticatorService.ServerConnectionException
 import io.grpc.StatusRuntimeException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

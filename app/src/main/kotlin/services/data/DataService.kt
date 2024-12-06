@@ -1,11 +1,11 @@
-package data
+package services.data
 
 import domain.BasicUserData
 
 /**
  * Интерфейс объекта для запроса данных пользователя с сервера
  */
-interface DataRequester {
+interface DataService {
 
     /**
      * Функция запроса основной информации о пользователе

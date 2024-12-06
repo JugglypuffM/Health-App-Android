@@ -1,9 +1,8 @@
-package data
+package services.data
 
 import domain.BasicUserData
-import domain.User
 
-class DataRequesterStub: DataRequester {
+class DataServiceStub: DataService {
     override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
         return Result.success(BasicUserData("stubName"))
     }
