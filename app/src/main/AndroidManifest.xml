@@ -16,6 +16,9 @@
         android:theme="@style/Theme.KotlinAndroidApp"
         tools:targetApi="31">
         <activity
+                android:name="KotlinAndroidApp.SplashActivity">
+        </activity>
+        <activity
             android:name="KotlinAndroidApp.RegistrationActivity">
         </activity>
         <activity
@@ -24,9 +27,9 @@
         <activity
                 android:name="KotlinAndroidApp.UserProfileActivity">
         </activity>
-
+        <!-- TODO -->
         <activity
-            android:name="KotlinAndroidApp.SplashActivity"
+            android:name="KotlinAndroidApp.TrainingActivity"
             android:exported="true"
             tools:ignore="MissingClass">
             <intent-filter>
