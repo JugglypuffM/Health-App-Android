@@ -19,6 +19,9 @@
             android:name="KotlinAndroidApp.UserProfileActivity">
 
         </activity>
+        <activity android:name="KotlinAndroidApp.HomeScreen">
+
+        </activity>
         <activity
             android:name="KotlinAndroidApp.MainActivity"
             android:exported="true"
