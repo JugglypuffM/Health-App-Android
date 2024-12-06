@@ -23,7 +23,7 @@ class RegistrationActivity : AppCompatActivity() {
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
         textViewLogin.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
@@ -40,7 +40,7 @@ class RegistrationActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Успешная регистрация", Toast.LENGTH_SHORT).show()
 
-                val intent = Intent(this, MainActivity::class.java).apply {
+                val intent = Intent(this, LoginActivity::class.java).apply {
                     putExtra("EXTRA_NAME", name)
                     putExtra("EXTRA_LOGIN", login)
                     putExtra("EXTRA_PASSWORD", password)
