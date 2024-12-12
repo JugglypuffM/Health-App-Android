@@ -5,4 +5,4 @@ package domain.training
  * @param title сообщение
  * @param timeUntilMillis время на выполнение
  */
-data class TrainingAction(val title: String, val timeUntilMillis: Long)
+data class TrainingAction(val title: String, val timeUntilMillis: Long, val imageSource: Int)
