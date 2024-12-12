@@ -1,5 +1,6 @@
 package domain.training
 
+import com.project.kotlin_android_app.R
 import java.io.Serializable
 
 /**
@@ -9,16 +10,14 @@ import java.io.Serializable
 enum class TrainingActions(var actions: List<TrainingAction>): Serializable {
     Yoga (
         listOf(
-            TrainingAction("Подготовьтесь", 12000),
-            TrainingAction("Поза 1: Гора", 62000),
-            TrainingAction("Перерыв", 10000),
-            TrainingAction("Поза 2: Дерево", 62000),
-            TrainingAction("Перерыв", 10000),
-            TrainingAction("Поза 3: Воин", 62000),
-            TrainingAction("Перерыв", 10000),
-            TrainingAction("Поза 4: Кобра", 62000),
-            TrainingAction("Перерыв", 10000),
-            TrainingAction("Завершение занятия", 12000)
+            TrainingAction("Подготовьтесь", 12000, R.drawable.ic_training_waiting),
+            TrainingAction("Тадасана", 62000, R.drawable.ic_yoga_tadasana),
+            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
+            TrainingAction("Врикшасана", 62000, R.drawable.ic_yoga_vrksasana),
+            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
+            TrainingAction("Вирабхадрасана", 62000, R.drawable.ic_yoga_virabhadrasana),
+            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
+            TrainingAction("Бхуджангасана", 62000, R.drawable.ic_yoga_bhujangasana),
         )
     );
 }

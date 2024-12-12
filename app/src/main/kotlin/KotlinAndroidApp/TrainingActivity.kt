@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import utils.TimerChain
@@ -25,10 +26,13 @@ class TrainingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_training)
+        supportActionBar?.hide()
 
+        val image: ImageView = findViewById(R.id.image)
         val titleText: TextView = findViewById(R.id.messageText)
         val timerText: TextView = findViewById(R.id.timerText)
         val startStopButton: Button = findViewById(R.id.startStopButton)
+
 
         val timerChain = TimerChain(
             updateViewTimer = { millisUntilFinished: Long ->
@@ -39,10 +43,11 @@ class TrainingActivity : AppCompatActivity() {
             },
             updateActivity = { action: TrainingAction ->
                 titleText.text = action.title
+                image.setImageResource(action.imageSource)
             },
             finish = {
-                val intent = Intent(this@TrainingActivity, SplashActivity::class.java)
-                startActivity(intent)
+                //save training to history
+                //callback to the activity
             },
             training = TrainingActions.Yoga.actions
         )
