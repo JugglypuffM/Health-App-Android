@@ -60,10 +60,10 @@ class RegistrationActivity : AppCompatActivity() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    result.onSuccess{ user ->
-                        val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
-                        userProfileIntent.putExtra("EXTRA_USER", user)
-                        startActivity(userProfileIntent)
+                    result.onSuccess { user ->
+
+                        val homeScreenActivityIntent = Intent(this@RegistrationActivity, HomeScreenActivity::class.java)
+                        startActivity(homeScreenActivityIntent)
                     }
                     result.onFailure { error ->
                         val message = when (error) {

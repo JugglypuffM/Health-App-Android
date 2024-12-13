@@ -23,11 +23,10 @@ class MainApplication : Application() {
         super.onCreate()
 
         Log.d("ATH", "server address: ${BuildConfig.serverAddress}, port: ${BuildConfig.serverPort}")
-
         viewModel = ViewModel(
             UserSerializer(applicationContext),
-            GrpcAuthenticator(BuildConfig.serverAddress, BuildConfig.serverPort.toInt()),
-            GrpcDataRequester(BuildConfig.serverAddress, BuildConfig.serverPort.toInt()),
+            AuthenticatorStub(),
+            DataRequesterStub(),
             Validator()
         )
     }
