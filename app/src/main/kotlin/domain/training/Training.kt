@@ -11,6 +11,8 @@ import kotlin.time.Duration.Companion.seconds
  * Специфична для каждого типа тренировки
  */
 sealed class Training(
+    val title: String,
+    val description: String,
     val date: LocalDate,
     val duration: Duration
 ) {
@@ -18,9 +20,11 @@ sealed class Training(
      * Информация о йоге
      */
     class Yoga(date: LocalDate, duration: Duration) : Training(
-        date = date,
-        duration = duration
-    ) {
+        title = "Йога",
+        description = "Йога помогает улучшить гибкость, снять стресс и укрепить мышечный корсет",
+        date=date,
+        duration=duration
+    ){
         constructor(yoga: TrainingProto.Yoga) : this(
             LocalDate.fromEpochDays(yoga.date.seconds.toInt()),
             yoga.duration.seconds.seconds
@@ -47,9 +51,11 @@ sealed class Training(
      * Информация о беге
      */
     class Jogging(date: LocalDate, duration: Duration, val distance: Double) : Training(
-        date = date,
-        duration = duration
-    ) {
+        title="Бег",
+        description="Бег способствует укреплению сердечно-сосудистой системы, улучшению выносливости и сжиганию лишних калорий",
+        date=date,
+        duration=duration
+    ){
         constructor(jogging: TrainingProto.Jogging) : this(
             LocalDate.fromEpochDays(jogging.date.seconds.toInt()),
             jogging.duration.seconds.seconds,

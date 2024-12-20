@@ -13,11 +13,19 @@ import services.async.AsyncCallExecutor
  */
 class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : AuthenticatorService,
     AsyncCallExecutor {
+    /**
+     * @param address Адреса сервера
+     * @param port Порт сервера
+     */
+    constructor(address: String, port: Int):
+        this(AuthServiceGrpc.newBlockingStub(
+            ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+        ))
     override suspend fun register(name: String, login: String, password: String): Result<String> =
         executeCallAsync(
             {
             val request =
-                RegisterRequest.newBuilder().setName(name).setLogin(login).setPassword(password)
+                RegisterRequest.newBuilder().setLogin(login).setPassword(password)
                     .build()
             stub.register(request)
             },

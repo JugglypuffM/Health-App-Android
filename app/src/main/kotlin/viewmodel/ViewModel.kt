@@ -3,6 +3,10 @@ package viewmodel
 import services.auth.AuthenticatorService
 import services.data.DataService
 import domain.BasicUserData
+import domain.Account
+import domain.UserInfo
+import auth.Authenticator
+import data.DataRequester
 import domain.User
 import utils.Validator
 import utils.UserSerializer
@@ -34,7 +38,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @param login Логин пользователя
      * @param password Пароль пользователя
      */
-    fun validate(login: String, password: String): Result<User> {
+    fun validate(login: String, password: String): Result<Account> {
         return validator.check(login, password)
     }
 
@@ -45,35 +49,35 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @param password Пароль пользователя
      * @param confirmPassword Подтверждение пароля пользователя
      */
-    fun validate(name: String, login: String, password: String, confirmPassword: String): Result<User> {
+    fun validate(name: String, login: String, password: String, confirmPassword: String): Result<Account> {
         return validator.check(name, login, password, confirmPassword)
     }
 
     /**
      * Загрузить пользователя
      */
-    fun loadUser(): Result<User> {
-        return userSerializer.loadUser()
+    suspend fun loadAccount(): Result<Account>{
+        return userSerializer.loadAccount()
     }
 
     /**
      * Удалить пользователя
      */
-    fun dropUser(): Result<String> {
-        return userSerializer.dropUser()
+    fun dropAccount(): Result<String> {
+        return userSerializer.dropAccount()
     }
 
     /**
      * Сохранить пользователя
      */
-    fun saveUser(value: User): Result<String> {
-        return userSerializer.saveUser(value)
+    fun saveAccount(value: Account): Result<String>{
+        return userSerializer.saveAccount(value)
     }
 
     /**
      * Функция для запроса BasicUserData
      */
-    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> {
-        return dataService.getBasicUserData(login, password)
+    suspend fun getUserData(login: String, password: String): Result<UserInfo>{
+        return dataService.getUserData(login, password)
     }
 }

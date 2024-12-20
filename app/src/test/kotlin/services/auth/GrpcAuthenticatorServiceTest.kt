@@ -31,7 +31,6 @@ class GrpcAuthenticatorServiceTest {
     @Test
     fun `register success`() = runBlocking {
         val request = RegisterRequest.newBuilder()
-            .setName("Test User")
             .setLogin("test_login")
             .setPassword("password123")
             .build()
@@ -52,7 +51,6 @@ class GrpcAuthenticatorServiceTest {
     @Test
     fun `register failure - user already exists`() = runBlocking {
         val request = RegisterRequest.newBuilder()
-            .setName("Test User")
             .setLogin("test_login")
             .setPassword("password123")
             .build()
