@@ -2,12 +2,8 @@ package viewmodel
 
 import services.auth.AuthenticatorService
 import services.data.DataService
-import domain.BasicUserData
 import domain.Account
 import domain.UserInfo
-import auth.Authenticator
-import data.DataRequester
-import domain.User
 import utils.Validator
 import utils.UserSerializer
 

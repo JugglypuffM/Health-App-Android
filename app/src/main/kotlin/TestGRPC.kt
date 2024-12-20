@@ -4,11 +4,11 @@ import services.data.DataService
 import services.data.GrpcDataService
 
 suspend fun main() {
-    val address = "https://localhost"
+    val address = "localhost"
     val port = 228
 
-    val authenticatorService: AuthenticatorService = GrpcAuthenticatorService(AuthenticatorService.createAuthServiceBlockingStub(url, port))
-    val dataService: DataService = GrpcDataService(AuthenticatorService.createDataServiceBlockingStub(url, port))
+    val authenticatorService: AuthenticatorService = GrpcAuthenticatorService(address, port)
+    val dataService: DataService = GrpcDataService(address, port)
 
     println(authenticatorService.register("stas", "jpf", "123456"))
     println(authenticatorService.register("stas", "jpf", "123465"))

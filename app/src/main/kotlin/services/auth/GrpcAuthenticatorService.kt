@@ -4,7 +4,9 @@ import domain.exceptions.Exceptions
 import grpc.AuthProto.AuthResponse
 import grpc.AuthProto.LoginRequest
 import grpc.AuthProto.RegisterRequest
+import grpc.AuthServiceGrpc
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
+import io.grpc.ManagedChannelBuilder
 import services.async.AsyncCallExecutor
 
 /**
@@ -18,7 +20,8 @@ class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : Auth
      * @param port Порт сервера
      */
     constructor(address: String, port: Int):
-        this(AuthServiceGrpc.newBlockingStub(
+        this(
+            AuthServiceGrpc.newBlockingStub(
             ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
         ))
     override suspend fun register(name: String, login: String, password: String): Result<String> =

@@ -2,10 +2,8 @@ package KotlinAndroidApp
 
 import android.app.Application
 import android.util.Log
-import auth.Authenticator
-import auth.GrpcAuthenticator
 import com.project.kotlin_android_app.BuildConfig
-import data.DataRequesterStub
+import services.auth.GrpcAuthenticatorService
 import services.data.GrpcDataService
 import utils.UserSerializer
 import utils.Validator
@@ -25,16 +23,12 @@ class MainApplication : Application() {
         viewModel = ViewModel(
             UserSerializer(applicationContext),
             GrpcAuthenticatorService(
-                AuthenticatorService.createAuthServiceBlockingStub(
                     BuildConfig.serverAddress,
                     BuildConfig.serverPort.toInt()
-                )
             ),
             GrpcDataService(
-                AuthenticatorService.createDataServiceBlockingStub(
                     BuildConfig.serverAddress,
                     BuildConfig.serverPort.toInt()
-                )
             ),
             Validator()
         )

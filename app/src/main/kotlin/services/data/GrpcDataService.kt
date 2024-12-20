@@ -1,14 +1,13 @@
 package services.data
 
-import async.AsyncCallExecutor
-import auth.Authenticator
-import domain.BasicUserData
-import grpc.DataProto.BasicDataRequest
-import grpc.DataProto.BasicDataResponse
+
+import domain.UserInfo
+import domain.exceptions.Exceptions
+import grpc.DataProto
 import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
-import io.github.cdimascio.dotenv.dotenv
 import io.grpc.ManagedChannelBuilder
+import services.async.AsyncCallExecutor
 
 class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
     AsyncCallExecutor {
@@ -24,13 +23,13 @@ class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
         executeCallAsync(
             {
             val request =
-                UserDataRequest.newBuilder().setLogin(login).setPassword(password).build()
+                DataProto.UserDataRequest.newBuilder().setLogin(login).setPassword(password).build()
             stub.getUserData(request)
             },
             ::processGrpcResponse
         )
 
-    private fun processGrpcResponse(response: UserDataResponse): Result<UserInfo> =
+    private fun processGrpcResponse(response: DataProto.UserDataResponse): Result<UserInfo> =
         when (response.success) {
             true -> Result.success(
                 UserInfo(
