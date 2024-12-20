@@ -33,7 +33,8 @@ class RegistrationActivity : AppCompatActivity() {
         val passwordField: EditText = findViewById(R.id.user_password2)
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
-        val viewModel = (application as MainApplication).viewModel
+        val mainApplication: MainApplication = application as MainApplication;
+        val viewModel = mainApplication.viewModel
 
         textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -61,9 +62,10 @@ class RegistrationActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     result.onSuccess{ user ->
+                        mainApplication.user = user;
                         val userProfileIntent = Intent(this@RegistrationActivity, UserProfileActivity::class.java)
-                        userProfileIntent.putExtra("EXTRA_USER", user)
                         startActivity(userProfileIntent)
+                        viewModel.saveAccount(user.account)
                     }
                     result.onFailure { error ->
                         val message = when (error) {

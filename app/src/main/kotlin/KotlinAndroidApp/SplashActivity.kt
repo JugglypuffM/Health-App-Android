@@ -24,7 +24,8 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val viewModel = (application as MainApplication).viewModel
+        val mainApplication: MainApplication = application as MainApplication;
+        val viewModel = mainApplication.viewModel
 
         CoroutineScope(Dispatchers.IO).launch {
             val result = result {
@@ -39,9 +40,10 @@ class SplashActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 result.onSuccess { user ->
+                    mainApplication.user = user;
                     val userProfileIntent = Intent(this@SplashActivity, UserProfileActivity::class.java)
-                    userProfileIntent.putExtra("EXTRA_USER", user)
                     startActivity(userProfileIntent)
+                    viewModel.saveAccount(user.account)
                 }
                 result.onFailure { error ->
                     val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
