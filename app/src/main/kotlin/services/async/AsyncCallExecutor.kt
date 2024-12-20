@@ -1,22 +1,24 @@
 package services.async
 
-import services.auth.AuthenticatorService.ServerConnectionException
 import io.grpc.StatusRuntimeException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 interface AsyncCallExecutor {
-    suspend fun <T, R>executeCallAsync(f: (T) -> Result<R>, call: () -> T): Result<R> =
+    suspend fun <T, R> executeCallAsync(call: () -> T, f: (T) -> Result<R>): Result<R> =
+        executeCallAsyncWithError(call, f) { Result.failure(it) }
+
+    suspend fun <T, R> executeCallAsyncWithError(
+        call: () -> T,
+        process: (T) -> Result<R>,
+        handler: (Throwable) -> Result<R>
+    ): Result<R> =
         withContext(Dispatchers.IO) {
             try {
                 val response = call()
-                f(response)
+                process(response)
             } catch (e: StatusRuntimeException) {
-                Result.failure(
-                    ServerConnectionException(
-                        "Failed to connect to the server: server is unavailable"
-                    )
-                )
+                handler(e)
             }
         }
 }

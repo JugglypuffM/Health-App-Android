@@ -1,10 +1,11 @@
 package services.auth
 
-import services.async.AsyncCallExecutor
-import services.auth.AuthenticatorService.InvalidCredentialsException
-import services.auth.AuthenticatorService.UserAlreadyExistsException
-import grpc.AuthProto.*
+import domain.exceptions.Exceptions
+import grpc.AuthProto.AuthResponse
+import grpc.AuthProto.LoginRequest
+import grpc.AuthProto.RegisterRequest
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
+import services.async.AsyncCallExecutor
 
 /**
  * Реализация интерфейса [AuthenticatorService] с использованием gRPC
@@ -13,24 +14,30 @@ import grpc.AuthServiceGrpc.AuthServiceBlockingStub
 class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : AuthenticatorService,
     AsyncCallExecutor {
     override suspend fun register(name: String, login: String, password: String): Result<String> =
-        executeCallAsync(::processGrpcResponse) {
+        executeCallAsync(
+            {
             val request =
                 RegisterRequest.newBuilder().setName(name).setLogin(login).setPassword(password)
                     .build()
             stub.register(request)
-        }
+            },
+            ::processGrpcResponse
+        )
 
     override suspend fun login(login: String, password: String): Result<String> =
-        executeCallAsync(::processGrpcResponse) {
+        executeCallAsync(
+            {
             val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
             stub.login(request)
-        }
+            },
+            ::processGrpcResponse
+        )
 
     private fun processGrpcResponse(response: AuthResponse): Result<String> =
         when (response.resultCode) {
             0 -> Result.success(response.message)
-            1 -> Result.failure(UserAlreadyExistsException(response.message))
-            2 -> Result.failure(InvalidCredentialsException(response.message))
+            1 -> Result.failure(Exceptions.UserAlreadyExistsException(response.message))
+            2 -> Result.failure(Exceptions.InvalidCredentialsException(response.message))
             else -> Result.failure(Exception(response.message))
         }
 }

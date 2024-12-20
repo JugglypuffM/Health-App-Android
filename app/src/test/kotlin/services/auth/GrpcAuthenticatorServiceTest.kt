@@ -1,16 +1,21 @@
 package services.auth
 
 import domain.exceptions.Exceptions
+import grpc.AuthProto.AuthResponse
+import grpc.AuthProto.LoginRequest
+import grpc.AuthProto.RegisterRequest
+import grpc.AuthServiceGrpc
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import grpc.AuthServiceGrpc
-import grpc.AuthProto.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
+import org.mockito.Mockito.`when`
 
 class GrpcAuthenticatorServiceTest {
 
@@ -113,10 +118,7 @@ class GrpcAuthenticatorServiceTest {
 
         val result = authenticator.login("test_login", "password123")
 
+        result.onFailure { assertTrue(Status.fromThrowable(it).code == Status.Code.UNAVAILABLE) }
         assertTrue(result.isFailure)
-        assertEquals(
-            "Failed to connect to the server: server is unavailable",
-            result.exceptionOrNull()?.message
-        )
     }
 }

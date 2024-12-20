@@ -74,10 +74,7 @@ class GrpcDataServiceTest {
 
         val result = dataRequester.getBasicUserData("test_login", "password123")
 
+        result.onFailure { assertTrue(Status.fromThrowable(it).code == Status.Code.UNAVAILABLE) }
         assertTrue(result.isFailure)
-        assertEquals(
-            "Failed to connect to the server: server is unavailable",
-            result.exceptionOrNull()?.message
-        )
     }
 }
