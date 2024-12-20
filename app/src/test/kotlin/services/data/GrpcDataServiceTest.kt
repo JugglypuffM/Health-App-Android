@@ -1,4 +1,4 @@
-package services.data
+import services.data.GrpcDataService
 
 import domain.exceptions.Exceptions
 import domain.UserInfo

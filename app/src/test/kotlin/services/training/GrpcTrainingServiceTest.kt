@@ -6,12 +6,13 @@ import domain.exceptions.Exceptions
 import domain.training.Training
 import grpc.TrainingProto
 import grpc.TrainingServiceGrpc
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
-import org.junit.jupiter.api.BeforeEach
+import org.junit.Before
 import kotlin.time.Duration.Companion.seconds
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -21,7 +22,7 @@ class GrpcTrainingServiceTest {
     private lateinit var stub: TrainingServiceGrpc.TrainingServiceBlockingStub
     private lateinit var service: GrpcTrainingService
 
-    @BeforeEach
+    @Before
     fun setUp(){
         stub = mock(TrainingServiceGrpc.TrainingServiceBlockingStub::class.java)
         service = GrpcTrainingService(stub)
