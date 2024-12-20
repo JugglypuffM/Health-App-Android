@@ -108,6 +108,7 @@ tasks.withType<Test>{
         events("passed", "skipped", "failed")
         showStandardStreams = true
     }
+    useJUnitPlatform()
 }
 
 buildscript {
