@@ -27,8 +27,9 @@ class UserProfileActivity : AppCompatActivity() {
         val userLoginTextView: TextView = findViewById(R.id.user_login)
         val logoutButton: Button = findViewById(R.id.btn_logout)
 
-        val (account, userInfo) = intent.getSerializableExtra("EXTRA_USER") as User
-        val viewModel = (application as MainApplication).viewModel
+        val mainApplication = application as MainApplication
+        val (account, userInfo) = mainApplication.user
+        val viewModel = mainApplication.viewModel
 
         userNameTextView.text = "Имя пользователя: ${userInfo.name}"
         userLoginTextView.text = "Логин: ${account.login}"

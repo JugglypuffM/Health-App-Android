@@ -32,7 +32,8 @@ class LoginActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.button)
         val textViewRegister: TextView = findViewById(R.id.textview_register)
 
-        val viewModel = (application as MainApplication).viewModel
+        val mainApplication: MainApplication = application as MainApplication;
+        val viewModel = mainApplication.viewModel
 
         textViewRegister.setOnClickListener {
             val intent = Intent(this, RegistrationActivity::class.java)
@@ -57,8 +58,8 @@ class LoginActivity : AppCompatActivity() {
 
                 withContext(Dispatchers.Main) {
                     loginResult.onSuccess { user ->
+                        mainApplication.user = user;
                         val userProfileIntent = Intent(this@LoginActivity, UserProfileActivity::class.java)
-                        userProfileIntent.putExtra("EXTRA_USER", user)
                         startActivity(userProfileIntent)
                         viewModel.saveAccount(user.account)
                     }
