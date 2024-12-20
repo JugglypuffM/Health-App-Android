@@ -7,9 +7,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
-import services.auth.AuthenticatorService
 import com.project.kotlin_android_app.R
 import domain.User
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +47,7 @@ class SplashActivity : AppCompatActivity() {
                     val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
                     startActivity(loginIntent)
                     when (error) {
-                        is AuthenticatorService.ServerConnectionException -> {
+                        is Exceptions.ServerConnectionException -> {
                             Toast.makeText(
                                 this@SplashActivity,
                                 "Ошибка соединения с сервером",
@@ -55,7 +55,7 @@ class SplashActivity : AppCompatActivity() {
                             ).show()
                         }
 
-                        is AuthenticatorService.InvalidCredentialsException -> {
+                        is Exceptions.InvalidCredentialsException -> {
                             viewModel.dropUser()
                         }
                     }

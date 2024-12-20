@@ -1,5 +1,6 @@
-package auth
+package services.auth
 
+import domain.exceptions.Exceptions
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import junit.framework.TestCase.assertEquals
@@ -10,10 +11,8 @@ import grpc.AuthProto.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
-import services.auth.AuthenticatorService
-import services.auth.GrpcAuthenticatorService
 
-class GrpcAuthenticatorServiceServiceTest {
+class GrpcAuthenticatorServiceTest {
 
     private lateinit var mockStub: AuthServiceGrpc.AuthServiceBlockingStub
     private lateinit var authenticator: GrpcAuthenticatorService
@@ -63,7 +62,7 @@ class GrpcAuthenticatorServiceServiceTest {
         val result = authenticator.register("Test User", "test_login", "password123")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is AuthenticatorService.UserAlreadyExistsException)
+        assertTrue(result.exceptionOrNull() is Exceptions.UserAlreadyExistsException)
         assertEquals("User already exists.", result.exceptionOrNull()?.message)
     }
 
@@ -104,7 +103,7 @@ class GrpcAuthenticatorServiceServiceTest {
         val result = authenticator.login("test_login", "wrong_password")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is AuthenticatorService.InvalidCredentialsException)
+        assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
         assertEquals("Invalid login or password.", result.exceptionOrNull()?.message)
     }
 

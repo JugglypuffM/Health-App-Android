@@ -1,7 +1,7 @@
-package auth
+package services.data
 
-import services.data.GrpcDataService
 import domain.BasicUserData
+import domain.exceptions.Exceptions
 import grpc.DataProto.BasicDataRequest
 import grpc.DataProto.BasicDataResponse
 import grpc.DataServiceGrpc.DataServiceBlockingStub
@@ -16,7 +16,6 @@ import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.spy
 import org.mockito.Mockito.`when`
-import services.auth.AuthenticatorService
 
 class GrpcDataServiceTest {
     private lateinit var mockStub: DataServiceBlockingStub
@@ -65,7 +64,7 @@ class GrpcDataServiceTest {
         val result = dataRequester.getBasicUserData("wrong_login", "password123")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is AuthenticatorService.InvalidCredentialsException)
+        assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
         assertEquals("Failed to login user with provided credentials", result.exceptionOrNull()?.message)
     }
 

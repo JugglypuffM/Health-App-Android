@@ -9,8 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
-import services.auth.AuthenticatorService
 import com.project.kotlin_android_app.R
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,9 +68,9 @@ class RegistrationActivity : AppCompatActivity() {
                             is Validator.InvalidLoginException -> "Неверный логин"
                             is Validator.InvalidPasswordException -> "Неверный пароль"
                             is Validator.NotEqualPasswordException -> "Пароли не совпадают"
-                            is AuthenticatorService.ServerConnectionException -> "Нет подключения к серверу"
-                            is AuthenticatorService.InvalidCredentialsException -> "Пользователь не найден"
-                            is AuthenticatorService.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
+                            is Exceptions.ServerConnectionException -> "Нет подключения к серверу"
+                            is Exceptions.InvalidCredentialsException -> "Пользователь не найден"
+                            is Exceptions.UserAlreadyExistsException -> "Пользователь с таким логином уже существует"
                             else -> "Непредвиденная ошибка"
                         }
 

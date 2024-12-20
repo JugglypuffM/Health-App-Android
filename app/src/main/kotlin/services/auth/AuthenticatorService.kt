@@ -10,10 +10,6 @@ import io.grpc.ManagedChannelBuilder
  * Интерфейс объекта для отправки запросов аутентификации на сервер
  */
 interface AuthenticatorService {
-    class ServerConnectionException(message: String): Exception(message)
-    class InvalidCredentialsException(message: String) : Exception(message)
-    class UserAlreadyExistsException(message: String) : Exception(message)
-
     /**
      * Функция для регистрации нового пользователя
      * @param name имя пользователя - непустая строка

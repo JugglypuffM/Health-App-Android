@@ -9,14 +9,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import arrow.core.raise.result
-import services.auth.AuthenticatorService
 import com.project.kotlin_android_app.R
 import domain.User
-import utils.Validator
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import utils.Validator
 
 /**
  * Активность для входа в приложение
@@ -69,8 +69,8 @@ class LoginActivity : AppCompatActivity() {
                             is Validator.InvalidNameException -> "Неверное имя пользователя"
                             is Validator.InvalidLoginException -> "Неверный логин"
                             is Validator.InvalidPasswordException -> "Неверный пароль"
-                            is AuthenticatorService.ServerConnectionException -> "Нет подключения к серверу"
-                            is AuthenticatorService.InvalidCredentialsException -> "Пользователь не найден"
+                            is Exceptions.ServerConnectionException -> "Нет подключения к серверу"
+                            is Exceptions.InvalidCredentialsException -> "Пользователь не найден"
                             else -> "Непредвиденная ошибка"
                         }
 
