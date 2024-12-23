@@ -36,7 +36,6 @@
             android:name="KotlinAndroidApp.HomeScreenActivity"
             android:exported="true">
         </activity>
-
         <activity
             android:name="KotlinAndroidApp.SplashActivity"
             android:exported="true"
