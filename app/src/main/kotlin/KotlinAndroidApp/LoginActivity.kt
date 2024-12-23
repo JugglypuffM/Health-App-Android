@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         })
 
         viewModel.onSuccess.observe(this, Observer {
-            startActivity(Intent(this@LoginActivity, UserProfileActivity::class.java))
+            startActivity(Intent(this@LoginActivity, HomeScreenActivity::class.java))
         })
 
         textViewRegister.setOnClickListener {

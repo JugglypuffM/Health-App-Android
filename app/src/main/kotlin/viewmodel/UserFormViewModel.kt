@@ -38,6 +38,8 @@ class UserFormViewModel(private val user: User, private val validator: Validator
                     "Непредвиденная ошибка"
                 }
             }
+
+            Log.d("TSLA", error.toString())
         }
     }
 

@@ -31,15 +31,15 @@ class UserFormActivity : AppCompatActivity() {
         })
 
         viewModel.onSuccess.observe(this, Observer {
-            startActivity(Intent(this@UserFormActivity, UserProfileActivity::class.java))
+            startActivity(Intent(this@UserFormActivity, HomeScreenActivity::class.java))
         })
 
         button.setOnClickListener {
             val name = nameField.text.toString()
-            val weight = weightField.text.toString()
             val age = ageField.text.toString()
+            val weight = weightField.text.toString()
 
-            viewModel.check(name, weight, age)
+            viewModel.check(name, age, weight)
         }
     }
 }

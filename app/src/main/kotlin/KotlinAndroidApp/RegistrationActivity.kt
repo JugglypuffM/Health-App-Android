@@ -38,12 +38,11 @@ class RegistrationActivity : AppCompatActivity() {
         })
 
         viewModel.onSuccess.observe(this, Observer {
-            startActivity(Intent(this@RegistrationActivity, UserProfileActivity::class.java))
+            startActivity(Intent(this@RegistrationActivity, UserFormActivity::class.java))
         })
 
         textViewLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
         registerButton.setOnClickListener {
