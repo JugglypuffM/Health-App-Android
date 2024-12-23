@@ -6,16 +6,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
 import domain.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import viewmodel.UserProfileViewModel
 
 /**
  * Активность для отображения профиля пользователя.
  */
-@Suppress("DEPRECATION")
 class UserProfileActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
@@ -29,15 +30,20 @@ class UserProfileActivity : AppCompatActivity() {
 
         val mainApplication = application as MainApplication
         val (account, userInfo) = mainApplication.user
-        val viewModel = mainApplication.viewModel
+        val viewModel = UserProfileViewModel(
+            mainApplication.userSerializer,
+            mainApplication.user
+        )
 
         userNameTextView.text = "Имя пользователя: ${userInfo.name}"
         userLoginTextView.text = "Логин: ${account.login}"
 
+        viewModel.onSuccess.observe(this) {
+            startActivity(Intent(this, LoginActivity::class.java))
+        }
+
         logoutButton.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            viewModel.dropAccount()
+            viewModel.logout()
         }
     }
 }

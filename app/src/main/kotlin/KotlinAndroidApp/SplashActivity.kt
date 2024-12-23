@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import arrow.core.raise.result
 import auth.Authenticator
 import com.project.kotlin_android_app.R
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import viewmodel.SplashViewModel
 
 /**
  * Активность загрузки
@@ -25,47 +27,25 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         val mainApplication: MainApplication = application as MainApplication;
-        val viewModel = mainApplication.viewModel
+        val viewModel = SplashViewModel(
+            mainApplication.userSerializer,
+            mainApplication.authenticator,
+            mainApplication.user,
+            mainApplication.validator
+        )
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val result = result {
-                val account = viewModel.loadAccount().bind()
-                Log.d("ATH","Successfully loaded user $account")
-                viewModel.login(account.login, account.password).bind()
-                Log.d("ATH","Successfully login into account")
-                val userInfo = viewModel.getUserData(account.login, account.password).bind()
-                Log.d("ATH","Successfully get data: $userInfo")
-                User(account, userInfo)
-            }
+        viewModel.errorMessage.observe(this, Observer { message ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        })
 
-            withContext(Dispatchers.Main) {
-                result.onSuccess { user ->
-                    mainApplication.user = user;
-                    val userProfileIntent = Intent(this@SplashActivity, UserProfileActivity::class.java)
-                    startActivity(userProfileIntent)
-                    viewModel.saveAccount(user.account)
-                }
-                result.onFailure { error ->
-                    val loginIntent = Intent(this@SplashActivity, LoginActivity::class.java)
-                    startActivity(loginIntent)
-                    when (error) {
-                        is Authenticator.ServerConnectionException -> {
-                            Toast.makeText(
-                                this@SplashActivity,
-                                "Ошибка соединения с сервером",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+        viewModel.onSuccess.observe(this, Observer {
+            startActivity(Intent(this@SplashActivity, UserProfileActivity::class.java))
+        })
 
-                        is Authenticator.InvalidCredentialsException -> {
-                            viewModel.dropAccount()
-                        }
-                    }
-                    Log.d("ATH", "throw user error: $error")
-                }
-            }
-        }
+        viewModel.onFailure.observe(this, Observer {
+            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+        })
 
-        Log.d("SplashActivity", "onCreate: finished")
+        viewModel.start()
     }
 }
