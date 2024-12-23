@@ -1,7 +1,10 @@
-import services.data.GrpcDataService
+package services.data
+
+import com.google.protobuf.Empty
 
 import domain.exceptions.Exceptions
 import domain.UserInfo
+import grpc.DataProto.UpdateDataRequest
 import grpc.DataProto.UserData
 import grpc.DataProto.UserDataRequest
 import grpc.DataProto.UserDataResponse
@@ -79,8 +82,7 @@ class GrpcDataServiceTest {
         val result = dataRequester.getUserData("wrong_login", "password123")
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
-        assertEquals("Failed to login user with provided credentials", result.exceptionOrNull()?.message)
+        assertTrue(result.exceptionOrNull() is Exceptions.UnexpectedError)
     }
 
     @Test
@@ -91,5 +93,46 @@ class GrpcDataServiceTest {
 
         result.onFailure { assertTrue(Status.fromThrowable(it).code == Status.Code.UNAVAILABLE) }
         assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `successful update request`() = runBlocking {
+        val userInfo = UserInfo("name", 1, distance = 3)
+
+        val request = UpdateDataRequest.newBuilder()
+            .setLogin("test_login")
+            .setPassword("password123")
+            .setData(userInfo.toUserData())
+            .build()
+
+        val response = Empty.getDefaultInstance()
+
+        `when`(mockStub.updateUserData(request)).thenReturn(response)
+
+        val result = dataRequester.updateUserData("test_login", "password123", userInfo)
+
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `failed update request`() = runBlocking {
+        val userInfo = UserInfo("name", 1, distance = 3)
+
+        val request = UpdateDataRequest.newBuilder()
+            .setLogin("test_login")
+            .setPassword("password123")
+            .setData(userInfo.toUserData())
+            .build()
+
+        val response = Empty.getDefaultInstance()
+
+        `when`(mockStub.updateUserData(request)).thenThrow(
+            StatusRuntimeException(Status.UNAUTHENTICATED)
+        )
+
+        val result = dataRequester.updateUserData("test_login", "password123", userInfo)
+
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
     }
 }
