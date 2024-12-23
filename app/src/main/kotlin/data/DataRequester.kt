@@ -1,6 +1,6 @@
 package data
 
-import domain.BasicUserData
+import domain.UserInfo
 
 /**
  * Интерфейс объекта для запроса данных пользователя с сервера
@@ -12,5 +12,5 @@ interface DataRequester {
      * @param login логин пользователя
      * @param password пароль пользователя
      */
-    suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData>
+    suspend fun getUserData(login: String, password: String): Result<UserInfo>
 }

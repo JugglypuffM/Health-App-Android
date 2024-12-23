@@ -28,7 +28,9 @@
         <activity
                 android:name="KotlinAndroidApp.UserProfileActivity">
         </activity>
-        <!-- TODO -->
+        <activity
+            android:name="KotlinAndroidApp.HomeScreenActivity">
+        </activity>
         <activity
             android:name="KotlinAndroidApp.SplashActivity"
             android:exported="true"

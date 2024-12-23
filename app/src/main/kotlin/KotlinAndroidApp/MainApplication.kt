@@ -3,8 +3,10 @@ package KotlinAndroidApp
 import android.app.Application
 import android.util.Log
 import auth.Authenticator
+import auth.AuthenticatorStub
 import auth.GrpcAuthenticator
 import com.project.kotlin_android_app.BuildConfig
+import data.DataRequesterStub
 import data.GrpcDataRequester
 import utils.UserSerializer
 import utils.Validator
@@ -20,22 +22,11 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Log.d("ATH", "server url: ${BuildConfig.serverAddress}, port: ${BuildConfig.serverPort}")
-
+        Log.d("ATH", "server address: ${BuildConfig.serverAddress}, port: ${BuildConfig.serverPort}")
         viewModel = ViewModel(
             UserSerializer(applicationContext),
-            GrpcAuthenticator(
-                Authenticator.createAuthServiceBlockingStub(
-                    BuildConfig.serverAddress,
-                    BuildConfig.serverPort.toInt()
-                )
-            ),
-            GrpcDataRequester(
-                Authenticator.createDataServiceBlockingStub(
-                    BuildConfig.serverAddress,
-                    BuildConfig.serverPort.toInt()
-                )
-            ),
+            AuthenticatorStub(),
+            DataRequesterStub(),
             Validator()
         )
     }

@@ -2,25 +2,40 @@ package data
 
 import async.AsyncCallExecutor
 import auth.Authenticator
-import domain.BasicUserData
-import grpc.DataProto.BasicDataRequest
-import grpc.DataProto.BasicDataResponse
+import domain.UserInfo
+import grpc.DataProto.UserDataRequest
+import grpc.DataProto.UserDataResponse
 import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
-import io.github.cdimascio.dotenv.dotenv
 import io.grpc.ManagedChannelBuilder
 
 class GrpcDataRequester(private val stub: DataServiceBlockingStub) : DataRequester, AsyncCallExecutor {
-    override suspend fun getBasicUserData(login: String, password: String): Result<BasicUserData> =
+    /**
+     * @param address Адреса сервера
+     * @param port Порт сервера
+     */
+    constructor(address: String, port: Int): this(DataServiceGrpc.newBlockingStub(
+        ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+    ))
+
+    override suspend fun getUserData(login: String, password: String): Result<UserInfo> =
         executeCallAsync(::processGrpcResponse) {
             val request =
-                BasicDataRequest.newBuilder().setLogin(login).setPassword(password).build()
-            stub.getBasicUserData(request)
+                UserDataRequest.newBuilder().setLogin(login).setPassword(password).build()
+            stub.getUserData(request)
         }
 
-    private fun processGrpcResponse(response: BasicDataResponse): Result<BasicUserData> =
+    private fun processGrpcResponse(response: UserDataResponse): Result<UserInfo> =
         when (response.success) {
-            true -> Result.success(BasicUserData(response.name))
+            true -> Result.success(
+                UserInfo(
+                    response.data.name,
+                    response.data.age,
+                    response.data.weight,
+                    response.data.totalDistance
+                )
+            )
+
             false ->
                 Result.failure(
                     Authenticator.InvalidCredentialsException(
