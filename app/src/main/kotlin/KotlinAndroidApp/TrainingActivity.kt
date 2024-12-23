@@ -30,12 +30,14 @@ class TrainingActivity : AppCompatActivity() {
         val timerText: TextView = findViewById(R.id.timerText)
         val cancelButton: Button = findViewById(R.id.startStopButton)
 
+        val mainApplication = application as MainApplication
+
         val viewModel = TrainingViewModel(
-            TrainingActions.Yoga()
+            mainApplication.currentTraining!!
         )
 
         viewModel.onSuccess.observe(this, Observer {
-            startActivity(Intent(this@TrainingActivity, UserProfileActivity::class.java))
+            startActivity(Intent(this@TrainingActivity, HomeScreenActivity::class.java))
         })
 
         viewModel.currentAction.observe(this, Observer { action ->
@@ -43,8 +45,8 @@ class TrainingActivity : AppCompatActivity() {
             image.setImageResource(action.imageSource)
         })
 
-        viewModel.millisUntilFinished.observe(this, Observer { mullisUntilFinished ->
-            val duration = Duration.ofMillis(mullisUntilFinished)
+        viewModel.millisUntilFinished.observe(this, Observer { millisUntilFinished ->
+            val duration = Duration.ofMillis(millisUntilFinished)
             val minutes = duration.toMinutesPart()
             val seconds = duration.toSecondsPart()
             timerText.text = String.format("%02d:%02d", minutes, seconds)

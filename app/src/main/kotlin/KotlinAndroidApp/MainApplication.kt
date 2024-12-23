@@ -13,6 +13,7 @@ import domain.Account
 import domain.User
 import domain.UserInfo
 import domain.training.Training
+import domain.training.TrainingActions
 import domain.training.TrainingHistory
 import kotlinx.datetime.LocalDate
 import utils.UserSerializer
@@ -31,6 +32,8 @@ class MainApplication : Application() {
     val validator = Validator()
     lateinit var userSerializer: UserSerializer
     private set
+
+    var currentTraining: TrainingActions? = null
 
     val trainingHistory: TrainingHistory = TrainingHistory(listOf(
         Training.Yoga(
