@@ -59,7 +59,7 @@ sealed class Training(
         constructor(jogging: TrainingProto.Jogging) : this(
             LocalDate.fromEpochDays(jogging.date.seconds.toInt()),
             jogging.duration.seconds.seconds,
-            jogging.distance
+            jogging.distance.toDouble()
         )
 
         override fun toTrainingProto(): TrainingProto.Training {
@@ -74,7 +74,7 @@ sealed class Training(
                             com.google.protobuf.Duration.newBuilder()
                                 .setSeconds(duration.inWholeSeconds)
                         )
-                        .setDistance(distance)
+                        .setDistance(distance.toInt())
                         .build()
                 ).build()
         }
