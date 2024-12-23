@@ -39,7 +39,7 @@ class SplashActivity : AppCompatActivity() {
         })
 
         viewModel.onSuccess.observe(this, Observer {
-            startActivity(Intent(this@SplashActivity, UserProfileActivity::class.java))
+            startActivity(Intent(this@SplashActivity, HomeScreenActivity::class.java))
         })
 
         viewModel.onFailure.observe(this, Observer {
