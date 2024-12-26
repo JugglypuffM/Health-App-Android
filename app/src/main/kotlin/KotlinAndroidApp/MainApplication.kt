@@ -26,7 +26,13 @@ class MainApplication : Application() {
                     BuildConfig.serverAddress,
                     BuildConfig.serverPort.toInt()
             ),
+            //TODO добавить обработку регистрации состояний клиента:
+            // не зарегистрирован - стабы пустые, после регистрации они обновляются,
+            // при повторном запуске приложения они сразу строятся по данным из памяти
             GrpcDataService(
+                "", // это, очевидно, надо убрать
+                "", // это, очевидно, тоже))
+                // а точнее поменять на логику обработки случаев если клиент авторизован или нет
                     BuildConfig.serverAddress,
                     BuildConfig.serverPort.toInt()
             ),

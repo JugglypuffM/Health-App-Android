@@ -14,7 +14,6 @@ import org.junit.Before
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 
 class GrpcTrainingServiceTest {
@@ -30,41 +29,24 @@ class GrpcTrainingServiceTest {
 
     @Test
     fun `saveTraining should return success when server responds successfully`() = runBlocking {
-        val login = "user"
-        val password = "pass"
         val training = Training.Yoga(LocalDate(12,12,12), 30.seconds)
 
-        val request = TrainingProto.SaveRequest.newBuilder()
-            .setLogin(login)
-            .setPassword(password)
-            .setTraining(training.toTrainingProto())
-            .build()
+        `when`(stub.saveTraining(training.toTrainingProto())).thenReturn(Empty.getDefaultInstance())
 
-        `when`(stub.saveTraining(request)).thenReturn(Empty.getDefaultInstance())
+        val result = service.saveTraining(training)
 
-        val result = service.saveTraining(login, password, training)
-
-        verify(stub).saveTraining(request)
         assertTrue(result.isSuccess)
     }
 
     @Test
     fun `saveTraining should return InvalidArgumentException for INVALID_ARGUMENT error`() = runBlocking {
-        val login = "user"
-        val password = "pass"
         val training = Training.Yoga(LocalDate(12,12,12), 30.seconds)
 
-        val request = TrainingProto.SaveRequest.newBuilder()
-            .setLogin(login)
-            .setPassword(password)
-            .setTraining(training.toTrainingProto())
-            .build()
-
-        `when`(stub.saveTraining(request)).thenThrow(
+        `when`(stub.saveTraining(training.toTrainingProto())).thenThrow(
             io.grpc.StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT)
         )
 
-        val result = service.saveTraining(login, password, training)
+        val result = service.saveTraining(training)
 
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is Exceptions.InvalidArgumentException)
@@ -72,8 +54,6 @@ class GrpcTrainingServiceTest {
 
     @Test
     fun `getTrainings should return list of trainings when server responds successfully`() = runBlocking {
-        val login = "user"
-        val password = "pass"
         val date = LocalDate(12,12,12)
 
         val response = TrainingProto.TrainingsResponse.newBuilder()
@@ -85,15 +65,11 @@ class GrpcTrainingServiceTest {
                 )
             ).build()
 
-        val request = TrainingProto.TrainingsRequest.newBuilder()
-            .setLogin(login)
-            .setPassword(password)
-            .setDate(Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()))
-            .build()
+        val request = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
 
         `when`(stub.getTrainings(request)).thenReturn(response)
 
-        val result = service.getTrainings(login, password, date)
+        val result = service.getTrainings(date)
 
         assertTrue(result.isSuccess)
         assertEquals(1, result.getOrNull()?.size)
@@ -102,21 +78,15 @@ class GrpcTrainingServiceTest {
 
     @Test
     fun `getTrainings should return InvalidCredentialsException for UNAUTHENTICATED error`() = runBlocking {
-        val login = "user"
-        val password = "wrongpass"
         val date = LocalDate(12,12,12)
 
-        val request = TrainingProto.TrainingsRequest.newBuilder()
-            .setLogin(login)
-            .setPassword(password)
-            .setDate(Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()))
-            .build()
+        val request = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
 
         `when`(stub.getTrainings(request)).thenThrow(
             io.grpc.StatusRuntimeException(io.grpc.Status.UNAUTHENTICATED)
         )
 
-        val result = service.getTrainings(login, password, date)
+        val result = service.getTrainings(date)
 
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)

@@ -1,54 +1,72 @@
 package services.auth
 
+import com.google.protobuf.Empty
 import domain.exceptions.Exceptions
-import grpc.AuthProto.AuthResponse
-import grpc.AuthProto.LoginRequest
-import grpc.AuthProto.RegisterRequest
+import grpc.AuthProto.AuthRequest
 import grpc.AuthServiceGrpc
 import grpc.AuthServiceGrpc.AuthServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
-import services.async.AsyncCallExecutor
+import io.grpc.Status
+import io.grpc.StatusRuntimeException
+import services.grpc.AsyncGrpcService
 
 /**
  * Реализация интерфейса [AuthenticatorService] с использованием gRPC
  * @param stub обязательный параметр gRPC-stub
  */
 class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : AuthenticatorService,
-    AsyncCallExecutor {
+    AsyncGrpcService {
     /**
      * @param address Адреса сервера
      * @param port Порт сервера
      */
-    constructor(address: String, port: Int):
+    constructor(address: String, port: Int) :
         this(
             AuthServiceGrpc.newBlockingStub(
-            ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
-        ))
-    override suspend fun register(name: String, login: String, password: String): Result<String> =
-        executeCallAsync(
+                ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+            )
+        )
+
+    override suspend fun register(name: String, login: String, password: String): Result<Unit> =
+        executeCallAsyncWithError<Empty, Unit>(
             {
             val request =
-                RegisterRequest.newBuilder().setLogin(login).setPassword(password)
-                    .build()
+                AuthRequest.newBuilder().setLogin(login).setPassword(password).build()
             stub.register(request)
             },
-            ::processGrpcResponse
-        )
-
-    override suspend fun login(login: String, password: String): Result<String> =
-        executeCallAsync(
             {
-            val request = LoginRequest.newBuilder().setLogin(login).setPassword(password).build()
-            stub.login(request)
+                Result.success(Unit)
             },
-            ::processGrpcResponse
+            ::processGrpcError
         )
 
-    private fun processGrpcResponse(response: AuthResponse): Result<String> =
-        when (response.resultCode) {
-            0 -> Result.success(response.message)
-            1 -> Result.failure(Exceptions.UserAlreadyExistsException(response.message))
-            2 -> Result.failure(Exceptions.InvalidCredentialsException(response.message))
-            else -> Result.failure(Exception(response.message))
+    override suspend fun login(login: String, password: String): Result<Unit> =
+        executeCallAsyncWithError<Empty, Unit>(
+            {
+                val request = AuthRequest.newBuilder().setLogin(login).setPassword(password).build()
+                stub.login(request)
+            },
+            { Result.success(Unit) },
+            ::processGrpcError
+        )
+
+    private fun processGrpcError(error: Throwable): Result<Unit> =
+        when (error) {
+            is StatusRuntimeException -> {
+                val status = Status.fromThrowable(error)
+
+                when (status){
+                    Status.UNAUTHENTICATED ->
+                        Result.failure(Exceptions.InvalidCredentialsException(error.message.orEmpty()))
+                    Status.INVALID_ARGUMENT ->
+                        Result.failure(Exceptions.InvalidArgumentException(error.message.orEmpty()))
+                    Status.ALREADY_EXISTS ->
+                        Result.failure(Exceptions.UserAlreadyExistsException(error.message.orEmpty()))
+                    else ->
+                        Result.failure(Exceptions.UnexpectedError(error.message.orEmpty()))
+                }
+            }
+
+            else -> Result.failure(error)
         }
 }

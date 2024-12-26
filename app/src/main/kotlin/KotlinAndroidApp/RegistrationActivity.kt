@@ -54,7 +54,7 @@ class RegistrationActivity : AppCompatActivity() {
                     Log.d("ATH", "user $account correct register")
                     viewModel.saveAccount(account).bind()
                     Log.d("ATH", "user $account saved")
-                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                    val userInfo = viewModel.getUserData().bind()
                     Log.d("ATH", "correct get user data $userInfo")
                     User(account, userInfo)
                 }

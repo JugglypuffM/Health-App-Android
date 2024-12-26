@@ -4,52 +4,61 @@ package services.data
 import com.google.protobuf.Empty
 import domain.UserInfo
 import domain.exceptions.Exceptions
-import grpc.DataProto
-import grpc.DataProto.UpdateDataRequest
 import grpc.DataServiceGrpc
 import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
-import services.async.AsyncCallExecutor
+import io.grpc.stub.MetadataUtils
+import services.grpc.AsyncGrpcService
 
 class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
-    AsyncCallExecutor {
+    AsyncGrpcService {
     /**
      * @param address Адреса сервера
      * @param port Порт сервера
      */
-    constructor(address: String, port: Int): this(DataServiceGrpc.newBlockingStub(
-        ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
-    ))
+    constructor(login: String, password: String, address: String, port: Int) : this(
+        DataServiceGrpc.newBlockingStub(
+            ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+        ).withInterceptors(
+            MetadataUtils.newAttachHeadersInterceptor(
+                AsyncGrpcService.createMetadata(login, password)
+            )
+        )
+    )
 
-    override suspend fun getUserData(login: String, password: String): Result<UserInfo> =
-        executeCallAsync(
+    override suspend fun getUserData(): Result<UserInfo> =
+        executeCallAsyncWithError(
+            { stub.getUserData(Empty.getDefaultInstance()) },
+            { Result.success(UserInfo(it)) },
             {
-            val request = DataProto.UserDataRequest.newBuilder()
-                .setLogin(login)
-                .setPassword(password)
-                .build()
+                when (it) {
+                    is StatusRuntimeException -> {
+                        val status = Status.fromThrowable(it)
 
-            stub.getUserData(request)
-            },
-            ::processGrpcResponse
+                        when (status.code) {
+                            Status.Code.UNAUTHENTICATED -> Result.failure(
+                                Exceptions.InvalidCredentialsException(
+                                    "Invalid credentials passed"
+                                )
+                            )
+
+                            else -> Result.failure(
+                                Exceptions.UnexpectedError(it.message.orEmpty())
+                            )
+                        }
+                    }
+
+                    else -> Result.failure(it)
+                }
+            }
         )
 
-    override suspend fun updateUserData(login: String, password: String, info: UserInfo): Result<Unit> =
+    override suspend fun updateUserData(info: UserInfo): Result<Unit> =
         executeCallAsyncWithError<Empty, Unit>(
-            {
-                val request = UpdateDataRequest.newBuilder()
-                    .setLogin(login)
-                    .setPassword(password)
-                    .setData(info.toUserData())
-                    .build()
-
-                stub.updateUserData(request)
-            },
-            {
-                Result.success(Unit)
-            },
+            { stub.updateUserData(info.toUserData()) },
+            { Result.success(Unit) },
             {
                 when (it) {
                     is StatusRuntimeException -> {
@@ -78,16 +87,4 @@ class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
                 }
             }
         )
-
-    private fun processGrpcResponse(response: DataProto.UserDataResponse): Result<UserInfo> =
-        when (response.success) {
-            true -> Result.success(UserInfo(response.data))
-
-            false ->
-                Result.failure(
-                    Exceptions.UnexpectedError(
-                        "Something went wrong: it may be invalid credentials or just some bug"
-                    )
-                )
-        }
 }

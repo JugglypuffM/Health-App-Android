@@ -32,7 +32,7 @@ class SplashActivity : AppCompatActivity() {
                 Log.d("ATH","Successfully loaded user $account")
                 viewModel.login(account.login, account.password).bind()
                 Log.d("ATH","Successfully login into account")
-                val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                val userInfo = viewModel.getUserData().bind()
                 Log.d("ATH","Successfully get data: $userInfo")
                 User(account, userInfo)
             }

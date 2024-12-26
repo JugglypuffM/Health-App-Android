@@ -4,44 +4,37 @@ import com.google.protobuf.Empty
 import com.google.protobuf.Timestamp
 import domain.exceptions.Exceptions
 import domain.training.Training
-import grpc.TrainingProto.SaveRequest
-import grpc.TrainingProto.TrainingsRequest
 import grpc.TrainingProto.TrainingsResponse
 import grpc.TrainingServiceGrpc
 import grpc.TrainingServiceGrpc.TrainingServiceBlockingStub
 import io.grpc.ManagedChannelBuilder
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
+import io.grpc.stub.MetadataUtils
 import kotlinx.datetime.LocalDate
-import services.async.AsyncCallExecutor
+import services.grpc.AsyncGrpcService
 
 class GrpcTrainingService(private val stub: TrainingServiceBlockingStub) : TrainingService,
-    AsyncCallExecutor {
+    AsyncGrpcService {
 
     /**
      * @param address Адреса сервера
      * @param port Порт сервера
      */
-    constructor(address: String, port: Int) : this(
+    constructor(login: String, password: String, address: String, port: Int) : this(
         TrainingServiceGrpc.newBlockingStub(
             ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+        ).withInterceptors(
+            MetadataUtils.newAttachHeadersInterceptor(
+                AsyncGrpcService.createMetadata(login, password)
+            )
         )
     )
 
-    override suspend fun saveTraining(
-        login: String,
-        password: String,
-        training: Training
-    ): Result<Unit> {
+    override suspend fun saveTraining(training: Training): Result<Unit> {
         return executeCallAsyncWithError<Empty, Unit>(
             {
-                val request = SaveRequest.newBuilder()
-                    .setLogin(login)
-                    .setPassword(password)
-                    .setTraining(training.toTrainingProto())
-                    .build()
-
-                stub.saveTraining(request)
+                stub.saveTraining(training.toTrainingProto())
             },
             {
                 Result.success(Unit)
@@ -76,20 +69,12 @@ class GrpcTrainingService(private val stub: TrainingServiceBlockingStub) : Train
         )
     }
 
-    override suspend fun getTrainings(
-        login: String,
-        password: String,
-        date: LocalDate
-    ): Result<List<Training>> {
+    override suspend fun getTrainings(date: LocalDate): Result<List<Training>> {
         return executeCallAsyncWithError<TrainingsResponse, List<Training>>(
             {
-                val request = TrainingsRequest.newBuilder()
-                    .setLogin(login)
-                    .setPassword(password)
-                    .setDate(Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()))
-                    .build()
+                val timestamp = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
 
-                stub.getTrainings(request)
+                stub.getTrainings(timestamp)
             },
             { response ->
                 Result.success(response.trainingsList.map {

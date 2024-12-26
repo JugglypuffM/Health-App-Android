@@ -14,7 +14,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @param password пароль пользователя
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun login(login: String, password: String): Result<String> {
+    suspend fun login(login: String, password: String): Result<Unit> {
         return authenticatorService.login(login, password)
     }
 
@@ -25,7 +25,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
      * @param password пароль новой учетной записи - строка длиннее 5и символов
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun register(name: String, login: String, password: String): Result<String> {
+    suspend fun register(name: String, login: String, password: String): Result<Unit> {
         return authenticatorService.register(name, login, password)
     }
 
@@ -73,7 +73,7 @@ class ViewModel(private val userSerializer: UserSerializer, private val authenti
     /**
      * Функция для запроса BasicUserData
      */
-    suspend fun getUserData(login: String, password: String): Result<UserInfo>{
-        return dataService.getUserData(login, password)
+    suspend fun getUserData(): Result<UserInfo>{
+        return dataService.getUserData()
     }
 }

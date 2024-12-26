@@ -16,8 +16,9 @@ suspend fun main() {
     val port = 50051
 
     val authenticatorService: AuthenticatorService = GrpcAuthenticatorService(address, port)
-    val dataService: DataService = GrpcDataService(address, port)
-    val trainingService: TrainingService = GrpcTrainingService(address, port)
+    val dataService: DataService = GrpcDataService("jpf", "123456", address, port)
+    val badDataService: DataService = GrpcDataService("not-jpf", "654321", address, port)
+    val trainingService: TrainingService = GrpcTrainingService("jpf", "123456", address, port)
 
     val date = LocalDate.fromEpochDays(Clock.System.now().epochSeconds.toInt())
 
@@ -42,36 +43,32 @@ suspend fun main() {
     println()
 
     println("Удачный запрос пока что пустых данных пользователя")
-    println(dataService.getUserData("jpf", "12345"))
+    println(dataService.getUserData())
     println()
 
     println("Неудачный запрос ... - плохие креды")
-    println(dataService.getUserData("jpf", "123456"))
+    println(badDataService.getUserData())
     println()
 
     println("Удачное обновление данных")
-    println(dataService.updateUserData("jpf", "12345", UserInfo("sas", 20, 85, 5)))
+    println(dataService.updateUserData(UserInfo("sas", 20, 85, 5)))
     println()
 
     println("Неудачное обновление данных - плохие креды")
     println(
-        dataService.updateUserData(
-            "jpf",
-            "123456",
+        badDataService.updateUserData(
             UserInfo("ne-sas", 200, 85000000, 500000000)
         )
     )
     println()
 
     println("Удачный запрос новых, полных данных пользователя")
-    println(dataService.getUserData("jpf", "12345"))
+    println(dataService.getUserData())
     println()
 
     println("Удачное сохранение тренировки")
     println(
         trainingService.saveTraining(
-            "jpf",
-            "12345",
             Training.Jogging(
                 date,
                 10.minutes,
@@ -82,11 +79,11 @@ suspend fun main() {
     println()
 
     println("Удачный запрос данных с изменившейся дистанцией")
-    println(dataService.getUserData("jpf", "12345"))
+    println(dataService.getUserData())
     println()
 
     println("Удачный запрос тренировок на дату")
-    println(trainingService.getTrainings("jpf", "12345", date))
+    println(trainingService.getTrainings(date))
     println()
 
 

@@ -51,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("ATH", "user $account is correct")
                     viewModel.saveAccount(account).bind()
                     Log.d("ATH", "correct save $account")
-                    val userInfo = viewModel.getUserData(account.login, account.password).bind()
+                    val userInfo = viewModel.getUserData().bind()
                     User(account, userInfo)
                 }
 
