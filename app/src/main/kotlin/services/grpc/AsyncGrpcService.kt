@@ -1,10 +1,11 @@
-package services.async
+package services.grpc
 
 import io.grpc.StatusRuntimeException
+import io.grpc.Metadata
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-interface AsyncCallExecutor {
+interface AsyncGrpcService {
     suspend fun <T, R> executeCallAsync(call: () -> T, f: (T) -> Result<R>): Result<R> =
         executeCallAsyncWithError(call, f) { Result.failure(it) }
 
@@ -21,4 +22,15 @@ interface AsyncCallExecutor {
                 handler(e)
             }
         }
+
+    companion object{
+        fun createMetadata(login: String, password: String): Metadata {
+            val metadata = Metadata()
+            val usernameKey = Metadata.Key.of("login-bin", Metadata.BINARY_BYTE_MARSHALLER)
+            val passwordKey = Metadata.Key.of("password-bin", Metadata.BINARY_BYTE_MARSHALLER)
+            metadata.put(usernameKey, login.toByteArray())
+            metadata.put(passwordKey, password.toByteArray())
+            return metadata
+        }
+    }
 }

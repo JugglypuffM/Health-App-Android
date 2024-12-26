@@ -1,105 +1,101 @@
 package utils
 
-import domain.Account
-import domain.User
-import io.mockk.coEvery
-import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
 
+import org.junit.Assert.*
+import utils.Validator.*
+
 class ValidatorTest {
-    private var validatorStub: Validator = Validator()
-
+    private val validator = Validator()
 
     @Test
-    fun `valid parameters for registration`() {
-        runBlocking {
-            val name = "Гриша"
-            val login = "MegaGrish1337"
-            val password = "123456"
-            val confirmPassword = "123456"
-
-            val expectedUser = Account(login, password)
-            val expected = Result.success(expectedUser)
-            val actual = validatorStub.check(name, login, password, confirmPassword)
-            
-            assertEquals(expected, actual)
-        }
+    fun `validateName should return success for valid name`() {
+        val result = validator.validateName("John Doe")
+        assertTrue(result.isSuccess)
+        assertEquals("John Doe", result.getOrNull())
     }
 
     @Test
-    fun `valid parameters for login`() {
-        runBlocking {
-            val login = "MegaGrish1337"
-            val password = "123456"
-
-            val expectedUser = Account(login, password)
-            val expected = Result.success(expectedUser)
-            val actual = validatorStub.check(login, password)
-            
-            assertEquals(expected, actual)
-        }
+    fun `validateName should return failure for empty name`() {
+        val result = validator.validateName("")
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is InvalidNameException)
+        assertEquals("User name is empty", result.exceptionOrNull()?.message)
     }
 
     @Test
-    fun `blank username`() {
-        runBlocking {
-            val name = "   "
-            val login = "MegaGrish1337"
-            val password = "123456"
-            val confirmPassword = "123456"
-
-            val actual = validatorStub.check(name, login, password, confirmPassword)
-
-            assert(actual.isFailure)
-            assert(actual.exceptionOrNull() is Validator.InvalidNameException)
-        }
-
-    }
-    @Test
-    fun `blank login`() {
-        runBlocking {
-            val name = "Гриша"
-            val login = "   "
-            val password = "123456"
-            val confirmPassword = "123456"
-
-            val actual = validatorStub.check(name, login, password, confirmPassword)
-
-            assert(actual.isFailure)
-            assert(actual.exceptionOrNull() is Validator.InvalidLoginException)
-        }
+    fun `validateLogin should return success for valid login`() {
+        val result = validator.validateLogin("validLogin")
+        assertTrue(result.isSuccess)
+        assertEquals("validLogin", result.getOrNull())
     }
 
     @Test
-    fun `short password`() {
-        runBlocking {
-            val name = "Гриша"
-            val login = "MegaGrish1337"
-            val password = "12345"
-            val confirmPassword = "12345"
-
-            val actual = validatorStub.check(name, login, password, confirmPassword)
-
-            assert(actual.isFailure)
-            assert(actual.exceptionOrNull() is Validator.InvalidPasswordException)
-        }
+    fun `validateLogin should return failure for empty login`() {
+        val result = validator.validateLogin("")
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is InvalidLoginException)
+        assertEquals("Login is empty", result.exceptionOrNull()?.message)
     }
 
     @Test
-    fun `password not equal confirmPassword`() {
-        runBlocking {
-            val name = "Гриша"
-            val login = "MegaGrish1337"
-            val password = "strongpassword"
-            val confirmPassword = "srongpassword"
+    fun `validatePassword should return success for valid password`() {
+        val result = validator.validatePassword("secure123")
+        assertTrue(result.isSuccess)
+        assertEquals("secure123", result.getOrNull())
+    }
 
-            val actual = validatorStub.check(name, login, password, confirmPassword)
+    @Test
+    fun `validatePassword should return failure for short password`() {
+        val result = validator.validatePassword("123")
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is InvalidPasswordException)
+        assertEquals("The password must be at least 6 characters long", result.exceptionOrNull()?.message)
+    }
 
-            assert(actual.isFailure)
-            assert(actual.exceptionOrNull() is Validator.NotEqualPasswordException)
-        }
+    @Test
+    fun `validateConfirmPassword should return success if passwords match`() {
+        val result = validator.validateConfirmPassword("password123", "password123")
+        assertTrue(result.isSuccess)
+        assertEquals("password123", result.getOrNull())
+    }
+
+    @Test
+    fun `validateConfirmPassword should return failure if passwords do not match`() {
+        val result = validator.validateConfirmPassword("password123", "differentPassword")
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is NotEqualPasswordException)
+        assertEquals("Passwords do not match", result.exceptionOrNull()?.message)
+    }
+
+    @Test
+    fun `validateAge should return success for valid age`() {
+        val result = validator.validateAge(25)
+        assertTrue(result.isSuccess)
+        assertEquals(25, result.getOrNull())
+    }
+
+    @Test
+    fun `validateAge should return failure for invalid age`() {
+        val result = validator.validateAge(150)
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is InvalidAgeException)
+        assertEquals("Age must be between 5 and 100", result.exceptionOrNull()?.message)
+    }
+
+    @Test
+    fun `validateWeight should return success for valid weight`() {
+        val result = validator.validateWeight(70)
+        assertTrue(result.isSuccess)
+        assertEquals(70, result.getOrNull())
+    }
+
+    @Test
+    fun `validateWeight should return failure for invalid weight`() {
+        val result = validator.validateWeight(2000)
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is InvalidWeightException)
+        assertEquals("Weight must be between 10 and 1000", result.exceptionOrNull()?.message)
     }
 }

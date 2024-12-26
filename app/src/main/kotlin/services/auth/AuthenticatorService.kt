@@ -1,11 +1,5 @@
 package services.auth
 
-import grpc.AuthServiceGrpc
-import grpc.AuthServiceGrpc.AuthServiceBlockingStub
-import grpc.DataServiceGrpc
-import grpc.DataServiceGrpc.DataServiceBlockingStub
-import io.grpc.ManagedChannelBuilder
-
 /**
  * Интерфейс объекта для отправки запросов аутентификации на сервер
  */
@@ -17,7 +11,7 @@ interface AuthenticatorService {
      * @param password пароль новой учетной записи - строка длиннее 5и символов
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun register(name: String, login: String, password: String): Result<String>
+    suspend fun register(name: String, login: String, password: String): Result<Unit>
 
     /**
      * Функция авторизации пользователя
@@ -25,5 +19,5 @@ interface AuthenticatorService {
      * @param password пароль пользователя
      * @return Result с сообщением об успехе или ошибке
      */
-    suspend fun login(login: String, password: String): Result<String>
+    suspend fun login(login: String, password: String): Result<Unit>
 }

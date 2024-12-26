@@ -4,10 +4,7 @@ import com.google.protobuf.Empty
 
 import domain.exceptions.Exceptions
 import domain.UserInfo
-import grpc.DataProto.UpdateDataRequest
 import grpc.DataProto.UserData
-import grpc.DataProto.UserDataRequest
-import grpc.DataProto.UserDataResponse
 import grpc.DataServiceGrpc.DataServiceBlockingStub
 import io.grpc.Status
 import io.grpc.StatusRuntimeException
@@ -33,10 +30,7 @@ class GrpcDataServiceTest {
 
     @Test
     fun `successful data request`() = runBlocking {
-        val request = UserDataRequest.newBuilder()
-            .setLogin("test_login")
-            .setPassword("password123")
-            .build()
+        val request = Empty.getDefaultInstance()
 
         val expectedData = UserData.newBuilder()
             .setName("Test")
@@ -45,53 +39,33 @@ class GrpcDataServiceTest {
             .setTotalDistance(1)
             .build()
 
-        val response = UserDataResponse.newBuilder()
-            .setSuccess(true)
-            .setData(expectedData)
-            .build()
+        `when`(mockStub.getUserData(request)).thenReturn(expectedData)
 
-        `when`(mockStub.getUserData(request)).thenReturn(response)
-
-        val result = dataRequester.getUserData("test_login", "password123")
+        val result = dataRequester.getUserData()
 
         assertTrue(result.isSuccess)
         assertEquals(UserInfo("Test", 20, 200, 1), result.getOrNull())
     }
 
     @Test
-    fun `failed data request`() = runBlocking {
-        val request = UserDataRequest.newBuilder()
-            .setLogin("wrong_login")
-            .setPassword("password123")
-            .build()
+    fun `failed data request auth`() = runBlocking {
+        val request = Empty.getDefaultInstance()
 
-        val expectedData = UserData.newBuilder()
-            .setName("")
-            .setAge(0)
-            .setWeight(0)
-            .setTotalDistance(0)
-            .build()
+        `when`(mockStub.getUserData(request)).thenThrow(Status.UNAUTHENTICATED.asRuntimeException())
 
-        val response = UserDataResponse.newBuilder()
-            .setSuccess(false)
-            .setData(expectedData)
-            .build()
-
-        `when`(mockStub.getUserData(request)).thenReturn(response)
-
-        val result = dataRequester.getUserData("wrong_login", "password123")
+        val result = dataRequester.getUserData()
 
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is Exceptions.UnexpectedError)
+        assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
     }
 
     @Test
     fun `server connection failure`() = runBlocking {
         `when`(mockStub.getUserData(any())).thenThrow(StatusRuntimeException(Status.UNAVAILABLE))
 
-        val result = dataRequester.getUserData("test_login", "password123")
+        val result = dataRequester.getUserData()
 
-        result.onFailure { assertTrue(Status.fromThrowable(it).code == Status.Code.UNAVAILABLE) }
+        result.onFailure { assertTrue(it is Exceptions.UnexpectedError) }
         assertTrue(result.isFailure)
     }
 
@@ -99,17 +73,11 @@ class GrpcDataServiceTest {
     fun `successful update request`() = runBlocking {
         val userInfo = UserInfo("name", 1, distance = 3)
 
-        val request = UpdateDataRequest.newBuilder()
-            .setLogin("test_login")
-            .setPassword("password123")
-            .setData(userInfo.toUserData())
-            .build()
-
         val response = Empty.getDefaultInstance()
 
-        `when`(mockStub.updateUserData(request)).thenReturn(response)
+        `when`(mockStub.updateUserData(userInfo.toUserData())).thenReturn(response)
 
-        val result = dataRequester.updateUserData("test_login", "password123", userInfo)
+        val result = dataRequester.updateUserData(userInfo)
 
         assertTrue(result.isSuccess)
     }
@@ -118,19 +86,11 @@ class GrpcDataServiceTest {
     fun `failed update request`() = runBlocking {
         val userInfo = UserInfo("name", 1, distance = 3)
 
-        val request = UpdateDataRequest.newBuilder()
-            .setLogin("test_login")
-            .setPassword("password123")
-            .setData(userInfo.toUserData())
-            .build()
-
-        val response = Empty.getDefaultInstance()
-
-        `when`(mockStub.updateUserData(request)).thenThrow(
+        `when`(mockStub.updateUserData(userInfo.toUserData())).thenThrow(
             StatusRuntimeException(Status.UNAUTHENTICATED)
         )
 
-        val result = dataRequester.updateUserData("test_login", "password123", userInfo)
+        val result = dataRequester.updateUserData(userInfo)
 
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is Exceptions.InvalidCredentialsException)
