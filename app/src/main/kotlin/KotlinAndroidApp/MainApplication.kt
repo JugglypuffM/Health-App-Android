@@ -26,6 +26,8 @@ class MainApplication : Application() {
         BuildConfig.serverPort.toInt()
     )
     var dataRequester: DataService? = null
+    private set
+
     var user = User.empty()
     val validator = Validator()
     lateinit var userSerializer: UserSerializer

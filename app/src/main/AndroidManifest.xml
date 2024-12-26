@@ -16,21 +16,23 @@
         android:theme="@style/Theme.KotlinAndroidApp"
         tools:targetApi="31">
         <activity
-                android:name="KotlinAndroidApp.TrainingActivity"
-                android:exported="true">
+            android:name="KotlinAndroidApp.TrainingActivity">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.RegistrationActivity">
+            android:name="KotlinAndroidApp.RegistrationActivity"
+            android:exported="true">
         </activity>
         <activity
-                android:name="KotlinAndroidApp.UserFormActivity"
-                android:exported="true">
+            android:name="KotlinAndroidApp.UserFormActivity"
+            android:exported="true">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.LoginActivity">
+            android:name="KotlinAndroidApp.LoginActivity"
+            android:exported="true">
         </activity>
         <activity
-                android:name="KotlinAndroidApp.UserProfileActivity">
+            android:name="KotlinAndroidApp.UserProfileActivity"
+            android:exported="true">
         </activity>
         <activity
             android:name="KotlinAndroidApp.HomeScreenActivity"
@@ -38,8 +40,7 @@
         </activity>
         <activity
             android:name="KotlinAndroidApp.SplashActivity"
-            android:exported="true"
-            tools:ignore="MissingClass">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

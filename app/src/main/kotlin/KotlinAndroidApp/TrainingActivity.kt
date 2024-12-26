@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
-import domain.training.TrainingActions
 import viewmodel.TrainingViewModel
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Активность тренировки (таймер на выполнение списка действий тренировки)
@@ -45,9 +45,9 @@ class TrainingActivity : AppCompatActivity() {
         })
 
         viewModel.millisUntilFinished.observe(this, Observer { millisUntilFinished ->
-            val duration = Duration.ofMillis(millisUntilFinished)
-            val minutes = duration.toMinutesPart()
-            val seconds = duration.toSecondsPart()
+            val duration: Duration = millisUntilFinished.milliseconds
+            val minutes = duration.inWholeMinutes % 60
+            val seconds = duration.inWholeSeconds % 60
             timerText.text = String.format("%02d:%02d", minutes, seconds)
         })
 

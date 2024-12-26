@@ -11,12 +11,12 @@ sealed class TrainingActions(val value: List<TrainingAction>){
     class Yoga: TrainingActions(
         listOf(
             TrainingAction("Подготовьтесь", 10000, R.drawable.waiting),
-            TrainingAction("Тадасана", 30000, R.drawable.yoga_tadasana),
-            TrainingAction("Врикшасана", 45000, R.drawable.yoga_super_tadasana),
-            TrainingAction("Адхо Мукха Шванасана", 45000, R.drawable.yoga_dog_face_down),
-            TrainingAction("Чатуранга Дандасана", 20000, R.drawable.yoga_dog_face_up),
-            TrainingAction("Урдхва Мукха Шванасана", 30000, R.drawable.yoga_half_dog_face_down),
-            TrainingAction("Вирабхадрасана I", 45000, R.drawable.yoga_varior_pose)
+            TrainingAction("Тадасана", 60000, R.drawable.yoga_tadasana),
+            TrainingAction("Врикшасана", 60000, R.drawable.yoga_super_tadasana),
+            TrainingAction("Адхо Мукха Шванасана", 90000, R.drawable.yoga_dog_face_down),
+            TrainingAction("Чатуранга Дандасана", 30000, R.drawable.yoga_dog_face_up),
+            TrainingAction("Урдхва Мукха Шванасана", 60000, R.drawable.yoga_half_dog_face_down),
+            TrainingAction("Вирабхадрасана I", 90000, R.drawable.yoga_varior_pose)
         )
     )
 
