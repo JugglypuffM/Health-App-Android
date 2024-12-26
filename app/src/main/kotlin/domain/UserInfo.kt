@@ -25,4 +25,10 @@ data class UserInfo(
         .setWeight(weight?: 0)
         .setTotalDistance(distance?: 0)
         .build()
+
+    companion object {
+        fun empty(): UserInfo {
+            return UserInfo("empty name", 0, 0, 0)
+        }
+    }
 }

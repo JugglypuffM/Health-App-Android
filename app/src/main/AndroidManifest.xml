@@ -16,7 +16,15 @@
         android:theme="@style/Theme.KotlinAndroidApp"
         tools:targetApi="31">
         <activity
+                android:name="KotlinAndroidApp.TrainingActivity"
+                android:exported="true">
+        </activity>
+        <activity
             android:name="KotlinAndroidApp.RegistrationActivity">
+        </activity>
+        <activity
+                android:name="KotlinAndroidApp.UserFormActivity"
+                android:exported="true">
         </activity>
         <activity
             android:name="KotlinAndroidApp.LoginActivity">
@@ -25,9 +33,9 @@
                 android:name="KotlinAndroidApp.UserProfileActivity">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.HomeScreenActivity">
+            android:name="KotlinAndroidApp.HomeScreenActivity"
+            android:exported="true">
         </activity>
-
         <activity
             android:name="KotlinAndroidApp.SplashActivity"
             android:exported="true"
