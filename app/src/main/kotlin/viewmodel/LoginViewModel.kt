@@ -5,21 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import arrow.core.raise.result
-import auth.Authenticator
 import domain.Account
 import domain.User
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import services.auth.AuthenticatorService
 import utils.UserSerializer
 import utils.Validator
 
 class LoginViewModel(
-    private val authenticator: Authenticator,
+    private val authenticator: AuthenticatorService,
     private val userSerializer: UserSerializer,
     private val user: User,
-    private val validator: Validator
+    private val validator: Validator,
+    private val createDataService: (Account) -> Unit
 ) : ViewModel() {
 
     private val _onSuccess = MutableLiveData<Unit>()
@@ -38,6 +40,9 @@ class LoginViewModel(
 
                 authenticator.login(account.login, account.password).bind()
                 Log.d("TSLA", "login in service success")
+
+                createDataService(account)
+                Log.d("TSLA", "success create data requester")
 
                 userSerializer.saveAccount(account).bind()
                 user.account = account
@@ -65,11 +70,11 @@ class LoginViewModel(
                             _errorMessage.value = "Неверный пароль"
                         }
 
-                        is Authenticator.ServerConnectionException -> {
+                        is Exceptions.ServerConnectionException -> {
                             _errorMessage.value = "Нет подключения к серверу"
                         }
 
-                        is Authenticator.InvalidCredentialsException -> {
+                        is Exceptions.InvalidCredentialsException -> {
                             _errorMessage.value = "Пользователь не найден"
                         }
 

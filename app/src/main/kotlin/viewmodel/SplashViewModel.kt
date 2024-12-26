@@ -5,21 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import arrow.core.raise.result
-import auth.Authenticator
-import data.DataRequester
+import domain.Account
 import domain.User
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import services.auth.AuthenticatorService
 import utils.UserSerializer
 import utils.Validator
 
 class SplashViewModel(
     private val userSerializer: UserSerializer,
-    private val authenticator: Authenticator,
+    private val authenticator: AuthenticatorService,
     private val user: User,
-    private val validator: Validator
+    private val validator: Validator,
+    private val createDataRequest: (Account) -> Unit
 ) : ViewModel() {
 
     private val _onSuccess: MutableLiveData<Unit> = MutableLiveData<Unit>()
@@ -40,6 +42,9 @@ class SplashViewModel(
                 authenticator.login(account.login, account.password).bind()
                 Log.d("TSLA", "Successfully login into account")
 
+                createDataRequest(account)
+                Log.d("TSLA", "Successfully create data request")
+
                 user.account = account;
                 account
             }
@@ -50,11 +55,11 @@ class SplashViewModel(
                 }
                 authResult.onFailure { error ->
                     when (error) {
-                        is Authenticator.ServerConnectionException -> {
+                        is Exceptions.ServerConnectionException -> {
                             _errorMessage.value = "Произошла ошибка соединения с сервером"
                         }
 
-                        is Authenticator.InvalidCredentialsException -> {
+                        is Exceptions.InvalidCredentialsException -> {
                             _errorMessage.value = "Данные для авторизации устарели"
                         }
                     }

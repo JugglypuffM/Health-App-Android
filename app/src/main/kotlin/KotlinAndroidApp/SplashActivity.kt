@@ -3,18 +3,10 @@ package KotlinAndroidApp
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import arrow.core.raise.result
-import auth.Authenticator
 import com.project.kotlin_android_app.R
-import domain.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import viewmodel.SplashViewModel
 
 /**
@@ -31,7 +23,8 @@ class SplashActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.authenticator,
             mainApplication.user,
-            mainApplication.validator
+            mainApplication.validator,
+            mainApplication::createDataRequester
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->

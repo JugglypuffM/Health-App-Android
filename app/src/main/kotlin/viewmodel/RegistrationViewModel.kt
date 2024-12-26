@@ -5,21 +5,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import arrow.core.raise.result
-import auth.Authenticator
 import domain.Account
 import domain.User
+import domain.exceptions.Exceptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import services.auth.AuthenticatorService
 import utils.UserSerializer
 import utils.Validator
 
 class RegistrationViewModel(
-    private val authenticator: Authenticator,
+    private val authenticator: AuthenticatorService,
     private val userSerializer: UserSerializer,
     private val user: User,
-    private val validator: Validator
+    private val validator: Validator,
+    private val createDataRequest: (Account) -> Unit
 ) : ViewModel() {
 
     private val _onSuccess = MutableLiveData<Unit>()
@@ -37,9 +39,11 @@ class RegistrationViewModel(
                 val account = Account(login, password)
                 Log.d("TSLA", "success validate user account")
 
-                //TODO remove field name from authenticator.register
                 authenticator.register("", account.login, account.password).bind()
                 Log.d("TSLA", "success register user")
+
+                createDataRequest(account)
+                Log.d("TSLA", "success create data request")
 
                 userSerializer.saveAccount(account).bind()
                 user.account = account
@@ -70,15 +74,15 @@ class RegistrationViewModel(
                             _errorMessage.value = "Пароли не совпадают"
                         }
 
-                        is Authenticator.ServerConnectionException -> {
+                        is Exceptions.ServerConnectionException -> {
                             _errorMessage.value = "Нет подключения к серверу"
                         }
 
-                        is Authenticator.InvalidCredentialsException -> {
+                        is Exceptions.InvalidCredentialsException -> {
                             _errorMessage.value = "Пользователь не найден"
                         }
 
-                        is Authenticator.UserAlreadyExistsException -> {
+                        is Exceptions.UserAlreadyExistsException -> {
                             _errorMessage.value = "Пользователь с таким логином уже существует"
                         }
 
