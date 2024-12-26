@@ -23,13 +23,18 @@
             android:name="KotlinAndroidApp.RegistrationActivity">
         </activity>
         <activity
+                android:name="KotlinAndroidApp.UserFormActivity"
+                android:exported="true">
+        </activity>
+        <activity
             android:name="KotlinAndroidApp.LoginActivity">
         </activity>
         <activity
                 android:name="KotlinAndroidApp.UserProfileActivity">
         </activity>
         <activity
-            android:name="KotlinAndroidApp.HomeScreenActivity">
+            android:name="KotlinAndroidApp.HomeScreenActivity"
+            android:exported="true">
         </activity>
         <activity
             android:name="KotlinAndroidApp.SplashActivity"

@@ -1,5 +1,6 @@
 package KotlinAndroidApp
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,6 +8,7 @@ import androidx.lifecycle.switchMap
 import domain.training.Training
 import domain.training.Training.Yoga
 import domain.training.Training.Jogging
+import domain.training.TrainingActions
 import kotlinx.datetime.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
@@ -30,5 +32,13 @@ class HomeScreenViewModel : ViewModel() {
 
     fun previousTraining() {
         _currentTrainingIndex.value = (_currentTrainingIndex.value!! - 1 + _trainings.size) % _trainings.size
+    }
+
+    fun setCurrentTraining(mainApplication: MainApplication) {
+        mainApplication.currentTraining = when(currentTrainingIndex.value){
+            0 -> TrainingActions.Yoga()
+            1 -> TrainingActions.FullBodyStrength()
+            else -> TrainingActions.Cardio()
+        }
     }
 }

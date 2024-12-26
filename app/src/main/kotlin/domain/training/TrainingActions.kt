@@ -7,17 +7,48 @@ import java.io.Serializable
  * Список действий для конкретной тренировки
  * @param actions список действий
  */
-enum class TrainingActions(var actions: List<TrainingAction>): Serializable {
-    Yoga (
+sealed class TrainingActions(val value: List<TrainingAction>){
+    class Yoga: TrainingActions(
         listOf(
-            TrainingAction("Подготовьтесь", 12000, R.drawable.ic_training_waiting),
-            TrainingAction("Тадасана", 62000, R.drawable.ic_yoga_tadasana),
-            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
-            TrainingAction("Врикшасана", 62000, R.drawable.ic_yoga_vrksasana),
-            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
-            TrainingAction("Вирабхадрасана", 62000, R.drawable.ic_yoga_virabhadrasana),
-            TrainingAction("Перерыв", 10000, R.drawable.ic_training_waiting),
-            TrainingAction("Бхуджангасана", 62000, R.drawable.ic_yoga_bhujangasana),
+            TrainingAction("Подготовьтесь", 10000, R.drawable.waiting),
+            TrainingAction("Тадасана", 30000, R.drawable.yoga_tadasana),
+            TrainingAction("Врикшасана", 45000, R.drawable.yoga_super_tadasana),
+            TrainingAction("Адхо Мукха Шванасана", 45000, R.drawable.yoga_dog_face_down),
+            TrainingAction("Чатуранга Дандасана", 20000, R.drawable.yoga_dog_face_up),
+            TrainingAction("Урдхва Мукха Шванасана", 30000, R.drawable.yoga_half_dog_face_down),
+            TrainingAction("Вирабхадрасана I", 45000, R.drawable.yoga_varior_pose)
         )
-    );
+    )
+
+    class FullBodyStrength: TrainingActions(
+        listOf(
+            TrainingAction("Приготовьтесь", 10000, R.drawable.waiting),
+            TrainingAction("Наклоны в сторону", 30000, R.drawable.strength_vlevo_vpravo),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Боковая планка", 45000, R.drawable.strength_oopa),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Приседания с поднятием штанги", 60000, R.drawable.strength_girya),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Выпады с гирями", 60000, R.drawable.strength_ruki_bazuki),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Жим штанги вверх", 45000, R.drawable.strength_oopa_girya)
+        )
+    )
+
+    class Cardio: TrainingActions(
+        listOf(
+            TrainingAction("Приготовьтесь", 10000, R.drawable.waiting),
+            TrainingAction("Приседания", 30000, R.drawable.cardio_prisedanya),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Выпады", 30000, R.drawable.cardio_calenca_prisedanya),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Скручивания на пресс", 30000, R.drawable.cardio_lezhaty),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Отжимания", 30000, R.drawable.cardio_otgumanyia),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Выпрямление ног", 30000, R.drawable.cardio_leg),
+            TrainingAction("Перерыв", 180000, R.drawable.waiting),
+            TrainingAction("Подъем ног лежа", 30000, R.drawable.cardio_legs)
+        )
+    )
 }

@@ -10,4 +10,10 @@ data class UserInfo(
     val age: Int,
     val weight: Int,
     val distance: Int,
-): Serializable
+): Serializable {
+    companion object {
+        fun empty(): UserInfo {
+            return UserInfo("empty name", 0, 0, 0)
+        }
+    }
+}

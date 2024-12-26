@@ -10,11 +10,19 @@ import domain.training.TrainingAction
  * @param finish функция вызывающаяся при истечении всех таймеров
  * @param training параметры таймеров
  */
-class TimerChain(val updateViewTimer: (millisUntilFinished: Long) -> Unit, val updateActivity: (trainingAction: TrainingAction) -> Unit, val finish: () -> Unit, training: Iterable<TrainingAction>) {
+class TimerChain(
+    private val updateViewTimer: (millisUntilFinished: Long) -> Unit,
+    private val updateActivity: (trainingAction: TrainingAction) -> Unit,
+    private val finish: () -> Unit,
+    training: Iterable<TrainingAction>
+) {
     private val trainingIterator = training.iterator()
     private var timer: CountDownTimer? = null
 
-    init {
+    /**
+     * Начать выполнение цепочки таймеров
+     */
+    fun start() {
         onFinish()
     }
 
