@@ -9,12 +9,14 @@ import grpc.TrainingServiceGrpc
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import org.junit.Before
-import kotlin.time.Duration.Companion.seconds
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import kotlin.time.Duration.Companion.seconds
 
 class GrpcTrainingServiceTest {
 
@@ -60,12 +62,18 @@ class GrpcTrainingServiceTest {
             .addTrainings(
                 TrainingProto.Training.newBuilder().setYoga(
                     TrainingProto.Yoga.newBuilder()
-                        .setDate(Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()))
+                        .setDate(
+                            Timestamp.newBuilder()
+                                .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+                                .build()
+                        )
                         .setDuration(com.google.protobuf.Duration.newBuilder().setSeconds(1800))
                 )
             ).build()
 
-        val request = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
+        val request = Timestamp.newBuilder()
+            .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+            .build()
 
         `when`(stub.getTrainings(request)).thenReturn(response)
 
@@ -80,7 +88,9 @@ class GrpcTrainingServiceTest {
     fun `getTrainings should return InvalidCredentialsException for UNAUTHENTICATED error`() = runBlocking {
         val date = LocalDate(12,12,12)
 
-        val request = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
+        val request = Timestamp.newBuilder()
+            .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+            .build()
 
         `when`(stub.getTrainings(request)).thenThrow(
             io.grpc.StatusRuntimeException(io.grpc.Status.UNAUTHENTICATED)

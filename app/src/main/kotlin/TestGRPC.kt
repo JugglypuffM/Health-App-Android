@@ -2,6 +2,8 @@ import domain.UserInfo
 import domain.training.Training
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import services.auth.AuthenticatorService
 import services.auth.GrpcAuthenticatorService
 import services.data.DataService
@@ -20,7 +22,9 @@ suspend fun main() {
     val badDataService: DataService = GrpcDataService("not-jpf", "654321", address, port)
     val trainingService: TrainingService = GrpcTrainingService("jpf", "123456", address, port)
 
-    val date = LocalDate.fromEpochDays(Clock.System.now().epochSeconds.toInt())
+    val date1 = LocalDate(2007, 9, 27)
+    val date2 = LocalDate(2027, 1, 24)
+    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     println("Удачная регистрация")
     println(authenticatorService.register("stas", "jpf", "123456"))
@@ -34,8 +38,8 @@ suspend fun main() {
     println(authenticatorService.login("jpf", "123456"))
     println()
 
-    println("Неудачная регистрация после логина - пользователь уже существует")
-    println(authenticatorService.register("stas", "jpf", "1234"))
+    println("Неудачная регистрация - неподходящие данные")
+    println(authenticatorService.register("stas", "jpf2", "1234"))
     println()
 
     println("Неудачный логин - плохие креды")
@@ -46,7 +50,7 @@ suspend fun main() {
     println(dataService.getUserData())
     println()
 
-    println("Неудачный запрос ... - плохие креды")
+    println("Неудачный запрос пока что пустых данных пользователя - плохие креды")
     println(badDataService.getUserData())
     println()
 
@@ -66,13 +70,61 @@ suspend fun main() {
     println(dataService.getUserData())
     println()
 
-    println("Удачное сохранение тренировки")
+    println("Удачное сохранение тренировок на одну дату")
     println(
         trainingService.saveTraining(
             Training.Jogging(
-                date,
+                date1,
                 10.minutes,
                 1000.0
+            )
+        )
+    )
+    println(
+        trainingService.saveTraining(
+            Training.Yoga(
+                date1,
+                15.minutes
+            )
+        )
+    )
+    println()
+
+    println("Удачное сохранение тренировок на другую дату")
+    println(
+        trainingService.saveTraining(
+            Training.Jogging(
+                date2,
+                20.minutes,
+                3000.0
+            )
+        )
+    )
+    println(
+        trainingService.saveTraining(
+            Training.Yoga(
+                date2,
+                20.minutes
+            )
+        )
+    )
+    println()
+
+    println("Удачное сохранение тренировок на текущую дату")
+    println(
+        trainingService.saveTraining(
+            Training.Jogging(
+                now,
+                100.minutes,
+                500.0
+            )
+        )
+    )
+    println(
+        trainingService.saveTraining(
+            Training.Yoga(
+                now,
+                1.minutes
             )
         )
     )
@@ -82,9 +134,15 @@ suspend fun main() {
     println(dataService.getUserData())
     println()
 
-    println("Удачный запрос тренировок на дату")
-    println(trainingService.getTrainings(date))
+    println("Удачный запрос тренировок на первую дату")
+    println(trainingService.getTrainings(date1))
     println()
 
+    println("Удачный запрос тренировок на вторую дату")
+    println(trainingService.getTrainings(date2))
+    println()
 
+    println("Удачный запрос тренировок на текущую дату")
+    println(trainingService.getTrainings(now))
+    println()
 }
