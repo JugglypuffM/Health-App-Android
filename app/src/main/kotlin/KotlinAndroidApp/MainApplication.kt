@@ -59,9 +59,9 @@ class MainApplication : Application() {
         return Pair(dataRequester!!, trainingService!!)
     }
 
-    fun createServicesStub(account: Account): Pair<DataService, TrainingService>{
-        dataRequester = DataServiceStub()
-        trainingService = TrainingServiceStub()
-        return Pair(dataRequester!!, trainingService!!)
-    }
+//    fun createServicesStub(account: Account): Pair<DataService, TrainingService>{
+//        dataRequester = DataServiceStub()
+//        trainingService = TrainingServiceStub()
+//        return Pair(dataRequester!!, trainingService!!)
+//    }
 }

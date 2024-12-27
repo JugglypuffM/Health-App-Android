@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.authenticator,
             mainApplication.user,
-            mainApplication::createServicesStub
+            mainApplication::createServices
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->
