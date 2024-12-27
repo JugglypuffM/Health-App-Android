@@ -1,19 +1,30 @@
 package viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import arrow.core.raise.result
 import domain.training.Training
 import domain.training.TrainingAction
 import domain.training.TrainingActions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import services.training.TrainingService
 import utils.TimerChain
 import kotlin.time.Duration.Companion.milliseconds
 
-class TrainingViewModel(val trainingActions: TrainingActions, val addTrainingHistory: (Training) -> Unit): ViewModel() {
+class TrainingViewModel(
+    private val trainingActions: TrainingActions,
+    private val addTrainingHistory: (Training) -> Unit,
+    private val trainingService: TrainingService
+): ViewModel() {
 
     private val _millisUntilTrainingFinished = MutableLiveData<Long>()
     val millisUntilTrainingFinished: LiveData<Long> = _millisUntilTrainingFinished
@@ -51,16 +62,33 @@ class TrainingViewModel(val trainingActions: TrainingActions, val addTrainingHis
     }
 
     fun onFinish(){
-        val finishTimeMillis = System.currentTimeMillis()
-        val trainingTimeMillis = finishTimeMillis - startTimeMillis
+        CoroutineScope(Dispatchers.IO).launch {
+            val finishTimeMillis = System.currentTimeMillis()
+            val trainingTimeMillis = finishTimeMillis - startTimeMillis
 
-        val duration = trainingTimeMillis.milliseconds
-        val date: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        addTrainingHistory(when(trainingActions){
-            TrainingActions.Yoga -> Training.Yoga(date, duration)
-            TrainingActions.FullBodyStrength -> Training.FullBodyStrength(date, duration)
-            TrainingActions.Cardio -> Training.Cardio(date, duration)
-        })
-        _onSuccess.value = Unit
+            val duration = trainingTimeMillis.milliseconds
+            val date: LocalDate =
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            val training = when (trainingActions) {
+                TrainingActions.Yoga -> Training.Yoga(date, duration)
+                TrainingActions.FullBodyStrength -> Training.FullBodyStrength(date, duration)
+                TrainingActions.Cardio -> Training.Cardio(date, duration)
+            }
+
+            val sendTrainingResult = trainingService.saveTraining(training)
+
+            sendTrainingResult.onFailure { error ->
+                Log.d("TSLA", error.toString())
+            }
+
+            sendTrainingResult.onSuccess {
+                Log.d("TSLA", "Training sent successfully")
+            }
+
+            withContext(Dispatchers.Main) {
+                addTrainingHistory(training)
+                _onSuccess.value = Unit
+            }
+        }
     }
 }

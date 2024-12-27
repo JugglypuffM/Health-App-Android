@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import domain.training.TrainingActions
 import domain.training.TrainingIcon
+import services.training.TrainingService
 import utils.CircularList
 
-class HomeScreenViewModel(val setCurrentTrainings: (TrainingActions?) -> Unit) : ViewModel() {
+class HomeScreenViewModel(
+    private val setCurrentTrainings: (TrainingActions?) -> Unit,
+) : ViewModel() {
     private val _currentTrainingIcon = MutableLiveData<TrainingIcon>()
     val currentTrainingIcon: LiveData<TrainingIcon> = _currentTrainingIcon
 

@@ -21,7 +21,7 @@ class RegistrationViewModel(
     private val userSerializer: UserSerializer,
     private val user: User,
     private val validator: Validator,
-    private val createDataRequest: (Account) -> Unit
+    private val createServices: (Account) -> Unit
 ) : ViewModel() {
 
     private val _onSuccess = MutableLiveData<Unit>()
@@ -42,7 +42,7 @@ class RegistrationViewModel(
                 authenticator.register("", account.login, account.password).bind()
                 Log.d("TSLA", "success register user")
 
-                createDataRequest(account)
+                createServices(account)
                 Log.d("TSLA", "success create data request")
 
                 userSerializer.saveAccount(account).bind()

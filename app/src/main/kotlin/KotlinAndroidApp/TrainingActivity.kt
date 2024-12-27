@@ -38,10 +38,9 @@ class TrainingActivity : AppCompatActivity() {
         val mainApplication = application as MainApplication
         val viewModel = TrainingViewModel(
             mainApplication.currentTraining!!,
-            mainApplication.trainingHistory.value::add
+            mainApplication.trainingHistory.value::add,
+            mainApplication.trainingService!!
         )
-
-        val trainingHistory = mainApplication.trainingHistory
 
         viewModel.onSuccess.observe(this, Observer {
             startActivity(Intent(this@TrainingActivity, HomeScreenActivity::class.java))

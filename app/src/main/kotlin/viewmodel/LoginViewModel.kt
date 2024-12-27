@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import services.auth.AuthenticatorService
+import services.data.DataService
+import services.training.TrainingService
 import utils.UserSerializer
 import utils.Validator
 
@@ -21,7 +23,7 @@ class LoginViewModel(
     private val userSerializer: UserSerializer,
     private val user: User,
     private val validator: Validator,
-    private val createDataService: (Account) -> Unit
+    private val createServices: (Account) -> Pair<DataService, TrainingService>
 ) : ViewModel() {
 
     private val _onSuccess = MutableLiveData<Unit>()
@@ -41,11 +43,16 @@ class LoginViewModel(
                 authenticator.login(account.login, account.password).bind()
                 Log.d("TSLA", "login in service success")
 
-                createDataService(account)
+                val (dataService, trainingService) = createServices(account)
                 Log.d("TSLA", "success create data requester")
+
+                val userInfo = dataService.getUserData().bind()
+                Log.d("TSLA", "success load user data")
 
                 userSerializer.saveAccount(account).bind()
                 user.account = account
+                user.userInfo = userInfo
+
                 Log.d("TSLA", "success save account")
 
                 account

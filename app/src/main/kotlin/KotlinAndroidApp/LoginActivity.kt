@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.user,
             mainApplication.validator,
-            mainApplication::createDataRequester
+            mainApplication::createServices
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->

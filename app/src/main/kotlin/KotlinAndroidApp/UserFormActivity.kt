@@ -23,7 +23,8 @@ class UserFormActivity : AppCompatActivity() {
 
         val viewModel = UserFormViewModel(
             mainApplication.user,
-            mainApplication.validator
+            mainApplication.validator,
+            mainApplication.dataRequester!!
         )
 
         viewModel.errorMessage.observe(this, Observer { message: String ->

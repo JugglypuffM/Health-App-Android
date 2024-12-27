@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import services.auth.AuthenticatorService
+import services.data.DataService
+import services.training.TrainingService
 import utils.UserSerializer
 import utils.Validator
 
@@ -20,8 +22,7 @@ class SplashViewModel(
     private val userSerializer: UserSerializer,
     private val authenticator: AuthenticatorService,
     private val user: User,
-    private val validator: Validator,
-    private val createDataRequest: (Account) -> Unit
+    private val createServices: (Account) -> Pair<DataService, TrainingService>
 ) : ViewModel() {
 
     private val _onSuccess: MutableLiveData<Unit> = MutableLiveData<Unit>()
@@ -42,10 +43,14 @@ class SplashViewModel(
                 authenticator.login(account.login, account.password).bind()
                 Log.d("TSLA", "Successfully login into account")
 
-                createDataRequest(account)
+                val (dataService, trainingService) = createServices(account)
                 Log.d("TSLA", "Successfully create data request")
 
-                user.account = account;
+                val userInfo = dataService.getUserData().bind()
+                Log.d("TSLA", "Successfully get userInfo data request")
+
+                user.account = account
+                user.userInfo = userInfo
                 account
             }
 
@@ -60,6 +65,8 @@ class SplashViewModel(
                         }
 
                         is Exceptions.InvalidCredentialsException -> {
+                            userSerializer.dropAccount()
+                            Log.d("TSLA", "Данные пользователя удалены")
                             _errorMessage.value = "Данные для авторизации устарели"
                         }
                     }
