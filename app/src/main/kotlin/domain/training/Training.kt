@@ -3,6 +3,8 @@ package domain.training
 import com.google.protobuf.Timestamp
 import grpc.TrainingProto
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -36,14 +38,20 @@ sealed class Training(
                     TrainingProto.Yoga.newBuilder()
                         .setDate(
                             Timestamp.newBuilder()
-                                .setSeconds(date.toEpochDays().toLong())
+                                .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+                                .build()
                         )
                         .setDuration(
                             com.google.protobuf.Duration.newBuilder()
                                 .setSeconds(duration.inWholeSeconds)
+                                .build()
                         )
                         .build()
                 ).build()
+        }
+
+        override fun toString(): String {
+            return "Yoga($date, $duration)"
         }
     }
 
@@ -68,15 +76,21 @@ sealed class Training(
                     TrainingProto.Jogging.newBuilder()
                         .setDate(
                             Timestamp.newBuilder()
-                                .setSeconds(date.toEpochDays().toLong())
+                                .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+                                .build()
                         )
                         .setDuration(
                             com.google.protobuf.Duration.newBuilder()
                                 .setSeconds(duration.inWholeSeconds)
+                                .build()
                         )
                         .setDistance(distance.toInt())
                         .build()
                 ).build()
+        }
+
+        override fun toString(): String {
+            return "Jogging($date, $duration, $distance)"
         }
     }
 

@@ -12,6 +12,8 @@ import io.grpc.Status
 import io.grpc.StatusRuntimeException
 import io.grpc.stub.MetadataUtils
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import services.grpc.AsyncGrpcService
 
 class GrpcTrainingService(private val stub: TrainingServiceBlockingStub) : TrainingService,
@@ -72,7 +74,9 @@ class GrpcTrainingService(private val stub: TrainingServiceBlockingStub) : Train
     override suspend fun getTrainings(date: LocalDate): Result<List<Training>> {
         return executeCallAsyncWithError<TrainingsResponse, List<Training>>(
             {
-                val timestamp = Timestamp.newBuilder().setSeconds(date.toEpochDays().toLong()).build()
+                val timestamp = Timestamp.newBuilder()
+                    .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+                    .build()
 
                 stub.getTrainings(timestamp)
             },
