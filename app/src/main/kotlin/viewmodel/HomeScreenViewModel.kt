@@ -1,44 +1,38 @@
 package KotlinAndroidApp
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
-import domain.training.Training
-import domain.training.Training.Yoga
-import domain.training.Training.Jogging
 import domain.training.TrainingActions
-import kotlinx.datetime.LocalDate
-import kotlin.time.Duration.Companion.minutes
+import domain.training.TrainingIcon
+import utils.CircularList
 
-class HomeScreenViewModel : ViewModel() {
+class HomeScreenViewModel(val setCurrentTrainings: (TrainingActions?) -> Unit) : ViewModel() {
+    private val _currentTrainingIcon = MutableLiveData<TrainingIcon>()
+    val currentTrainingIcon: LiveData<TrainingIcon> = _currentTrainingIcon
 
-    private val _trainings = listOf(
-        Yoga(LocalDate(2023, 10, 1), 60.minutes),
-        Jogging(LocalDate(2023, 10, 2), 30.minutes, 5.0)
-    )
+    private val circleTrainingList = CircularList(TrainingIcon.entries.toList())
 
-    private val _currentTrainingIndex = MutableLiveData(0)
-    val currentTrainingIndex: LiveData<Int> get() = _currentTrainingIndex
-
-    val currentTraining: LiveData<Training> = _currentTrainingIndex.switchMap { index ->
-        MutableLiveData(_trainings[index])
+    init{
+        _currentTrainingIcon.value = circleTrainingList.current()
     }
 
-    fun nextTraining() {
-        _currentTrainingIndex.value = (_currentTrainingIndex.value!! + 1) % _trainings.size
+    fun nextTraining(){
+        circleTrainingList.next();
+        _currentTrainingIcon.value = circleTrainingList.current()
     }
 
-    fun previousTraining() {
-        _currentTrainingIndex.value = (_currentTrainingIndex.value!! - 1 + _trainings.size) % _trainings.size
+    fun previousTraining(){
+        circleTrainingList.previous();
+        _currentTrainingIcon.value = circleTrainingList.current()
     }
 
-    fun setCurrentTraining(mainApplication: MainApplication) {
-        mainApplication.currentTraining = when(currentTrainingIndex.value){
-            0 -> TrainingActions.Yoga()
-            1 -> TrainingActions.FullBodyStrength()
-            else -> TrainingActions.Cardio()
-        }
+    fun setTrainingActions() {
+        setCurrentTrainings(
+            when(circleTrainingList.current()){
+                TrainingIcon.Yoga -> TrainingActions.Yoga
+                TrainingIcon.FullBodyStrength -> TrainingActions.FullBodyStrength
+                TrainingIcon.Cardio -> TrainingActions.Cardio
+        })
     }
 }

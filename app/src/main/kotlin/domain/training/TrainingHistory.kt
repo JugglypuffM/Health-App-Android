@@ -4,4 +4,4 @@ package domain.training
  * История тренировок
  */
 @JvmInline
-value class TrainingHistory(val value: List<Training>)
+value class TrainingHistory(val value: MutableList<Training>)

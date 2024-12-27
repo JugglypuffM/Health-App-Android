@@ -7,8 +7,8 @@ import java.io.Serializable
  * Список действий для конкретной тренировки
  * @param actions список действий
  */
-sealed class TrainingActions(val value: List<TrainingAction>){
-    class Yoga: TrainingActions(
+enum class TrainingActions(val value: List<TrainingAction>){
+    Yoga(
         listOf(
             TrainingAction("Подготовьтесь", 10000, R.drawable.waiting),
             TrainingAction("Тадасана", 60000, R.drawable.yoga_tadasana),
@@ -18,9 +18,9 @@ sealed class TrainingActions(val value: List<TrainingAction>){
             TrainingAction("Урдхва Мукха Шванасана", 60000, R.drawable.yoga_half_dog_face_down),
             TrainingAction("Вирабхадрасана I", 90000, R.drawable.yoga_varior_pose)
         )
-    )
+    ),
 
-    class FullBodyStrength: TrainingActions(
+    FullBodyStrength(
         listOf(
             TrainingAction("Приготовьтесь", 10000, R.drawable.waiting),
             TrainingAction("Наклоны в сторону", 30000, R.drawable.strength_vlevo_vpravo),
@@ -33,9 +33,9 @@ sealed class TrainingActions(val value: List<TrainingAction>){
             TrainingAction("Перерыв", 180000, R.drawable.waiting),
             TrainingAction("Жим штанги вверх", 45000, R.drawable.strength_oopa_girya)
         )
-    )
+    ),
 
-    class Cardio: TrainingActions(
+    Cardio(
         listOf(
             TrainingAction("Приготовьтесь", 10000, R.drawable.waiting),
             TrainingAction("Приседания", 30000, R.drawable.cardio_prisedanya),

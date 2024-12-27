@@ -8,11 +8,13 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.kotlin_android_app.R
 import domain.training.Training
+import domain.training.TrainingIcon
 import kotlinx.datetime.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
@@ -38,16 +40,21 @@ class HomeScreenActivity : AppCompatActivity() {
         btnPrevious = findViewById(R.id.btnPrevious)
         btnNext = findViewById(R.id.btnNext)
 
-        viewModel = ViewModelProvider(this).get(HomeScreenViewModel::class.java)
 
         val mainApplication = application as MainApplication
 
-        viewModel.currentTraining.observe(this, { training ->
-            updateUI(training)
+        viewModel = HomeScreenViewModel(
+            mainApplication::currentTraining::set
+        )
+
+        viewModel.currentTrainingIcon.observe(this, Observer { training: TrainingIcon ->
+            workoutName.text = training.title
+            workoutDescription.text = training.description
+            workoutImage.setImageResource(training.imageSource)
         })
 
         btnStartWorkout.setOnClickListener {
-            viewModel.setCurrentTraining(mainApplication)
+            viewModel.setTrainingActions()
             startActivity(Intent(this@HomeScreenActivity, TrainingActivity::class.java))
         }
 
@@ -64,15 +71,5 @@ class HomeScreenActivity : AppCompatActivity() {
         val trainings = mainApplication.trainingHistory.value
         val adapter = TrainingAdapter(trainings)
         recyclerView.adapter = adapter
-    }
-
-    private fun updateUI(training: Training) {
-        workoutName.text = training.title
-        workoutDescription.text = training.description
-
-        when (training) {
-            is Training.Yoga -> workoutImage.setImageResource(R.drawable.ic_yoga)
-            is Training.Jogging -> workoutImage.setImageResource(R.drawable.ic_running)
-        }
     }
 }

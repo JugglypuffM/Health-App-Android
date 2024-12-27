@@ -9,6 +9,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
+import domain.training.Training
+import domain.training.TrainingActions
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import viewmodel.TrainingViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -30,10 +36,12 @@ class TrainingActivity : AppCompatActivity() {
         val cancelButton: Button = findViewById(R.id.startStopButton)
 
         val mainApplication = application as MainApplication
-
         val viewModel = TrainingViewModel(
-            mainApplication.currentTraining!!
+            mainApplication.currentTraining!!,
+            mainApplication.trainingHistory.value::add
         )
+
+        val trainingHistory = mainApplication.trainingHistory
 
         viewModel.onSuccess.observe(this, Observer {
             startActivity(Intent(this@TrainingActivity, HomeScreenActivity::class.java))
@@ -44,7 +52,7 @@ class TrainingActivity : AppCompatActivity() {
             image.setImageResource(action.imageSource)
         })
 
-        viewModel.millisUntilFinished.observe(this, Observer { millisUntilFinished ->
+        viewModel.millisUntilTrainingFinished.observe(this, Observer { millisUntilFinished ->
             val duration: Duration = millisUntilFinished.milliseconds
             val minutes = duration.inWholeMinutes % 60
             val seconds = duration.inWholeSeconds % 60

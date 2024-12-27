@@ -34,26 +34,7 @@ class MainApplication : Application() {
     private set
 
     var currentTraining: TrainingActions? = null
-
-    val trainingHistory: TrainingHistory = TrainingHistory(listOf(
-        Training.Yoga(
-            date = LocalDate(2024, 12, 20),
-            duration = 60.minutes
-        ),
-        Training.Yoga(
-            date = LocalDate(2024, 12, 19),
-            duration = 60.minutes
-        ),
-        Training.Yoga(
-            date = LocalDate(2024, 12, 18),
-            duration = 60.minutes
-        ),
-        Training.Jogging(
-            date = LocalDate(2024, 12, 17),
-            duration = 45.seconds,
-            distance = 5.0
-        )
-    ))
+    val trainingHistory: TrainingHistory = TrainingHistory(mutableListOf())
 
     override fun onCreate() {
         super.onCreate()
