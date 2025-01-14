@@ -1,6 +1,5 @@
 package viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +14,7 @@ import kotlinx.coroutines.withContext
 import services.auth.AuthenticatorService
 import services.data.DataService
 import services.training.TrainingService
+import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator
 
@@ -23,11 +23,12 @@ class LoginViewModel(
     private val userSerializer: UserSerializer,
     private val user: User,
     private val validator: Validator,
-    private val createServices: (Account) -> Pair<DataService, TrainingService>
+    private val createServices: (Account) -> Pair<DataService, TrainingService>,
+    private val logger: CustomLogger
 ) : ViewModel() {
 
-    private val _onSuccess = MutableLiveData<Unit>()
-    val onSuccess: LiveData<Unit> = _onSuccess
+    private val _onFinish = MutableLiveData<Unit>()
+    val onFinish: LiveData<Unit> = _onFinish
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -38,29 +39,20 @@ class LoginViewModel(
                 val login = validator.validateLogin(rawLogin).bind()
                 val password = validator.validatePassword(rawPassword).bind()
                 val account = Account(login, password)
-                Log.d("TSLA", "success validate account")
 
                 authenticator.login(account.login, account.password).bind()
-                Log.d("TSLA", "login in service success")
 
-                val (dataService, trainingService) = createServices(account)
-                Log.d("TSLA", "success create data requester")
-
+                val (dataService, _) = createServices(account)
                 val userInfo = dataService.getUserData().bind()
-                Log.d("TSLA", "success load user data")
-
                 userSerializer.saveAccount(account).bind()
                 user.account = account
                 user.userInfo = userInfo
-
-                Log.d("TSLA", "success save account")
-
                 account
             }
 
             withContext(Dispatchers.Main) {
                 authResult.onSuccess {
-                    _onSuccess.value = Unit
+                    _onFinish.value = Unit
                 }
 
                 authResult.onFailure { error ->
@@ -90,7 +82,7 @@ class LoginViewModel(
                         }
                     }
 
-                    Log.d("TSLA", error.toString())
+                    logger.logDebug(error.toString())
                 }
             }
         }

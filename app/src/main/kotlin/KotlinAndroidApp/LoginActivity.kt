@@ -31,14 +31,15 @@ class LoginActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.user,
             mainApplication.validator,
-            mainApplication::createServices
+            mainApplication::createServices,
+            mainApplication.logger
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(this@LoginActivity, message, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.onSuccess.observe(this, Observer {
+        viewModel.onFinish.observe(this, Observer {
             startActivity(Intent(this@LoginActivity, HomeScreenActivity::class.java))
         })
 

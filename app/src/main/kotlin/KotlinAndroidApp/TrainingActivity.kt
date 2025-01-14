@@ -6,15 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
-import domain.training.Training
-import domain.training.TrainingActions
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import viewmodel.TrainingViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -39,10 +34,15 @@ class TrainingActivity : AppCompatActivity() {
         val viewModel = TrainingViewModel(
             mainApplication.currentTraining!!,
             mainApplication.trainingHistory.value::add,
-            mainApplication.trainingService!!
+            mainApplication.trainingService!!,
+            mainApplication.logger
         )
+        
+        viewModel.errorMessage.observe(this, Observer { message ->
+            Toast.makeText(this@TrainingActivity, message, Toast.LENGTH_SHORT).show()
+        })
 
-        viewModel.onSuccess.observe(this, Observer {
+        viewModel.onFinish.observe(this, Observer {
             startActivity(Intent(this@TrainingActivity, HomeScreenActivity::class.java))
         })
 

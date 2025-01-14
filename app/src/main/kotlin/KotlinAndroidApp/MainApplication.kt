@@ -14,6 +14,7 @@ import services.data.GrpcDataService
 import services.training.GrpcTrainingService
 import services.training.TrainingService
 import services.training.TrainingServiceStub
+import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator
 
@@ -21,6 +22,8 @@ import utils.Validator
  * Класс, представляющий глобальное состояние приложения.
  */
 class MainApplication : Application() {
+    val logger: CustomLogger = CustomLogger()
+
     val authenticator: AuthenticatorService = AuthenticatorServiceStub()
     var dataRequester: DataService? = null
     private set
@@ -41,27 +44,27 @@ class MainApplication : Application() {
         userSerializer = UserSerializer(applicationContext)
     }
 
-    fun createServices(account: Account): Pair<DataService, TrainingService>{
-        dataRequester = GrpcDataService(
-            account.login,
-            account.password,
-            BuildConfig.serverAddress,
-            BuildConfig.serverPort.toInt()
-        )
-
-        trainingService = GrpcTrainingService(
-            account.login,
-            account.password,
-            BuildConfig.serverAddress,
-            BuildConfig.serverPort.toInt()
-        )
-
-        return Pair(dataRequester!!, trainingService!!)
-    }
-
-//    fun createServicesStub(account: Account): Pair<DataService, TrainingService>{
-//        dataRequester = DataServiceStub()
-//        trainingService = TrainingServiceStub()
+//    fun createServices(account: Account): Pair<DataService, TrainingService>{
+//        dataRequester = GrpcDataService(
+//            account.login,
+//            account.password,
+//            BuildConfig.serverAddress,
+//            BuildConfig.serverPort.toInt()
+//        )
+//
+//        trainingService = GrpcTrainingService(
+//            account.login,
+//            account.password,
+//            BuildConfig.serverAddress,
+//            BuildConfig.serverPort.toInt()
+//        )
+//
 //        return Pair(dataRequester!!, trainingService!!)
 //    }
+
+    fun createServices(account: Account): Pair<DataService, TrainingService>{
+        dataRequester = DataServiceStub()
+        trainingService = TrainingServiceStub()
+        return Pair(dataRequester!!, trainingService!!)
+    }
 }

@@ -23,14 +23,15 @@ class SplashActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.authenticator,
             mainApplication.user,
-            mainApplication::createServices
+            mainApplication::createServices,
+            mainApplication.logger
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.onSuccess.observe(this, Observer {
+        viewModel.onFinish.observe(this, Observer {
             startActivity(Intent(this@SplashActivity, HomeScreenActivity::class.java))
         })
 

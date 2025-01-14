@@ -24,14 +24,15 @@ class UserFormActivity : AppCompatActivity() {
         val viewModel = UserFormViewModel(
             mainApplication.user,
             mainApplication.validator,
-            mainApplication.dataRequester!!
+            mainApplication.dataRequester!!,
+            mainApplication.logger
         )
 
         viewModel.errorMessage.observe(this, Observer { message: String ->
             Toast.makeText(this@UserFormActivity, message, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.onSuccess.observe(this, Observer {
+        viewModel.onFinish.observe(this, Observer {
             startActivity(Intent(this@UserFormActivity, HomeScreenActivity::class.java))
         })
 

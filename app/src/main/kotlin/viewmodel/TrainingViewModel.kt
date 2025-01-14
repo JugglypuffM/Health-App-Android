@@ -1,10 +1,8 @@
 package viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import arrow.core.raise.result
 import domain.training.Training
 import domain.training.TrainingAction
 import domain.training.TrainingActions
@@ -17,13 +15,15 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import services.training.TrainingService
+import utils.CustomLogger
 import utils.TimerChain
 import kotlin.time.Duration.Companion.milliseconds
 
 class TrainingViewModel(
     private val trainingActions: TrainingActions,
     private val addTrainingHistory: (Training) -> Unit,
-    private val trainingService: TrainingService
+    private val trainingService: TrainingService,
+    private val logger: CustomLogger
 ): ViewModel() {
 
     private val _millisUntilTrainingFinished = MutableLiveData<Long>()
@@ -32,8 +32,11 @@ class TrainingViewModel(
     private val _currentAction = MutableLiveData<TrainingAction>()
     val currentAction: LiveData<TrainingAction> = _currentAction
 
-    private val _onSuccess = MutableLiveData<Unit>()
-    val onSuccess: LiveData<Unit> = _onSuccess
+    private val _onFinish = MutableLiveData<Unit>()
+    val onFinish: LiveData<Unit> = _onFinish
+
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> = _errorMessage 
 
     private var startTimeMillis: Long = 0
 
@@ -69,6 +72,7 @@ class TrainingViewModel(
             val duration = trainingTimeMillis.milliseconds
             val date: LocalDate =
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            
             val training = when (trainingActions) {
                 TrainingActions.Yoga -> Training.Yoga(date, duration)
                 TrainingActions.FullBodyStrength -> Training.FullBodyStrength(date, duration)
@@ -76,18 +80,19 @@ class TrainingViewModel(
             }
 
             val sendTrainingResult = trainingService.saveTraining(training)
-
-            sendTrainingResult.onFailure { error ->
-                Log.d("TSLA", error.toString())
-            }
-
-            sendTrainingResult.onSuccess {
-                Log.d("TSLA", "Training sent successfully")
-            }
-
+            
             withContext(Dispatchers.Main) {
-                addTrainingHistory(training)
-                _onSuccess.value = Unit
+                sendTrainingResult.onSuccess {
+                    addTrainingHistory(training)
+                }
+
+                sendTrainingResult.onFailure { error ->
+                    _errorMessage.value = "Ошибка отправки тренировки на сервер"
+                    _errorMessage.value = "Тренировка не была сохранена"
+                    logger.logDebug(error.toString())
+                }
+                
+                _onFinish.value = Unit
             }
         }
     }

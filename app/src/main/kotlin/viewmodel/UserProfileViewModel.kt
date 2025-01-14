@@ -1,6 +1,5 @@
 package viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,13 +11,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import utils.CustomLogger
 import utils.UserSerializer
 
+class UserProfileViewModel(
+    private val userSerializer: UserSerializer,
+    private val user: User,
+    private val logger: CustomLogger
+): ViewModel() {
 
-class UserProfileViewModel(private val userSerializer: UserSerializer, private val user: User): ViewModel() {
-
-    private val _onSuccess = MutableLiveData<Unit>()
-    val onSuccess: LiveData<Unit> = _onSuccess;
+    private val _onFinish = MutableLiveData<Unit>()
+    val onFinish: LiveData<Unit> = _onFinish;
 
     fun logout(){
         CoroutineScope(Dispatchers.IO).launch {
@@ -26,15 +29,14 @@ class UserProfileViewModel(private val userSerializer: UserSerializer, private v
                 userSerializer.dropAccount()
                 user.account = Account.empty()
                 user.userInfo = UserInfo.empty()
-                Log.d("TSLA", "Successfully logged out")
             }
 
             withContext(Dispatchers.Main) {
                 logOutResult.onFailure { error ->
-                    Log.d("TSLA", error.toString())
+                    logger.logDebug(error.toString())
                 }
 
-                _onSuccess.value = Unit
+                _onFinish.value = Unit
             }
         }
     }
