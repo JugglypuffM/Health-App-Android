@@ -14,13 +14,15 @@ import utils.CircularList
 import utils.CustomLogger
 import utils.XMLReader
 
-@Root(name = "iconList", strict = false)
+
+//TODO попытаться буфферизировать значения
+@Root(name = "iconList")
 private data class RawIconList(
     @field:ElementList(inline = true, entry = "icon")
     var items: MutableList<RawIcon> = mutableListOf()
 )
 
-@Root(name = "icon", strict = false)
+@Root(name = "icon")
 private data class RawIcon(
     @field:Element(name = "title")
     var title: String = "",

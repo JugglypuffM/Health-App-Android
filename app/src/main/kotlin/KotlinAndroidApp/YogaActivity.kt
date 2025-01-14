@@ -35,20 +35,25 @@ class YogaActivity : AppCompatActivity() {
             mainApplication.trainingHistory.value::add,
             mainApplication.trainingService!!,
             mainApplication.logger,
-            mainApplication.xmlReader
+            mainApplication.xmlReader,
+            application
         )
+
+        viewModel.onError.observe(this, Observer {
+            startActivity(Intent(this@YogaActivity, HomeScreenActivity::class.java))
+        })
         
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(this@YogaActivity, message, Toast.LENGTH_SHORT).show()
         })
 
         viewModel.onFinish.observe(this, Observer {
-            startActivity(Intent(this@YogaActivity, HomeScreenActivity::class.java))
+            finish()
         })
 
         viewModel.currentAction.observe(this, Observer { action ->
             titleText.text = action.title
-            image.setImageResource(action.imageSource)
+            image.setImageResource(action.imageResId)
         })
 
         viewModel.millisUntilTrainingFinished.observe(this, Observer { millisUntilFinished ->
@@ -61,7 +66,5 @@ class YogaActivity : AppCompatActivity() {
         cancelButton.setOnClickListener {
             viewModel.cancel()
         }
-
-        viewModel.start()
     }
 }

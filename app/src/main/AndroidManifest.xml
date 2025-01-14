@@ -16,7 +16,8 @@
         android:theme="@style/Theme.KotlinAndroidApp"
         tools:targetApi="31">
         <activity
-            android:name="KotlinAndroidApp.YogaActivity">
+            android:name="KotlinAndroidApp.YogaActivity"
+            android:exported="true">
         </activity>
         <activity
             android:name="KotlinAndroidApp.RegistrationActivity"

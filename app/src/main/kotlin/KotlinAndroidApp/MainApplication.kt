@@ -4,7 +4,6 @@ import android.app.Application
 import com.project.kotlin_android_app.BuildConfig
 import domain.Account
 import domain.User
-import domain.training.TrainingActions
 import domain.training.TrainingHistory
 import services.auth.AuthenticatorService
 import services.auth.AuthenticatorServiceStub
@@ -39,13 +38,13 @@ class MainApplication : Application() {
     lateinit var userSerializer: UserSerializer
     private set
 
-    var currentTraining: TrainingActions? = null
     val trainingHistory: TrainingHistory = TrainingHistory(mutableListOf())
 
     override fun onCreate() {
         super.onCreate()
         xmlReader = XMLReader(this)
         userSerializer = UserSerializer(this)
+        createServices(Account("", ""))
     }
 
 //    fun createServices(account: Account): Pair<DataService, TrainingService>{

@@ -2,7 +2,7 @@ package utils
 
 import android.os.CountDownTimer
 import android.util.Log
-import domain.training.TrainingAction
+import domain.training.Action
 
 /**
  * Цепочка таймеров
@@ -13,9 +13,9 @@ import domain.training.TrainingAction
  */
 class TimerChain(
     private val updateViewTimer: (millisUntilFinished: Long) -> Unit,
-    private val updateActivity: (trainingAction: TrainingAction) -> Unit,
+    private val updateActivity: (trainingAction: Action) -> Unit,
     private val finish: () -> Unit,
-    training: Iterable<TrainingAction>
+    training: Iterable<Action>
 ) {
     private val trainingIterator = training.iterator()
     private var timer: CountDownTimer? = null
@@ -52,7 +52,7 @@ class TimerChain(
         else {
             val action = trainingIterator.next()
             updateActivity(action)
-            startTimer(action.timeUntilMillis)
+            startTimer(action.durationMilliseconds)
         }
     }
 
