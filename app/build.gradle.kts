@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.dotenv.kotlin)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.simple.xml)
 
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
@@ -75,6 +76,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.junit.jupiter)
+
 }
 
 protobuf {

@@ -17,12 +17,15 @@ import services.training.TrainingServiceStub
 import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator
+import utils.XMLReader
 
 /**
  * Класс, представляющий глобальное состояние приложения.
  */
 class MainApplication : Application() {
     val logger: CustomLogger = CustomLogger()
+    lateinit var xmlReader: XMLReader
+    private set
 
     val authenticator: AuthenticatorService = AuthenticatorServiceStub()
     var dataRequester: DataService? = null
@@ -41,7 +44,8 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        userSerializer = UserSerializer(applicationContext)
+        xmlReader = XMLReader(this)
+        userSerializer = UserSerializer(this)
     }
 
 //    fun createServices(account: Account): Pair<DataService, TrainingService>{

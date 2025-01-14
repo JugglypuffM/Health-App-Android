@@ -17,13 +17,14 @@ import kotlinx.datetime.toLocalDateTime
 import services.training.TrainingService
 import utils.CustomLogger
 import utils.TimerChain
+import utils.XMLReader
 import kotlin.time.Duration.Companion.milliseconds
 
-class TrainingViewModel(
-    private val trainingActions: TrainingActions,
+class YogaViewModel(
     private val addTrainingHistory: (Training) -> Unit,
     private val trainingService: TrainingService,
-    private val logger: CustomLogger
+    private val logger: CustomLogger,
+    private val xmlReader: XMLReader
 ): ViewModel() {
 
     private val _millisUntilTrainingFinished = MutableLiveData<Long>()
@@ -40,11 +41,11 @@ class TrainingViewModel(
 
     private var startTimeMillis: Long = 0
 
-    private val timerChain = TimerChain(
+    private var timerChain = TimerChain(
         ::updateViewTimer,
         ::updateActivity,
         ::onFinish,
-        trainingActions.value
+        emptyList()
     )
 
     fun updateViewTimer(millisUntilFinished: Long){
@@ -72,13 +73,8 @@ class TrainingViewModel(
             val duration = trainingTimeMillis.milliseconds
             val date: LocalDate =
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            
-            val training = when (trainingActions) {
-                TrainingActions.Yoga -> Training.Yoga(date, duration)
-                TrainingActions.FullBodyStrength -> Training.FullBodyStrength(date, duration)
-                TrainingActions.Cardio -> Training.Cardio(date, duration)
-            }
 
+            val training = Training.Yoga(date, duration)
             val sendTrainingResult = trainingService.saveTraining(training)
             
             withContext(Dispatchers.Main) {

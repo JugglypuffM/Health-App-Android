@@ -1,0 +1,4 @@
+package KotlinAndroidApp
+
+class JoggingActivity {
+}

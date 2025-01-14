@@ -94,27 +94,5 @@ sealed class Training(
         }
     }
 
-    class FullBodyStrength(date: LocalDate, duration: Duration): Training(
-        title = "Полная силовая тренировка",
-        description = "",
-        date = date,
-        duration = duration
-    ) {
-        override fun toTrainingProto(): TrainingProto.Training {
-            TODO("Not yet implemented")
-        }
-    }
-
-    class Cardio(date: LocalDate, duration: Duration): Training(
-        title = "Кардио тренировка",
-        description = "",
-        date = date,
-        duration = duration
-    ) {
-        override fun toTrainingProto(): TrainingProto.Training {
-            TODO("Not yet implemented")
-        }
-    }
-
     abstract fun toTrainingProto(): TrainingProto.Training
 }

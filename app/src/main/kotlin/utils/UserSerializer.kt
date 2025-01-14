@@ -1,18 +1,18 @@
 package utils
 
+import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import arrow.core.raise.result
 import domain.Account
 
 /**
  * Локальное хранилище для пользователя
  */
-class UserSerializer(private val applicationContext: Context) {
+class UserSerializer(context: Application) {
     class UserNotFoundException(message: String) : Exception(message)
 
     val TABLE_NAME = "User"
-    val sharedPreferences = applicationContext.getSharedPreferences(TABLE_NAME, Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences(TABLE_NAME, Context.MODE_PRIVATE)
 
     private val LOGIN = "login"
     private val PASSWORD = "password"

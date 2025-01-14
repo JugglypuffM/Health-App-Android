@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<trainingActions>
+    <trainingAction>
+        <name>Подготовьтесь</name>
+        <duration>10000</duration>
+        <imageResId>waiting</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Тадасана</name>
+        <duration>60000</duration>
+        <imageResId>yoga_tadasana</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Врикшасана</name>
+        <duration>60000</duration>
+        <imageResId>yoga_super_tadasana</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Адхо Мукха Шванасана</name>
+        <duration>90000</duration>
+        <imageResId>yoga_dog_face_down</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Чатуранга Дандасана</name>
+        <duration>30000</duration>
+        <imageResId>yoga_dog_face_up</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Урдхва Мукха Шванасана</name>
+        <duration>60000</duration>
+        <imageResId>yoga_half_dog_face_down</imageResId>
+    </trainingAction>
+    <trainingAction>
+        <name>Вирабхадрасана I</name>
+        <duration>90000</duration>
+        <imageResId>yoga_varior_pose</imageResId>
+    </trainingAction>
+</trainingActions>

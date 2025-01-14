@@ -10,14 +10,14 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
-import viewmodel.TrainingViewModel
+import viewmodel.YogaViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Активность тренировки (таймер на выполнение списка действий тренировки)
  */
-class TrainingActivity : AppCompatActivity() {
+class YogaActivity : AppCompatActivity() {
 
     @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,19 +31,19 @@ class TrainingActivity : AppCompatActivity() {
         val cancelButton: Button = findViewById(R.id.startStopButton)
 
         val mainApplication = application as MainApplication
-        val viewModel = TrainingViewModel(
-            mainApplication.currentTraining!!,
+        val viewModel = YogaViewModel(
             mainApplication.trainingHistory.value::add,
             mainApplication.trainingService!!,
-            mainApplication.logger
+            mainApplication.logger,
+            mainApplication.xmlReader
         )
         
         viewModel.errorMessage.observe(this, Observer { message ->
-            Toast.makeText(this@TrainingActivity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@YogaActivity, message, Toast.LENGTH_SHORT).show()
         })
 
         viewModel.onFinish.observe(this, Observer {
-            startActivity(Intent(this@TrainingActivity, HomeScreenActivity::class.java))
+            startActivity(Intent(this@YogaActivity, HomeScreenActivity::class.java))
         })
 
         viewModel.currentAction.observe(this, Observer { action ->
