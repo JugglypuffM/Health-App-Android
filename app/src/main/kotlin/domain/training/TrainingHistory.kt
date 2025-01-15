@@ -3,5 +3,14 @@ package domain.training
 /**
  * История тренировок
  */
-@JvmInline
-value class TrainingHistory(val value: MutableList<Training>)
+class TrainingHistory(
+    value: List<Training>
+) {
+    var value = value
+    private set
+
+    operator fun plus(training: Training): TrainingHistory {
+        val newList = value + training
+        return TrainingHistory(newList)
+    }
+}

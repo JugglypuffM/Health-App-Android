@@ -1,7 +1,7 @@
 package KotlinAndroidApp
 
 import android.app.Application
-import com.project.kotlin_android_app.BuildConfig
+import androidx.lifecycle.MutableLiveData
 import domain.Account
 import domain.User
 import domain.training.TrainingHistory
@@ -9,8 +9,6 @@ import services.auth.AuthenticatorService
 import services.auth.AuthenticatorServiceStub
 import services.data.DataService
 import services.data.DataServiceStub
-import services.data.GrpcDataService
-import services.training.GrpcTrainingService
 import services.training.TrainingService
 import services.training.TrainingServiceStub
 import utils.CustomLogger
@@ -38,7 +36,7 @@ class MainApplication : Application() {
     lateinit var userSerializer: UserSerializer
     private set
 
-    val trainingHistory: TrainingHistory = TrainingHistory(mutableListOf())
+    val trainingHistory = MutableLiveData(TrainingHistory(emptyList()))
 
     override fun onCreate() {
         super.onCreate()

@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.kotlin_android_app.R
 import domain.training.Training
+import domain.training.TrainingHistory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,13 +26,14 @@ import utils.DistanceTracker
 import utils.XMLReader
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 
 class JoggingViewModel(
     context: Application,
     xmlReader: XMLReader,
     private val logger: CustomLogger,
-    private val addTrainingHistory: (Training) -> Unit,
+    private val trainingHistory: MutableLiveData<TrainingHistory>,
     private val trainingService: TrainingService
 ): ViewModel() {
 
@@ -151,7 +153,7 @@ class JoggingViewModel(
         distanceTracker.stopTracking()
         
         CoroutineScope(Dispatchers.IO).launch {
-            val duration: Duration = (_durationMilliseconds.value ?: 0.0).toLong().milliseconds
+            val duration: Duration = stopwatchTime.seconds
             val distance: Double = _distanceMeters.value ?: 0.0
             val date: LocalDate =
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
@@ -161,7 +163,7 @@ class JoggingViewModel(
 
             withContext(Dispatchers.Main) {
                 sendTrainingResult.onSuccess {
-                    addTrainingHistory(training)
+                    trainingHistory.value = trainingHistory.value!! + training
                 }
 
                 sendTrainingResult.onFailure { error ->

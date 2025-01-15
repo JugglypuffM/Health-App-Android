@@ -2,50 +2,84 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.project.kotlin_android_app.R
 import domain.training.Training
+import domain.training.TrainingHistory
 import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.time.DurationUnit
 
-class TrainingAdapter(private val trainings: List<Training>) : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
+class TrainingAdapter(
+    lifecycleOwner: LifecycleOwner,
+    private val trainingHistory: LiveData<TrainingHistory>
+) : RecyclerView.Adapter<TrainingAdapter.ViewHolder>() {
+    sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val durationTextView: TextView = itemView.findViewById(R.id.trainingDuration)
+        private val dataTextView: TextView = itemView.findViewById(R.id.trainingDate)
 
-    // Создаём ViewHolder
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_training, parent, false)
-        return ViewHolder(view)
-    }
+        open fun bind(item: Training){
+            durationTextView.text = "Продолжительность: ${item.duration.inWholeMinutes} минут"
 
-    // Привязываем данные к ViewHolder
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val training = trainings[position]
-        holder.bind(training)
-    }
-
-    // Возвращаем количество элементов
-    override fun getItemCount(): Int {
-        return trainings.size
-    }
-
-    // ViewHolder для элемента списка
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvTrainingTitle: TextView = itemView.findViewById(R.id.tvTrainingTitle)
-        private val tvTrainingTime: TextView = itemView.findViewById(R.id.tvTrainingTime)
-        private val tvTrainingDuration: TextView = itemView.findViewById(R.id.tvTrainingDuration)
-
-        // Метод для привязки данных
-        fun bind(training: Training) {
-            tvTrainingTitle.text = training.title
-
-            // Форматируем дату и время
-            val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            val formattedDate = training.date.toJavaLocalDate().format(formatter)
-            tvTrainingTime.text = formattedDate
-
-            // Форматируем продолжительность
-            val durationInMinutes = training.duration.toDouble(DurationUnit.MINUTES).toInt()
-            tvTrainingDuration.text = "Продолжительность $durationInMinutes минут"
+            val javaLocalDate = item.date.toJavaLocalDate()
+            dataTextView.text = javaLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
         }
+    }
+
+    class YogaViewHolder(itemView: View) : ViewHolder(itemView)
+    class DistanceViewHolder(itemView: View): ViewHolder(itemView) {
+        private val distanceTextView = itemView.findViewById<TextView>(R.id.trainingDistance)
+
+        override fun bind(item: Training){
+            super.bind(item)
+            if(item is Training.Jogging) {
+                val meterDistance = item.distance.toLong()
+                distanceTextView.text = "Протяжённость: ${meterDistance} метров"
+            }
+        }
+    }
+
+    private var items: List<Training>;
+
+    init {
+        items = trainingHistory.value?.value!!
+
+        trainingHistory.observe(lifecycleOwner, Observer { trainingHistory ->
+            items = trainingHistory.value
+            notifyDataSetChanged()
+        })
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (items.get(position)) {
+            is Training.Yoga -> YOGA_TYPE
+            is Training.Jogging -> JOGGING_TYPE
+            null -> throw IllegalArgumentException()
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return when (viewType) {
+            YOGA_TYPE -> YogaViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_yoga, parent, false)
+            )
+            JOGGING_TYPE -> DistanceViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_jogging, parent, false)
+            )
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(items[position])
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    companion object {
+        private const val YOGA_TYPE = 0
+        private const val JOGGING_TYPE = 1
     }
 }

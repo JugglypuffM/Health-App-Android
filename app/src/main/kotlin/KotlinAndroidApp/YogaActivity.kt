@@ -32,7 +32,7 @@ class YogaActivity : AppCompatActivity() {
 
         val mainApplication = application as MainApplication
         val viewModel = YogaViewModel(
-            mainApplication.trainingHistory.value::add,
+            mainApplication.trainingHistory,
             mainApplication.trainingService!!,
             mainApplication.logger,
             mainApplication.xmlReader,

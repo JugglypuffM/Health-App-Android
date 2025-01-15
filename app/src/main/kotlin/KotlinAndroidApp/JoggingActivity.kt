@@ -44,7 +44,7 @@ class JoggingActivity: AppCompatActivity(){
             application,
             mainApplication.xmlReader,
             mainApplication.logger,
-            mainApplication.trainingHistory.value::add,
+            mainApplication.trainingHistory,
             mainApplication.trainingService!!
         )
 

@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.project.kotlin_android_app.R
 import domain.training.Action
 import domain.training.Training
+import domain.training.TrainingHistory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @SuppressLint("DiscouragedApi")
 class YogaViewModel(
-    private val addTrainingHistory: (Training) -> Unit,
+    private val trainingLiveData: MutableLiveData<TrainingHistory>,
     private val trainingService: TrainingService,
     private val logger: CustomLogger,
     xmlReader: XMLReader,
@@ -125,7 +126,7 @@ class YogaViewModel(
             
             withContext(Dispatchers.Main) {
                 sendTrainingResult.onSuccess {
-                    addTrainingHistory(training)
+                    trainingLiveData.value = trainingLiveData.value!! + training
                 }
 
                 sendTrainingResult.onFailure { error ->

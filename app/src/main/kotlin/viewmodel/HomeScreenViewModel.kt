@@ -14,36 +14,34 @@ import utils.CircularList
 import utils.CustomLogger
 import utils.XMLReader
 
-
-//TODO попытаться буфферизировать значения
-@Root(name = "iconList")
-private data class RawIconList(
-    @field:ElementList(inline = true, entry = "icon")
-    var items: MutableList<RawIcon> = mutableListOf()
-)
-
-@Root(name = "icon")
-private data class RawIcon(
-    @field:Element(name = "title")
-    var title: String = "",
-
-    @field:Element(name = "description")
-    var description: String = "",
-
-    @field:Element(name = "imageResId")
-    var imageResId: String = "",
-
-    @field:Element(name = "activityId")
-    var activityClass: String = ""
-)
-
-
 @SuppressLint("DiscouragedApi")
 class HomeScreenViewModel(
     context: Application,
     xmlReader: XMLReader,
     logger: CustomLogger,
 ) : ViewModel() {
+
+    @Root(name = "iconList")
+    private data class RawIconList(
+        @field:ElementList(inline = true, entry = "icon")
+        var items: MutableList<RawIcon> = mutableListOf()
+    )
+
+    @Root(name = "icon")
+    private data class RawIcon(
+        @field:Element(name = "title")
+        var title: String = "",
+
+        @field:Element(name = "description")
+        var description: String = "",
+
+        @field:Element(name = "imageResId")
+        var imageResId: String = "",
+
+        @field:Element(name = "activityId")
+        var activityClass: String = ""
+    )
+
     private val _currentTrainingIcon = MutableLiveData<Icon>()
     val currentTrainingIcon: LiveData<Icon> = _currentTrainingIcon
 

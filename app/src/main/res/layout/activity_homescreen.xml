@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:overScrollMode="always"
-                tools:listitem="@layout/item_training" />
+                tools:listitem="@layout/item_yoga" />
 
         <View
                 android:layout_width="match_parent"

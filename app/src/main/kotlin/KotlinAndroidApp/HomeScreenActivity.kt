@@ -69,8 +69,10 @@ class HomeScreenActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.rvTrainings)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val trainings = mainApplication.trainingHistory.value
-        val adapter = TrainingAdapter(trainings)
+
+        val trainings = mainApplication.trainingHistory
+        val adapter = TrainingAdapter(this, trainings)
+
         recyclerView.adapter = adapter
     }
 }
