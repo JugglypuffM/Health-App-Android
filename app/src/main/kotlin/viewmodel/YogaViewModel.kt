@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.kotlin_android_app.R
 import domain.training.Action
+import domain.training.Containers
 import domain.training.Training
 import domain.training.TrainingHistory
 import kotlinx.coroutines.CoroutineScope
@@ -17,9 +18,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.ElementList
-import org.simpleframework.xml.Root
 import services.training.TrainingService
 import utils.CustomLogger
 import utils.TimerChain
@@ -36,24 +34,6 @@ class YogaViewModel(
     xmlReader: XMLReader,
     context: Application
 ): ViewModel() {
-
-    @Root(name = "actionList")
-    private data class RawActionList(
-        @field:ElementList(inline = true, entry = "action")
-        var items: MutableList<RawAction> = mutableListOf()
-    )
-
-    @Root(name = "action")
-    private data class RawAction(
-        @field:Element(name = "title")
-        var title: String = "",
-
-        @field:Element(name = "duration")
-        var durationMilliseconds: Long = 0,
-
-        @field:Element(name = "imageResId")
-        var imageResId: String = ""
-    )
 
     private val _onError = MutableLiveData<Unit>()
     val onError: LiveData<Unit> = _onError
@@ -75,7 +55,7 @@ class YogaViewModel(
 
     init {
         try{
-            val rawActionList = xmlReader.read(RawActionList::class.java, R.raw.yoga_action_list)
+            val rawActionList = xmlReader.read(Containers.RawActionList::class.java, R.raw.yoga_action_list)
             val actionList = rawActionList.items.map { rawAction ->
                 Action(
                     rawAction.title,

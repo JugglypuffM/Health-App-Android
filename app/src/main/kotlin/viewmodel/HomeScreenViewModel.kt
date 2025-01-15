@@ -6,10 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.project.kotlin_android_app.R
+import domain.training.Containers
 import domain.training.Icon
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.ElementList
-import org.simpleframework.xml.Root
 import utils.CircularList
 import utils.CustomLogger
 import utils.XMLReader
@@ -21,27 +19,6 @@ class HomeScreenViewModel(
     logger: CustomLogger,
 ) : ViewModel() {
 
-    @Root(name = "iconList")
-    private data class RawIconList(
-        @field:ElementList(inline = true, entry = "icon")
-        var items: MutableList<RawIcon> = mutableListOf()
-    )
-
-    @Root(name = "icon")
-    private data class RawIcon(
-        @field:Element(name = "title")
-        var title: String = "",
-
-        @field:Element(name = "description")
-        var description: String = "",
-
-        @field:Element(name = "imageResId")
-        var imageResId: String = "",
-
-        @field:Element(name = "activityId")
-        var activityClass: String = ""
-    )
-
     private val _currentTrainingIcon = MutableLiveData<Icon>()
     val currentTrainingIcon: LiveData<Icon> = _currentTrainingIcon
 
@@ -52,7 +29,7 @@ class HomeScreenViewModel(
 
     init{
         try {
-            val rawIconList = xmlReader.read(RawIconList::class.java, R.raw.icon_list)
+            val rawIconList = xmlReader.read(Containers.RawIconList::class.java, R.raw.icon_list)
             val iconList = rawIconList.items.map { rawIcon ->
                     Icon(
                         rawIcon.title,

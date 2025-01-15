@@ -12,6 +12,8 @@ import kotlin.time.Duration.Companion.seconds
  * Информация о тренировке
  * Специфична для каждого типа тренировки
  */
+
+//TODO remove title, description
 sealed class Training(
     val title: String,
     val description: String,
@@ -91,6 +93,25 @@ sealed class Training(
 
         override fun toString(): String {
             return "Jogging($date, $duration, $distance)"
+        }
+    }
+
+    /**
+     * Информация о планке
+     */
+    class Plank(date: LocalDate, duration: Duration) : Training(
+        title = "",
+        description = "",
+        date=date,
+        duration=duration
+    ){
+
+        override fun toTrainingProto(): TrainingProto.Training {
+            TODO("реализовать")
+        }
+
+        override fun toString(): String {
+            return "Plank($date, $duration)"
         }
     }
 

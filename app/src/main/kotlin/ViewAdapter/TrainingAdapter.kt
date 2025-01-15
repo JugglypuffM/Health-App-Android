@@ -29,6 +29,7 @@ class TrainingAdapter(
     }
 
     class YogaViewHolder(itemView: View) : ViewHolder(itemView)
+    class PlankViewHolder(itemView: View) : ViewHolder(itemView)
     class DistanceViewHolder(itemView: View): ViewHolder(itemView) {
         private val distanceTextView = itemView.findViewById<TextView>(R.id.trainingDistance)
 
@@ -47,7 +48,7 @@ class TrainingAdapter(
         items = trainingHistory.value?.value!!
 
         trainingHistory.observe(lifecycleOwner, Observer { trainingHistory ->
-            items = trainingHistory.value
+            items = trainingHistory.value.reversed()
             notifyDataSetChanged()
         })
     }
@@ -56,6 +57,7 @@ class TrainingAdapter(
         return when (items.get(position)) {
             is Training.Yoga -> YOGA_TYPE
             is Training.Jogging -> JOGGING_TYPE
+            is Training.Plank -> PLANK_TYPE
             null -> throw IllegalArgumentException()
         }
     }
@@ -67,6 +69,9 @@ class TrainingAdapter(
             )
             JOGGING_TYPE -> DistanceViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_jogging, parent, false)
+            )
+            PLANK_TYPE -> PlankViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.item_plank, parent, false)
             )
             else -> throw IllegalArgumentException("Invalid view type")
         }
@@ -81,5 +86,6 @@ class TrainingAdapter(
     companion object {
         private const val YOGA_TYPE = 0
         private const val JOGGING_TYPE = 1
+        private const val PLANK_TYPE = 2
     }
 }

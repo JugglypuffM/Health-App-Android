@@ -1,6 +1,5 @@
 package viewmodel
 
-import android.app.Application
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
@@ -22,14 +21,12 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import services.training.TrainingService
 import utils.CustomLogger
-import utils.DistanceTracker
 import utils.XMLReader
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 
-class JoggingViewModel(
-    context: Application,
+class PlankViewModel(
     xmlReader: XMLReader,
     private val logger: CustomLogger,
     private val trainingHistory: MutableLiveData<TrainingHistory>,
@@ -53,7 +50,7 @@ class JoggingViewModel(
 
     private val _distanceMeters = MutableLiveData<Double>()
     val distanceMeters: LiveData<Double> = _distanceMeters
-    
+
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
@@ -69,15 +66,9 @@ class JoggingViewModel(
     private lateinit var countdownAction: Actions.CountdownAction
     private lateinit var stopwatchAction: Actions.StopwatchAction
 
-    private lateinit var distanceTracker: DistanceTracker
-
     init {
-        distanceTracker = DistanceTracker(context){ distanceMeter ->
-            _distanceMeters.value = distanceMeter
-        }
-
         try {
-            val container = xmlReader.read(Containers.Container::class.java, R.raw.jogging_action)
+            val container = xmlReader.read(Containers.Container::class.java, R.raw.plank_action)
 
             countdownAction = container.countdownAction
             stopwatchAction = container.stopwatchAction
@@ -107,7 +98,6 @@ class JoggingViewModel(
         _descriptionMessage.value = stopwatchAction.title
         _timerDescriptionMessage.value = stopwatchAction.timerDescription
         _stopwatchSeconds.value = 0
-        distanceTracker.startTracking()
 
         handler.post(object : Runnable {
             override fun run() {
@@ -119,15 +109,12 @@ class JoggingViewModel(
     }
 
     fun onFinish(){
-        distanceTracker.stopTracking()
-        
         CoroutineScope(Dispatchers.IO).launch {
             val duration: Duration = stopwatchTime.seconds
-            val distance: Double = _distanceMeters.value ?: 0.0
             val date: LocalDate =
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-            val training = Training.Jogging(date, duration, distance)
+            val training = Training.Plank(date, duration)
             val sendTrainingResult = trainingService.saveTraining(training)
 
             withContext(Dispatchers.Main) {
