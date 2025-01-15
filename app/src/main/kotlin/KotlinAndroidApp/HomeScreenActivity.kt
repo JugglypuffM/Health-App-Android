@@ -1,5 +1,6 @@
 package KotlinAndroidApp
 
+import TrainingAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -8,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.project.kotlin_android_app.R
 import domain.training.Training
 
@@ -53,6 +56,12 @@ class HomeScreenActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             viewModel.nextTraining()
         }
+
+        val recyclerView: RecyclerView = findViewById(R.id.rvTrainings)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val trainings = mainApplication.trainingHistory.list
+        val adapter = TrainingAdapter(trainings)
+        recyclerView.adapter = adapter
     }
 
     private fun updateUI(training: Training) {
