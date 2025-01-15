@@ -26,8 +26,8 @@ class YogaActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         val image: ImageView = findViewById(R.id.image)
-        val titleText: TextView = findViewById(R.id.messageText)
-        val timerText: TextView = findViewById(R.id.timerText)
+        val titleText: TextView = findViewById(R.id.Descirption)
+        val timerText: TextView = findViewById(R.id.ClockText)
         val cancelButton: Button = findViewById(R.id.startStopButton)
 
         val mainApplication = application as MainApplication

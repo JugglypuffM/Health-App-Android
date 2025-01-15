@@ -44,8 +44,11 @@ class MainApplication : Application() {
         super.onCreate()
         xmlReader = XMLReader(this)
         userSerializer = UserSerializer(this)
+
+        //TODO remove
         createServices(Account("", ""))
     }
+//TODO uncomment
 
 //    fun createServices(account: Account): Pair<DataService, TrainingService>{
 //        dataRequester = GrpcDataService(
@@ -65,6 +68,7 @@ class MainApplication : Application() {
 //        return Pair(dataRequester!!, trainingService!!)
 //    }
 
+    //TODO remove
     fun createServices(account: Account): Pair<DataService, TrainingService>{
         dataRequester = DataServiceStub()
         trainingService = TrainingServiceStub()

@@ -25,23 +25,7 @@ import utils.TimerChain
 import utils.XMLReader
 import kotlin.time.Duration.Companion.milliseconds
 
-@Root(name = "actionList")
-private data class RawActionList(
-    @field:ElementList(inline = true, entry = "action")
-    var items: MutableList<RawAction> = mutableListOf()
-)
 
-@Root(name = "action")
-private data class RawAction(
-    @field:Element(name = "title")
-    var title: String = "",
-
-    @field:Element(name = "duration")
-    var durationMilliseconds: Long = 0,
-
-    @field:Element(name = "imageResId")
-    var imageResId: String = ""
-)
 
 @SuppressLint("DiscouragedApi")
 class YogaViewModel(
@@ -51,6 +35,25 @@ class YogaViewModel(
     xmlReader: XMLReader,
     context: Application
 ): ViewModel() {
+
+    @Root(name = "actionList")
+    private data class RawActionList(
+        @field:ElementList(inline = true, entry = "action")
+        var items: MutableList<RawAction> = mutableListOf()
+    )
+
+    @Root(name = "action")
+    private data class RawAction(
+        @field:Element(name = "title")
+        var title: String = "",
+
+        @field:Element(name = "duration")
+        var durationMilliseconds: Long = 0,
+
+        @field:Element(name = "imageResId")
+        var imageResId: String = ""
+    )
+
     private val _onError = MutableLiveData<Unit>()
     val onError: LiveData<Unit> = _onError
 

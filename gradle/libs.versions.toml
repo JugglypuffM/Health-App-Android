@@ -23,6 +23,7 @@ perfmarkApi = "0.27.0"
 junitJupiter = "5.11.2"
 secretsGradlePlugin = "2.0.1"
 simpleXml = "2.7.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -52,6 +53,7 @@ perfmark-api = { module = "io.perfmark:perfmark-api", version.ref = "perfmarkApi
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 simple-xml = { module = "org.simpleframework:simple-xml", version.ref = "simpleXml" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -5,66 +5,65 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:content="KotlinAndoridApp/TrainingActivity">
 
-  <FrameLayout
-          android:id="@+id/imageContainer"
-          android:layout_width="match_parent"
-          android:layout_height="300dp"
-          android:layout_marginStart="16dp"
-          android:layout_marginEnd="16dp"
-          app:layout_constraintBottom_toTopOf="@id/messageText"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintVertical_chainStyle="packed"
-          android:layout_marginBottom="90dp">
+    <FrameLayout
+        android:id="@+id/imageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
 
-          <!-- ImageView внутри контейнера -->
-      <ImageView
-              android:id="@+id/image"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:scaleType="fitCenter"
-              android:src="@drawable/yoga_dog_face_down" />
-  </FrameLayout>
+        <!-- ImageView внутри контейнера -->
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/yoga_dog_face_down" />
+    </FrameLayout>
 
-  <TextView
-          android:id="@+id/messageText"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Здесь могла быть ваша реклама"
-          android:textSize="20sp"
-          android:width="300sp"
-          android:gravity="center"
-          app:layout_constraintBottom_toTopOf="@id/timerText"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintVertical_chainStyle="packed"
-          android:layout_marginBottom="16dp" />
+    <TextView
+        android:id="@+id/Descirption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:width="300sp"
+        android:gravity="center"
+        android:text="Какое-то название"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageContainer"
+        app:layout_constraintVertical_chainStyle="packed" />
 
   <!-- Текстовое поле для отображения таймера -->
-  <TextView
-          android:id="@+id/timerText"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="00:00"
-          android:textColor="#279eda"
-          android:textSize="50sp"
-          android:textStyle="bold"
-          android:gravity="center"
-          app:layout_constraintBottom_toTopOf="@id/startStopButton"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintVertical_chainStyle="packed"
-          android:layout_marginBottom="16dp" />
+    <TextView
+        android:id="@+id/ClockText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="00:00"
+        android:textColor="#279eda"
+        android:textSize="50sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Descirption"
+        app:layout_constraintVertical_chainStyle="packed" />
 
   <!-- Кнопка Старт/Стоп -->
-  <Button
-          android:id="@+id/startStopButton"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Завершить"
-          app:layout_constraintBottom_toBottomOf="parent"
-          app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintVertical_bias="0.6"
-          android:layout_marginBottom="100dp" />
+    <Button
+        android:id="@+id/startStopButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="100dp"
+        android:text="Завершить"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ClockText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

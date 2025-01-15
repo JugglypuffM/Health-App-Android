@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.javax.annotation.api)
     implementation(libs.perfmark.api)
     implementation(libs.okio)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.mockk)
     testImplementation(libs.junit.jupiter.api)
