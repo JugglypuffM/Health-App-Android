@@ -1,7 +1,6 @@
 package utils
 
 import android.os.CountDownTimer
-import android.util.Log
 import domain.training.Action
 
 /**

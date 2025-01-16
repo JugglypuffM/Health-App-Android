@@ -2,13 +2,17 @@ package KotlinAndroidApp
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import com.project.kotlin_android_app.BuildConfig
 import domain.Account
 import domain.User
 import domain.training.TrainingHistory
 import services.auth.AuthenticatorService
 import services.auth.AuthenticatorServiceStub
+import services.auth.GrpcAuthenticatorService
 import services.data.DataService
 import services.data.DataServiceStub
+import services.data.GrpcDataService
+import services.training.GrpcTrainingService
 import services.training.TrainingService
 import services.training.TrainingServiceStub
 import utils.CustomLogger
@@ -24,7 +28,10 @@ class MainApplication : Application() {
     lateinit var xmlReader: XMLReader
     private set
 
-    val authenticator: AuthenticatorService = AuthenticatorServiceStub()
+    val authenticator: AuthenticatorService = GrpcAuthenticatorService(
+        BuildConfig.serverAddress,
+        BuildConfig.serverPort.toInt()
+    )
     var dataRequester: DataService? = null
     private set
 
@@ -42,34 +49,28 @@ class MainApplication : Application() {
         super.onCreate()
         xmlReader = XMLReader(this)
         userSerializer = UserSerializer(this)
-
-        //TODO remove
-        createServices(Account("", ""))
     }
-//TODO uncomment
-
-//    fun createServices(account: Account): Pair<DataService, TrainingService>{
-//        dataRequester = GrpcDataService(
-//            account.login,
-//            account.password,
-//            BuildConfig.serverAddress,
-//            BuildConfig.serverPort.toInt()
-//        )
-//
-//        trainingService = GrpcTrainingService(
-//            account.login,
-//            account.password,
-//            BuildConfig.serverAddress,
-//            BuildConfig.serverPort.toInt()
-//        )
-//
-//        return Pair(dataRequester!!, trainingService!!)
-//    }
-
-    //TODO remove
     fun createServices(account: Account): Pair<DataService, TrainingService>{
-        dataRequester = DataServiceStub()
-        trainingService = TrainingServiceStub()
+        dataRequester = GrpcDataService(
+            account.login,
+            account.password,
+            BuildConfig.serverAddress,
+            BuildConfig.serverPort.toInt()
+        )
+
+        trainingService = GrpcTrainingService(
+            account.login,
+            account.password,
+            BuildConfig.serverAddress,
+            BuildConfig.serverPort.toInt()
+        )
+
         return Pair(dataRequester!!, trainingService!!)
     }
+
+//    fun createServices(account: Account): Pair<DataService, TrainingService>{
+//        dataRequester = DataServiceStub()
+//        trainingService = TrainingServiceStub()
+//        return Pair(dataRequester!!, trainingService!!)
+//    }
 }

@@ -15,6 +15,10 @@ import viewmodel.JoggingViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+
+/**
+ * Активность занятия йогой
+ */
 class JoggingActivity: AppCompatActivity(){
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
     private val ACCESS_ON_USE = -1

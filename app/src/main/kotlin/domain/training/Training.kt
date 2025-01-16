@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.seconds
  * Специфична для каждого типа тренировки
  */
 
-//TODO remove title, description
+//TODO удалить title, description
 sealed class Training(
     val title: String,
     val description: String,

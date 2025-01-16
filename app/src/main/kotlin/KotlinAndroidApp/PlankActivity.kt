@@ -11,6 +11,9 @@ import viewmodel.PlankViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Активность стойки в планке
+ */
 class PlankActivity: AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {

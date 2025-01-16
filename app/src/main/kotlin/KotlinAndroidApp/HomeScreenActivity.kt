@@ -15,6 +15,7 @@ import com.project.kotlin_android_app.R
 import domain.training.Icon
 
 class HomeScreenActivity : AppCompatActivity() {
+
     private lateinit var workoutImage: ImageView
     private lateinit var workoutName: TextView
     private lateinit var workoutDescription: TextView

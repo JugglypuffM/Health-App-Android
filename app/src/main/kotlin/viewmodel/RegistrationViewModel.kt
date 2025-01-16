@@ -39,7 +39,7 @@ class RegistrationViewModel(
                 validator.validateConfirmPassword(password, confirmPassword).bind()
                 val account = Account(login, password)
 
-                //TODO переписать register без запроса имени
+                //TODO переписать register без передачи имени
                 authenticator.register("", account.login, account.password).bind()
 
                 createServices(account)
