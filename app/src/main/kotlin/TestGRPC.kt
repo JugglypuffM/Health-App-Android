@@ -88,6 +88,14 @@ suspend fun main() {
             )
         )
     )
+    println(
+        trainingService.saveTraining(
+            Training.Plank(
+                date1,
+                5.minutes
+            )
+        )
+    )
     println()
 
     println("Удачное сохранение тренировок на другую дату")
@@ -105,6 +113,14 @@ suspend fun main() {
             Training.Yoga(
                 date2,
                 20.minutes
+            )
+        )
+    )
+    println(
+        trainingService.saveTraining(
+            Training.Plank(
+                date2,
+                1.minutes
             )
         )
     )
@@ -128,6 +144,14 @@ suspend fun main() {
             )
         )
     )
+    println(
+        trainingService.saveTraining(
+            Training.Plank(
+                now,
+                3.minutes
+            )
+        )
+    )
     println()
 
     println("Удачный запрос данных с изменившейся дистанцией")
@@ -145,4 +169,6 @@ suspend fun main() {
     println("Удачный запрос тренировок на текущую дату")
     println(trainingService.getTrainings(now))
     println()
+
+
 }
