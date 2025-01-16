@@ -77,6 +77,10 @@ class LoginViewModel(
                             _errorMessage.value = "Пользователь не найден"
                         }
 
+                        is Exceptions.UnexpectedError -> {
+                            _errorMessage.value = "Проблема соединения с сервером"
+                        }
+
                         else -> {
                             _errorMessage.value = "Непредвиденная ошибка"
                         }

@@ -28,10 +28,7 @@ class MainApplication : Application() {
     lateinit var xmlReader: XMLReader
     private set
 
-    val authenticator: AuthenticatorService = GrpcAuthenticatorService(
-        BuildConfig.serverAddress,
-        BuildConfig.serverPort.toInt()
-    )
+    val authenticator: AuthenticatorService = AuthenticatorServiceStub()
     var dataRequester: DataService? = null
     private set
 
@@ -51,19 +48,9 @@ class MainApplication : Application() {
         userSerializer = UserSerializer(this)
     }
     fun createServices(account: Account): Pair<DataService, TrainingService>{
-        dataRequester = GrpcDataService(
-            account.login,
-            account.password,
-            BuildConfig.serverAddress,
-            BuildConfig.serverPort.toInt()
-        )
+        dataRequester = DataServiceStub()
 
-        trainingService = GrpcTrainingService(
-            account.login,
-            account.password,
-            BuildConfig.serverAddress,
-            BuildConfig.serverPort.toInt()
-        )
+        trainingService = TrainingServiceStub()
 
         return Pair(dataRequester!!, trainingService!!)
     }

@@ -64,11 +64,13 @@ class HomeScreenViewModel(
             val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
             val numberOfDays = 30
 
-            for (i in 0 until numberOfDays) {
-                val date = currentDate.minus(i, DateTimeUnit.DAY)
-                trainingService.getTrainings(date).map { trainings ->
-                    withContext(Dispatchers.Main) {
-                        trainingHistory.value = trainingHistory.value?.plus(trainings)
+            if(trainingHistory.value?.value?.isEmpty() ?: true) {
+                for (i in 0 until numberOfDays) {
+                    val date = currentDate.minus(i, DateTimeUnit.DAY)
+                    trainingService.getTrainings(date).map { trainings ->
+                        withContext(Dispatchers.Main) {
+                            trainingHistory.value = trainingHistory.value?.plus(trainings)
+                        }
                     }
                 }
             }
