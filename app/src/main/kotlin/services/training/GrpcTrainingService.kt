@@ -84,6 +84,7 @@ class GrpcTrainingService(private val stub: TrainingServiceBlockingStub) : Train
                 Result.success(response.trainingsList.map {
                     if (it.hasYoga()) Training.Yoga(it.yoga)
                     else if (it.hasJogging()) Training.Jogging(it.jogging)
+                    else if (it.hasPlank()) Training.Plank(it.plank)
                     else return@executeCallAsyncWithError Result.failure(
                         Exceptions.UnexpectedError(
                             "Unexpected training type, probably server was updated"
