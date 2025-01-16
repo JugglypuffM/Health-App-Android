@@ -96,9 +96,27 @@ sealed class Training(
         date=date,
         duration=duration
     ){
+        constructor(plank: TrainingProto.Plank) : this(
+            LocalDate.fromEpochDays(plank.date.seconds.toInt()),
+            plank.duration.seconds.seconds
+        )
 
         override fun toTrainingProto(): TrainingProto.Training {
-            TODO("реализовать")
+            return TrainingProto.Training.newBuilder()
+                .setPlank(
+                    TrainingProto.Plank.newBuilder()
+                        .setDate(
+                            Timestamp.newBuilder()
+                                .setSeconds(date.atStartOfDayIn(TimeZone.currentSystemDefault()).epochSeconds)
+                                .build()
+                        )
+                        .setDuration(
+                            com.google.protobuf.Duration.newBuilder()
+                                .setSeconds(duration.inWholeSeconds)
+                                .build()
+                        )
+                        .build()
+                ).build()
         }
 
         override fun toString(): String {
