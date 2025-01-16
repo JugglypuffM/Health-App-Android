@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<container>
+    <countdownAction>
+        <title>Подготовьтесь</title>
+        <timerDescription>Подождите:</timerDescription>
+        <duration>10000</duration>
+    </countdownAction>
+    <stopwatchAction>
+        <title>Планка</title>
+        <timerDescription>Время:</timerDescription>
+    </stopwatchAction>
+</container>

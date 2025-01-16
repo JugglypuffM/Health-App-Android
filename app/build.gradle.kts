@@ -4,15 +4,20 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.protobuf") version "0.9.4"
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
-    namespace = "com.example.kotlin_android_app"
+    namespace = "com.project.kotlin_android_app"
     compileSdk = 34
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
-        applicationId = "com.example.kotlin_android_app"
-        minSdk = 30
+        applicationId = "com.project.kotlin_android_app"
+        minSdk = 31
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -40,13 +45,17 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
     implementation(libs.dotenv.kotlin)
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.simple.xml)
+
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
 
     implementation(libs.grpc.kotlin.stub)
     implementation(libs.grpc.okhttp.v1570)
@@ -56,6 +65,7 @@ dependencies {
     implementation(libs.javax.annotation.api)
     implementation(libs.perfmark.api)
     implementation(libs.okio)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.mockk)
     testImplementation(libs.junit.jupiter.api)
@@ -93,4 +103,21 @@ protobuf {
             }
         }
     }
+}
+
+tasks.withType<Test>{
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true
+    }
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.secrets.gradle.plugin)
+    }
+}
+
+secrets {
+    defaultPropertiesFileName = "default.properties"
 }

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="16dp">
+
+    <!-- Обёртка для выделения рамкой -->
+    <FrameLayout
+        android:id="@+id/flImageWrapper"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="16dp"
+        android:background="#000000"
+        android:padding="1dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Изображение тренировки -->
+        <ImageView
+            android:id="@+id/ivWorkoutImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:rotation="0"
+            android:rotationY="0"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_yoga" />
+    </FrameLayout>
+
+    <!-- Название тренировки -->
+    <TextView
+        android:id="@+id/tvWorkoutName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Йога для начинающих"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/flImageWrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Описание тренировки -->
+    <TextView
+        android:id="@+id/tvWorkoutDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Описание тренировки"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tvWorkoutName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Кнопка для переключения на предыдущую тренировку -->
+    <ImageButton
+        android:id="@+id/btnPrevious"
+        android:layout_width="34dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Предыдущая тренировка"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintTop_toBottomOf="@id/tvWorkoutDescription"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Кнопка для переключения на следующую тренировку -->
+    <ImageButton
+        android:id="@+id/btnNext"
+        android:layout_width="34dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="16dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="Следующая тренировка"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintTop_toBottomOf="@id/tvWorkoutDescription"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Кнопка для старта выбранной тренировки -->
+    <Button
+        android:id="@+id/btnStartWorkout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/purple_500"
+        android:text="Начать"
+        app:layout_constraintTop_toBottomOf="@id/tvWorkoutDescription"
+        app:layout_constraintStart_toEndOf="@id/btnPrevious"
+        app:layout_constraintEnd_toStartOf="@id/btnNext"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <TextView
+            android:id="@+id/TrainingHistory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="История тренировок"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/btnStartWorkout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Контейнер с обводкой -->
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            app:layout_constraintTop_toBottomOf="@id/TrainingHistory"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B3B3" /> <!-- Цвет линии -->
+
+        <!-- RecyclerView для динамического списка -->
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTrainings"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:overScrollMode="always"
+                tools:listitem="@layout/item_yoga" />
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B6B3B3" /> <!-- Цвет линии -->
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/windowBackground"
+        app:menu="@menu/bottom_navigation_menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

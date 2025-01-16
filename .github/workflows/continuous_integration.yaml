@@ -1,0 +1,25 @@
+name: Android CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Set up repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          check-latest: true
+
+      - name: Launch Gradle test
+        run: ./gradlew test
