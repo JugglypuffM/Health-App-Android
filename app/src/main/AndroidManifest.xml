@@ -30,11 +30,13 @@
             android:name="KotlinAndroidApp.LoginActivity">
         </activity>
         <activity
-                android:name="KotlinAndroidApp.UserProfileActivity">
+            android:name="KotlinAndroidApp.UserProfileActivity"
+            >
         </activity>
         <activity
             android:name="KotlinAndroidApp.HomeScreenActivity"
-            android:exported="true">
+            android:exported="true"
+            >
         </activity>
         <activity
             android:name="KotlinAndroidApp.SplashActivity"
@@ -47,6 +49,8 @@
             </intent-filter>
 
         </activity>
+
+
 
     </application>
 
