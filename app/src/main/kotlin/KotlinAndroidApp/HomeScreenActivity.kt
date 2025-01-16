@@ -1,5 +1,6 @@
 package KotlinAndroidApp
 
+import TrainingAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -7,8 +8,11 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.project.kotlin_android_app.R
+import domain.training.Icon
 import domain.training.Training
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -23,10 +27,13 @@ class HomeScreenActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
 
     private lateinit var viewModel: HomeScreenViewModel
+    private var activityClass: Class<*>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_homescreen)
+
+        val mainApplication = application as MainApplication
 
         workoutImage = findViewById(R.id.ivWorkoutImage)
         workoutName = findViewById(R.id.tvWorkoutName)
@@ -36,20 +43,29 @@ class HomeScreenActivity : AppCompatActivity() {
         btnNext = findViewById(R.id.btnNext)
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
-        // Устанавливаем активный пункт навигации
         bottomNavigationView.selectedItemId = R.id.home
 
-        viewModel = ViewModelProvider(this).get(HomeScreenViewModel::class.java)
+        viewModel = HomeScreenViewModel(
+            application,
+            mainApplication.xmlReader,
+            mainApplication.logger,
+            mainApplication.trainingService!!,
+            mainApplication.trainingHistory
+        )
 
-        val mainApplication = application as MainApplication
+        viewModel.onError.observe(this, Observer {
+            startActivity(Intent(this@HomeScreenActivity, LoginActivity::class.java))
+        })
 
-        viewModel.currentTraining.observe(this, { training ->
-            updateUI(training)
+        viewModel.currentTrainingIcon.observe(this, Observer { training: Icon ->
+            workoutName.text = training.title
+            workoutDescription.text = training.description
+            workoutImage.setImageResource(training.imageResId)
+            activityClass = training.activityClass
         })
 
         btnStartWorkout.setOnClickListener {
-            viewModel.setCurrentTraining(mainApplication)
-            startActivity(Intent(this@HomeScreenActivity, TrainingActivity::class.java))
+            startActivity(Intent(this@HomeScreenActivity, activityClass))
         }
 
         btnPrevious.setOnClickListener {
@@ -70,15 +86,12 @@ class HomeScreenActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
+        val recyclerView: RecyclerView = findViewById(R.id.rvTrainings)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-    private fun updateUI(training: Training) {
-        workoutName.text = training.title
-        workoutDescription.text = training.description
+        val trainings = mainApplication.trainingHistory
+        val adapter = TrainingAdapter(this, trainings)
 
-        when (training) {
-            is Training.Yoga -> workoutImage.setImageResource(R.drawable.ic_yoga)
-            is Training.Jogging -> workoutImage.setImageResource(R.drawable.ic_running)
-        }
+        recyclerView.adapter = adapter
     }
 }

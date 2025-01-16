@@ -1,6 +1,5 @@
 package viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,19 +12,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import services.auth.AuthenticatorService
+import services.data.DataService
+import services.training.TrainingService
+import utils.CustomLogger
 import utils.UserSerializer
-import utils.Validator
 
 class SplashViewModel(
     private val userSerializer: UserSerializer,
     private val authenticator: AuthenticatorService,
     private val user: User,
-    private val validator: Validator,
-    private val createDataRequest: (Account) -> Unit
+    private val createServices: (Account) -> Pair<DataService, TrainingService>,
+    private val logger: CustomLogger
 ) : ViewModel() {
 
-    private val _onSuccess: MutableLiveData<Unit> = MutableLiveData<Unit>()
-    val onSuccess: LiveData<Unit> = _onSuccess
+    private val _onFinish: MutableLiveData<Unit> = MutableLiveData<Unit>()
+    val onFinish: LiveData<Unit> = _onFinish
 
     private val _onFailure: MutableLiveData<Unit> = MutableLiveData<Unit>()
     val onFailure: LiveData<Unit> = _onFailure
@@ -37,21 +38,21 @@ class SplashViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             val authResult = result {
                 val account = userSerializer.loadAccount().bind()
-                Log.d("TSLA", "Successfully loaded user $account")
 
                 authenticator.login(account.login, account.password).bind()
-                Log.d("TSLA", "Successfully login into account")
 
-                createDataRequest(account)
-                Log.d("TSLA", "Successfully create data request")
+                val (dataService, _) = createServices(account)
 
-                user.account = account;
+                val userInfo = dataService.getUserData().bind()
+
+                user.account = account
+                user.userInfo = userInfo
                 account
             }
 
             withContext(Dispatchers.Main) {
                 authResult.onSuccess {
-                    _onSuccess.value = Unit
+                    _onFinish.value = Unit
                 }
                 authResult.onFailure { error ->
                     when (error) {
@@ -60,10 +61,20 @@ class SplashViewModel(
                         }
 
                         is Exceptions.InvalidCredentialsException -> {
+                            userSerializer.dropAccount()
                             _errorMessage.value = "Данные для авторизации устарели"
                         }
+
+                        is Exceptions.UnexpectedError -> {
+                            _errorMessage.value = "Произошла ошибка соединения с сервером"
+                        }
+
+                        else -> {
+                            _errorMessage.value = "Непредвиденная ошибка"
+                        }
                     }
-                    Log.d("TSLA", "$error")
+
+                    logger.logDebug(error.toString())
                     _onFailure.value = Unit
                 }
             }

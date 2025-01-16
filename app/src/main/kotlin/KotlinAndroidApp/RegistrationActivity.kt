@@ -31,14 +31,15 @@ class RegistrationActivity : AppCompatActivity() {
             mainApplication.userSerializer,
             mainApplication.user,
             mainApplication.validator,
-            mainApplication::createDataRequester
+            mainApplication::createServices,
+            mainApplication.logger
         )
 
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(this@RegistrationActivity, message, Toast.LENGTH_SHORT).show()
         })
 
-        viewModel.onSuccess.observe(this, Observer {
+        viewModel.onFinish.observe(this, Observer {
             startActivity(Intent(this@RegistrationActivity, UserFormActivity::class.java))
         })
 

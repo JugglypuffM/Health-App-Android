@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
@@ -91,69 +92,45 @@
         app:layout_constraintEnd_toStartOf="@id/btnNext"
         app:layout_constraintHorizontal_bias="0.5" />
 
-    <!-- История тренировок -->
+    <TextView
+            android:id="@+id/TrainingHistory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="История тренировок"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/btnStartWorkout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Контейнер с обводкой -->
     <LinearLayout
-        android:id="@+id/llWorkoutHistory"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/btnStartWorkout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            app:layout_constraintTop_toBottomOf="@id/TrainingHistory"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Элемент 1 -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="4dp"
-            android:background="#EEEEEE">
-
-            <ImageView
+        <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
-        </FrameLayout>
+                android:layout_height="1dp"
+                android:background="#B6B3B3" /> <!-- Цвет линии -->
 
-        <!-- Элемент 2 -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="4dp"
-            android:background="#EEEEEE">
-
-            <ImageView
+        <!-- RecyclerView для динамического списка -->
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTrainings"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
-        </FrameLayout>
+                android:layout_height="200dp"
+                android:overScrollMode="always"
+                tools:listitem="@layout/item_yoga" />
 
-        <!-- Элемент 3 -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="4dp"
-            android:background="#EEEEEE">
-
-            <ImageView
+        <View
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
-        </FrameLayout>
-
-        <!-- Элемент 4 -->
-        <FrameLayout
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_margin="4dp"
-            android:background="#EEEEEE">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop" />
-        </FrameLayout>
+                android:layout_height="1dp"
+                android:background="#B6B3B3" /> <!-- Цвет линии -->
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

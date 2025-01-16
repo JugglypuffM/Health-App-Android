@@ -1,6 +1,5 @@
 package viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import services.auth.AuthenticatorService
+import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator
 
@@ -21,11 +21,12 @@ class RegistrationViewModel(
     private val userSerializer: UserSerializer,
     private val user: User,
     private val validator: Validator,
-    private val createDataRequest: (Account) -> Unit
+    private val createServices: (Account) -> Unit,
+    private val logger: CustomLogger
 ) : ViewModel() {
 
-    private val _onSuccess = MutableLiveData<Unit>()
-    val onSuccess: LiveData<Unit> = _onSuccess
+    private val _onFinish = MutableLiveData<Unit>()
+    val onFinish: LiveData<Unit> = _onFinish
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -37,24 +38,21 @@ class RegistrationViewModel(
                 val password = validator.validatePassword(rawPassword).bind()
                 validator.validateConfirmPassword(password, confirmPassword).bind()
                 val account = Account(login, password)
-                Log.d("TSLA", "success validate user account")
 
+                //TODO переписать register без передачи имени
                 authenticator.register("", account.login, account.password).bind()
-                Log.d("TSLA", "success register user")
 
-                createDataRequest(account)
-                Log.d("TSLA", "success create data request")
+                createServices(account)
 
                 userSerializer.saveAccount(account).bind()
                 user.account = account
-                Log.d("TSLA", "success save account")
 
                 account
             }
 
             withContext(Dispatchers.Main) {
                 result.onSuccess {
-                    _onSuccess.value = Unit
+                    _onFinish.value = Unit
                 }
                 result.onFailure { error ->
                     when (error) {
@@ -91,7 +89,7 @@ class RegistrationViewModel(
                         }
                     }
 
-                    Log.e("TSLA", "throw user error: $error")
+                    logger.logDebug(error.toString())
                 }
             }
         }

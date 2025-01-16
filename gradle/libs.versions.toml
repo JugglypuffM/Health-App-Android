@@ -21,12 +21,9 @@ mockk = "1.13.13"
 okio = "3.9.1"
 perfmarkApi = "0.27.0"
 junitJupiter = "5.11.2"
-activity = "1.8.0"
-constraintlayout = "2.1.4"
 secretsGradlePlugin = "2.0.1"
-coreKtxVersion = "1.6.1"
-junitKtx = "1.2.1"
-espressoIntents = "3.6.1"
+simpleXml = "2.7.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -54,12 +51,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 perfmark-api = { module = "io.perfmark:perfmark-api", version.ref = "perfmarkApi" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
-androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
-androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
-androidx-espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "espressoIntents" }
+simple-xml = { module = "org.simpleframework:simple-xml", version.ref = "simpleXml" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

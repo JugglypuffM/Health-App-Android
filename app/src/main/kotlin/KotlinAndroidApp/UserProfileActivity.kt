@@ -6,12 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
-import domain.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import viewmodel.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -39,14 +34,15 @@ class UserProfileActivity : AppCompatActivity() {
         val (account, userInfo) = mainApplication.user
         val viewModel = UserProfileViewModel(
             mainApplication.userSerializer,
-            mainApplication.user
+            mainApplication.user,
+            mainApplication.logger
         )
 
         userNameTextView.text = "Имя пользователя: ${userInfo.name}"
         userAgeTextView.text = "Возраст: ${userInfo.age} лет"
         userWeightTextView.text = "Вес: ${userInfo.weight} кг"
 
-        viewModel.onSuccess.observe(this) {
+        viewModel.onFinish.observe(this) {
             startActivity(Intent(this, LoginActivity::class.java))
         }
 
