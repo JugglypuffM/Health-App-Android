@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.project.kotlin_android_app.R
 import domain.training.Icon
+import domain.training.Training
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeScreenActivity : AppCompatActivity() {
 
@@ -22,6 +24,7 @@ class HomeScreenActivity : AppCompatActivity() {
     private lateinit var btnStartWorkout: Button
     private lateinit var btnPrevious: ImageButton
     private lateinit var btnNext: ImageButton
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private lateinit var viewModel: HomeScreenViewModel
     private var activityClass: Class<*>? = null
@@ -38,6 +41,10 @@ class HomeScreenActivity : AppCompatActivity() {
         btnStartWorkout = findViewById(R.id.btnStartWorkout)
         btnPrevious = findViewById(R.id.btnPrevious)
         btnNext = findViewById(R.id.btnNext)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+
+        // Устанавливаем активный пункт навигации
+        bottomNavigationView.selectedItemId = R.id.home
 
         viewModel = HomeScreenViewModel(
             application,
@@ -69,6 +76,18 @@ class HomeScreenActivity : AppCompatActivity() {
         btnNext.setOnClickListener {
             viewModel.nextTraining()
         }
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> true
+                R.id.profile -> {
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 
         val recyclerView: RecyclerView = findViewById(R.id.rvTrainings)
         recyclerView.layoutManager = LinearLayoutManager(this)
