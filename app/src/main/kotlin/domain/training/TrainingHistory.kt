@@ -13,4 +13,9 @@ class TrainingHistory(
         val newList = value + training
         return TrainingHistory(newList)
     }
+
+    operator fun plus(trainings: List<Training>): TrainingHistory {
+        val newList = value + trainings
+        return TrainingHistory(newList)
+    }
 }

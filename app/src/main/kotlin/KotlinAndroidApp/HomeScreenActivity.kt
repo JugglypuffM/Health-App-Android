@@ -43,6 +43,8 @@ class HomeScreenActivity : AppCompatActivity() {
             application,
             mainApplication.xmlReader,
             mainApplication.logger,
+            mainApplication.trainingService!!,
+            mainApplication.trainingHistory
         )
 
         viewModel.onError.observe(this, Observer {
