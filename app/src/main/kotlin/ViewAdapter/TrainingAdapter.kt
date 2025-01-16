@@ -23,7 +23,7 @@ class TrainingAdapter(
 
         open fun bind(item: Training){
             val time = LocalTime.ofSecondOfDay(item.duration.inWholeSeconds)
-            val formatterTime = time.format(DateTimeFormatter.ofPattern("HH:mm::ss"))
+            val formatterTime = time.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
             durationTextView.text = "Продолжительность ${formatterTime}"
 
             val javaLocalDate = item.date.toJavaLocalDate()
