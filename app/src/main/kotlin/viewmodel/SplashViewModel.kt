@@ -66,7 +66,7 @@ class SplashViewModel(
                         }
 
                         else -> {
-                            _errorMessage.value = "Непредвиденная ошибка"
+                            _onFinish.value = Unit
                         }
                     }
 
