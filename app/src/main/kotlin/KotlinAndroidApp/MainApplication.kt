@@ -26,19 +26,22 @@ import utils.XMLReader
 class MainApplication : Application() {
     val logger: CustomLogger = CustomLogger()
     lateinit var xmlReader: XMLReader
-    private set
+        private set
 
-    val authenticator: AuthenticatorService = AuthenticatorServiceStub()
+    val authenticator: AuthenticatorService = GrpcAuthenticatorService(
+        BuildConfig.serverAddress,
+        BuildConfig.serverPort.toInt()
+    )
     var dataRequester: DataService? = null
-    private set
+        private set
 
     var trainingService: TrainingService? = null
-    private set
+        private set
 
     var user = User.empty()
     val validator = Validator()
     lateinit var userSerializer: UserSerializer
-    private set
+        private set
 
     val trainingHistory = MutableLiveData(TrainingHistory(emptyList()))
 
@@ -48,9 +51,19 @@ class MainApplication : Application() {
         userSerializer = UserSerializer(this)
     }
     fun createServices(account: Account): Pair<DataService, TrainingService>{
-        dataRequester = DataServiceStub()
+        dataRequester = GrpcDataService(
+            account.login,
+            account.password,
+            BuildConfig.serverAddress,
+            BuildConfig.serverPort.toInt()
+        )
 
-        trainingService = TrainingServiceStub()
+        trainingService = GrpcTrainingService(
+            account.login,
+            account.password,
+            BuildConfig.serverAddress,
+            BuildConfig.serverPort.toInt()
+        )
 
         return Pair(dataRequester!!, trainingService!!)
     }
