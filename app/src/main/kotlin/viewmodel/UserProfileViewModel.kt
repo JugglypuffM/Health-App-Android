@@ -19,7 +19,7 @@ class UserProfileViewModel(
     private val userSerializer: UserSerializer,
     info: UserInfo,
     private val logger: CustomLogger
-): ViewModel() {
+) : ViewModel() {
     private val _userInfo = MutableLiveData(info)
     val userInfo: LiveData<UserInfo> = _userInfo
 
@@ -29,7 +29,7 @@ class UserProfileViewModel(
     private val _onFinish = MutableLiveData<Unit>()
     val onFinish: LiveData<Unit> = _onFinish
 
-    init{
+    init {
         CoroutineScope(Dispatchers.IO).launch {
             val dataResult = dataService?.getUserData()
                 ?: Result.failure(Exceptions.UnexpectedError("DataRequester was not initialized"))
@@ -50,7 +50,7 @@ class UserProfileViewModel(
         }
     }
 
-    fun logout(){
+    fun logout() {
         CoroutineScope(Dispatchers.IO).launch {
             val logOutResult = result {
                 userSerializer.dropAccount()

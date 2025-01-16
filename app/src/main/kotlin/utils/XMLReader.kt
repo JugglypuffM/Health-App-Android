@@ -4,8 +4,8 @@ import android.app.Application
 import org.simpleframework.xml.core.Persister
 import java.io.InputStream
 
-class XMLReader(private val context: Application){
-    class XMLReaderException(message: String): Exception(message)
+class XMLReader(private val context: Application) {
+    class XMLReaderException(message: String) : Exception(message)
 
     fun <T> read(cls: Class<T>, resId: Int): T {
         return try {

@@ -21,18 +21,18 @@ class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : Auth
      * @param port Порт сервера
      */
     constructor(address: String, port: Int) :
-        this(
-            AuthServiceGrpc.newBlockingStub(
-                ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+            this(
+                AuthServiceGrpc.newBlockingStub(
+                    ManagedChannelBuilder.forAddress(address, port).usePlaintext().build()
+                )
             )
-        )
 
     override suspend fun register(login: String, password: String): Result<Unit> =
         executeCallAsyncWithError<Empty, Unit>(
             {
-            val request =
-                AuthRequest.newBuilder().setLogin(login).setPassword(password).build()
-            stub.register(request)
+                val request =
+                    AuthRequest.newBuilder().setLogin(login).setPassword(password).build()
+                stub.register(request)
             },
             {
                 Result.success(Unit)
@@ -55,18 +55,22 @@ class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : Auth
             is StatusRuntimeException -> {
                 val status = Status.fromThrowable(error)
 
-                when (status.code){
+                when (status.code) {
                     Status.Code.UNAVAILABLE -> Result.failure(
                         Exceptions.ServerConnectionException(
                             error.message.orEmpty()
                         )
                     )
+
                     Status.Code.UNAUTHENTICATED ->
                         Result.failure(Exceptions.InvalidCredentialsException(error.message.orEmpty()))
+
                     Status.Code.INVALID_ARGUMENT ->
                         Result.failure(Exceptions.InvalidArgumentException(error.message.orEmpty()))
+
                     Status.Code.ALREADY_EXISTS ->
                         Result.failure(Exceptions.UserAlreadyExistsException(error.message.orEmpty()))
+
                     else ->
                         Result.failure(Exceptions.UnexpectedError(error.message.orEmpty()))
                 }

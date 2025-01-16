@@ -2,21 +2,13 @@ package app
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project.kotlin_android_app.R
 import viewmodel.UserProfileViewModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 /**
  * Активность для отображения профиля пользователя.
@@ -77,6 +69,7 @@ class UserProfileActivity : AppCompatActivity() {
                     startActivity(Intent(this, HomeScreenActivity::class.java))
                     true
                 }
+
                 R.id.profile -> true
                 else -> false
             }

@@ -40,17 +40,21 @@ class HomeScreenViewModel(
 
     private var circleTrainingList = CircularList<Icon>(emptyList())
 
-    init{
+    init {
         try {
             val rawIconList = xmlReader.read(Containers.RawIconList::class.java, R.raw.icon_list)
             val iconList = rawIconList.items.map { rawIcon ->
-                    Icon(
-                        rawIcon.title,
-                        rawIcon.description,
-                        context.resources.getIdentifier(rawIcon.imageResId, "drawable", context.packageName),
-                        Class.forName(rawIcon.activityClass)
-                    )
-                }
+                Icon(
+                    rawIcon.title,
+                    rawIcon.description,
+                    context.resources.getIdentifier(
+                        rawIcon.imageResId,
+                        "drawable",
+                        context.packageName
+                    ),
+                    Class.forName(rawIcon.activityClass)
+                )
+            }
             circleTrainingList = CircularList(iconList)
             _currentTrainingIcon.value = circleTrainingList.current()
         } catch (error: Exception) {
@@ -59,10 +63,11 @@ class HomeScreenViewModel(
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            val currentDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+            val currentDate =
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
             val numberOfDays = 30
 
-            if(trainingHistory.value?.value?.isEmpty() ?: true) {
+            if (trainingHistory.value?.value?.isEmpty() != false) {
                 for (i in 0 until numberOfDays) {
                     val date = currentDate.minus(i, DateTimeUnit.DAY)
                     trainingService.getTrainings(date).map { trainings ->
@@ -75,13 +80,13 @@ class HomeScreenViewModel(
         }
     }
 
-    fun nextTraining(){
-        circleTrainingList.next();
+    fun nextTraining() {
+        circleTrainingList.next()
         _currentTrainingIcon.value = circleTrainingList.current()
     }
 
-    fun previousTraining(){
-        circleTrainingList.previous();
+    fun previousTraining() {
+        circleTrainingList.previous()
         _currentTrainingIcon.value = circleTrainingList.current()
     }
 }

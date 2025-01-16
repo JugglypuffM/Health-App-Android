@@ -28,7 +28,7 @@ class TimerChain(
 
     private fun startTimer(millisUntilFinished: Long) {
         timer = object : CountDownTimer(millisUntilFinished, 1000) {
-            override fun onTick(millisUntilFinished: Long){
+            override fun onTick(millisUntilFinished: Long) {
                 this@TimerChain.onTick(millisUntilFinished)
             }
 
@@ -37,18 +37,17 @@ class TimerChain(
             }
         }
 
-        timer?.start();
+        timer?.start()
     }
 
-    private fun onTick(millisUntilFinished: Long){
+    private fun onTick(millisUntilFinished: Long) {
         updateViewTimer(millisUntilFinished)
     }
 
-    private fun onFinish(){
-        if(!trainingIterator.hasNext()){
+    private fun onFinish() {
+        if (!trainingIterator.hasNext()) {
             finish()
-        }
-        else {
+        } else {
             val action = trainingIterator.next()
             updateActivity(action)
             startTimer(action.durationMilliseconds)
@@ -58,7 +57,7 @@ class TimerChain(
     /**
      * Остановить выполнение всех таймеров
      */
-    fun cancel(){
+    fun cancel() {
         timer?.cancel()
         finish()
     }

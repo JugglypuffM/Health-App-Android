@@ -25,7 +25,6 @@ import utils.XMLReader
 import kotlin.time.Duration.Companion.milliseconds
 
 
-
 @SuppressLint("DiscouragedApi")
 class YogaViewModel(
     private val trainingLiveData: MutableLiveData<TrainingHistory>,
@@ -33,7 +32,7 @@ class YogaViewModel(
     private val logger: CustomLogger,
     xmlReader: XMLReader,
     context: Application
-): ViewModel() {
+) : ViewModel() {
 
     private val _onError = MutableLiveData<Unit>()
     val onError: LiveData<Unit> = _onError
@@ -48,19 +47,24 @@ class YogaViewModel(
     val onFinish: LiveData<Unit> = _onFinish
 
     private val _errorMessage = MutableLiveData<String>()
-    val errorMessage: LiveData<String> = _errorMessage 
+    val errorMessage: LiveData<String> = _errorMessage
 
     private var startTimeMillis: Long
     private lateinit var timerChain: TimerChain
 
     init {
-        try{
-            val rawActionList = xmlReader.read(Containers.RawActionList::class.java, R.raw.yoga_action_list)
+        try {
+            val rawActionList =
+                xmlReader.read(Containers.RawActionList::class.java, R.raw.yoga_action_list)
             val actionList = rawActionList.items.map { rawAction ->
                 Action(
                     rawAction.title,
                     rawAction.durationMilliseconds,
-                    context.resources.getIdentifier(rawAction.imageResId, "drawable", context.packageName)
+                    context.resources.getIdentifier(
+                        rawAction.imageResId,
+                        "drawable",
+                        context.packageName
+                    )
                 )
             }
 
@@ -70,7 +74,7 @@ class YogaViewModel(
                 ::onFinish,
                 actionList
             )
-        } catch (error: Exception){
+        } catch (error: Exception) {
             logger.logError(error.toString())
             _onError.value = Unit
         }
@@ -80,19 +84,19 @@ class YogaViewModel(
         timerChain.start()
     }
 
-    fun updateViewTimer(millisUntilFinished: Long){
+    fun updateViewTimer(millisUntilFinished: Long) {
         _millisUntilTrainingFinished.value = millisUntilFinished
     }
 
-    fun updateActivity(action: Action){
+    fun updateActivity(action: Action) {
         _currentAction.value = action
     }
 
-    fun cancel(){
+    fun cancel() {
         timerChain.cancel()
     }
 
-    fun onFinish(){
+    fun onFinish() {
         CoroutineScope(Dispatchers.IO).launch {
             val finishTimeMillis = System.currentTimeMillis()
             val trainingTimeMillis = finishTimeMillis - startTimeMillis
@@ -103,7 +107,7 @@ class YogaViewModel(
 
             val training = Training.Yoga(date, duration)
             val sendTrainingResult = trainingService.saveTraining(training)
-            
+
             withContext(Dispatchers.Main) {
                 sendTrainingResult.onSuccess {
                     trainingLiveData.value = trainingLiveData.value!! + training
@@ -114,7 +118,7 @@ class YogaViewModel(
                     _errorMessage.value = "Тренировка не была сохранена"
                     logger.logDebug(error.toString())
                 }
-                
+
                 _onFinish.value = Unit
             }
         }

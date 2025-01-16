@@ -31,7 +31,7 @@ class PlankViewModel(
     private val logger: CustomLogger,
     private val trainingHistory: MutableLiveData<TrainingHistory>,
     private val trainingService: TrainingService
-): ViewModel() {
+) : ViewModel() {
 
     private val _descriptionMessage = MutableLiveData<String>()
     val descriptionMessage: LiveData<String> = _descriptionMessage
@@ -73,7 +73,7 @@ class PlankViewModel(
             countdownAction = container.countdownAction
             stopwatchAction = container.stopwatchAction
             startCountdown()
-        } catch (error: Exception){
+        } catch (error: Exception) {
             _onError.value = Unit
             logger.logError(error.toString())
         }
@@ -108,7 +108,7 @@ class PlankViewModel(
         })
     }
 
-    fun onFinish(){
+    fun onFinish() {
         CoroutineScope(Dispatchers.IO).launch {
             val duration: Duration = stopwatchTime.seconds
             val date: LocalDate =

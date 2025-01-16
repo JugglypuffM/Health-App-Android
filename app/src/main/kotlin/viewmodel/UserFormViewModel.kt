@@ -39,7 +39,7 @@ class UserFormViewModel(
                 userInfo
             }
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 checkResult.onSuccess { userInfo ->
                     user.userInfo = userInfo
                     _onFinish.value = Unit

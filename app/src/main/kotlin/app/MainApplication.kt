@@ -47,7 +47,8 @@ class MainApplication : Application() {
         xmlReader = XMLReader(this)
         userSerializer = UserSerializer(this)
     }
-    fun createServices(account: Account): Pair<DataService, TrainingService>{
+
+    fun createServices(account: Account): Pair<DataService, TrainingService> {
         dataRequester = GrpcDataService(
             account.login,
             account.password,

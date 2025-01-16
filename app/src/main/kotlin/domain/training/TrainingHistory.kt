@@ -7,7 +7,7 @@ class TrainingHistory(
     value: List<Training>
 ) {
     var value = value
-    private set
+        private set
 
     operator fun plus(training: Training): TrainingHistory {
         val newList = value + training
@@ -19,7 +19,7 @@ class TrainingHistory(
         return TrainingHistory(newList)
     }
 
-    fun clear(){
+    fun clear() {
         value = emptyList()
     }
 }

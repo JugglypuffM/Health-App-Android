@@ -20,7 +20,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val mainApplication: MainApplication = application as MainApplication;
+        val mainApplication: MainApplication = application as MainApplication
         val viewModel = SplashViewModel(
             mainApplication.userSerializer,
             mainApplication.authenticator,

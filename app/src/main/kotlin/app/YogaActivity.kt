@@ -42,7 +42,7 @@ class YogaActivity : AppCompatActivity() {
         viewModel.onError.observe(this, Observer {
             startActivity(Intent(this@YogaActivity, HomeScreenActivity::class.java))
         })
-        
+
         viewModel.errorMessage.observe(this, Observer { message ->
             Toast.makeText(this@YogaActivity, message, Toast.LENGTH_SHORT).show()
         })

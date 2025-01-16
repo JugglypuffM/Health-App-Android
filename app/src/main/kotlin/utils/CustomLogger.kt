@@ -13,7 +13,7 @@ class CustomLogger {
      * Метод для создания отладочного лога
      * @param message
      */
-    fun logDebug(message: String){
+    fun logDebug(message: String) {
         Log.d(DEBUG_TAG, message)
     }
 
@@ -21,7 +21,7 @@ class CustomLogger {
      * Метод для создания лога ошибки
      * @param message
      */
-    fun logError(message: String){
+    fun logError(message: String) {
         Log.e(ERROR_TAG, message)
     }
 }

@@ -11,7 +11,7 @@ data class UserInfo(
     val age: Int? = null,
     val weight: Int? = null,
     val distance: Int? = null,
-): Serializable{
+) : Serializable {
     constructor(userData: DataProto.UserData) : this(
         userData.name,
         userData.age,
@@ -21,9 +21,9 @@ data class UserInfo(
 
     fun toUserData(): DataProto.UserData = DataProto.UserData.newBuilder()
         .setName(name)
-        .setAge(age?: 0)
-        .setWeight(weight?: 0)
-        .setTotalDistance(distance?: 0)
+        .setAge(age ?: 0)
+        .setWeight(weight ?: 0)
+        .setTotalDistance(distance ?: 0)
         .build()
 
     companion object {

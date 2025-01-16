@@ -43,6 +43,7 @@ class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
                                     it.message.orEmpty()
                                 )
                             )
+
                             Status.Code.UNAUTHENTICATED -> Result.failure(
                                 Exceptions.InvalidCredentialsException(
                                     "Invalid credentials passed"

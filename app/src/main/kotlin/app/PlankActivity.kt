@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Активность стойки в планке
  */
-class PlankActivity: AppCompatActivity(){
+class PlankActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +35,7 @@ class PlankActivity: AppCompatActivity(){
             mainApplication.trainingService!!
         )
 
-        viewModel.onError.observe(this, Observer{
+        viewModel.onError.observe(this, Observer {
             finish()
         })
 
@@ -61,7 +61,7 @@ class PlankActivity: AppCompatActivity(){
             Toast.makeText(this@PlankActivity, message, Toast.LENGTH_SHORT).show()
         })
 
-        finishButton.setOnClickListener{
+        finishButton.setOnClickListener {
             viewModel.onFinish()
             finish()
         }

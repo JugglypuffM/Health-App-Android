@@ -34,7 +34,7 @@ class JoggingViewModel(
     private val logger: CustomLogger,
     private val trainingHistory: MutableLiveData<TrainingHistory>,
     private val trainingService: TrainingService
-): ViewModel() {
+) : ViewModel() {
 
     private val _descriptionMessage = MutableLiveData<String>()
     val descriptionMessage: LiveData<String> = _descriptionMessage
@@ -53,7 +53,7 @@ class JoggingViewModel(
 
     private val _distanceMeters = MutableLiveData<Double>()
     val distanceMeters: LiveData<Double> = _distanceMeters
-    
+
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
 
@@ -72,7 +72,7 @@ class JoggingViewModel(
     private lateinit var distanceTracker: DistanceTracker
 
     init {
-        distanceTracker = DistanceTracker(context){ distanceMeter ->
+        distanceTracker = DistanceTracker(context) { distanceMeter ->
             _distanceMeters.value = distanceMeter
         }
 
@@ -82,7 +82,7 @@ class JoggingViewModel(
             countdownAction = container.countdownAction
             stopwatchAction = container.stopwatchAction
             startCountdown()
-        } catch (error: Exception){
+        } catch (error: Exception) {
             _onError.value = Unit
             logger.logError(error.toString())
         }
@@ -118,9 +118,9 @@ class JoggingViewModel(
         })
     }
 
-    fun onFinish(){
+    fun onFinish() {
         distanceTracker.stopTracking()
-        
+
         CoroutineScope(Dispatchers.IO).launch {
             val duration: Duration = stopwatchTime.seconds
             val distance: Double = _distanceMeters.value ?: 0.0

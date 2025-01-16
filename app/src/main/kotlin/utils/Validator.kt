@@ -1,8 +1,5 @@
 package utils
 
-import arrow.core.raise.result
-import domain.Account
-
 class Validator {
     class InvalidNameException(message: String) : Exception(message)
     class InvalidLoginException(message: String) : Exception(message)
@@ -55,16 +52,17 @@ class Validator {
     /**
      * Валидация возраста
      */
-    fun validateAge(age: Int?): Result<Int>{
-        return if(age !in 5..100)
+    fun validateAge(age: Int?): Result<Int> {
+        return if (age !in 5..100)
             Result.failure(InvalidAgeException("Age must be between 5 and 100"))
         else Result.success(age!!)
     }
+
     /**
      * Валидация веса
      */
-    fun validateWeight(weight: Int?): Result<Int>{
-        return if(weight!in 10..1000)
+    fun validateWeight(weight: Int?): Result<Int> {
+        return if (weight !in 10..1000)
             Result.failure(InvalidWeightException("Weight must be between 10 and 1000"))
         else Result.success(weight!!)
     }

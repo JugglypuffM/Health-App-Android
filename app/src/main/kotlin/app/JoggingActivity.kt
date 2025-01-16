@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 /**
  * Активность занятия йогой
  */
-class JoggingActivity: AppCompatActivity(){
+class JoggingActivity : AppCompatActivity() {
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
     private val ACCESS_ON_USE = -1
 
@@ -35,7 +35,7 @@ class JoggingActivity: AppCompatActivity(){
         }
     }
 
-    private fun create(){
+    private fun create() {
         val distanceTextView = findViewById<TextView>(R.id.DistanceText)
         val clockTextView = findViewById<TextView>(R.id.ClockText)
         val timerDescriptionView = findViewById<TextView>(R.id.ClockDescription)
@@ -52,7 +52,7 @@ class JoggingActivity: AppCompatActivity(){
             mainApplication.trainingService!!
         )
 
-        viewModel.onError.observe(this, Observer{
+        viewModel.onError.observe(this, Observer {
             finish()
         })
 
@@ -83,7 +83,7 @@ class JoggingActivity: AppCompatActivity(){
             Toast.makeText(this@JoggingActivity, message, Toast.LENGTH_SHORT).show()
         })
 
-        finishButton.setOnClickListener{
+        finishButton.setOnClickListener {
             viewModel.onFinish()
             finish()
         }
@@ -112,10 +112,10 @@ class JoggingActivity: AppCompatActivity(){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() &&
-                (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[0] == ACCESS_ON_USE)) {
+                (grantResults[0] == PackageManager.PERMISSION_GRANTED || grantResults[0] == ACCESS_ON_USE)
+            ) {
                 create()
-            }
-            else{
+            } else {
                 finish()
             }
         }
