@@ -10,6 +10,7 @@ import com.project.kotlin_android_app.R
 import domain.training.Training
 import domain.training.TrainingHistory
 import kotlinx.datetime.toJavaLocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class TrainingAdapter(
@@ -21,7 +22,9 @@ class TrainingAdapter(
         private val dataTextView: TextView = itemView.findViewById(R.id.trainingDate)
 
         open fun bind(item: Training){
-            durationTextView.text = "Продолжительность: ${item.duration.inWholeMinutes} минут"
+            val time = LocalTime.ofSecondOfDay(item.duration.inWholeSeconds)
+            val formatterTime = time.format(DateTimeFormatter.ofPattern("HH:mm::ss"))
+            durationTextView.text = "Продолжительность ${formatterTime}"
 
             val javaLocalDate = item.date.toJavaLocalDate()
             dataTextView.text = javaLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))

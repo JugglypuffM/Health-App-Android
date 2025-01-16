@@ -84,10 +84,6 @@ class RegistrationViewModel(
                             _errorMessage.value = "Пользователь с таким логином уже существует"
                         }
 
-                        is Exceptions.UnexpectedError -> {
-                            _errorMessage.value = "Проблема соединения с сервером"
-                        }
-
                         else -> {
                             _errorMessage.value = "Непредвиденная ошибка"
                         }

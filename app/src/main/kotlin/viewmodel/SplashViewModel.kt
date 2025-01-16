@@ -65,10 +65,6 @@ class SplashViewModel(
                             _errorMessage.value = "Данные для авторизации устарели"
                         }
 
-                        is Exceptions.UnexpectedError -> {
-                            _errorMessage.value = "Произошла ошибка соединения с сервером"
-                        }
-
                         else -> {
                             _errorMessage.value = "Непредвиденная ошибка"
                         }
