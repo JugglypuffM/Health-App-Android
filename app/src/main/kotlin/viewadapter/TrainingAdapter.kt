@@ -1,3 +1,5 @@
+package viewadapter
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import com.project.kotlin_android_app.R
 import domain.training.Training
 import domain.training.TrainingHistory
 import kotlinx.datetime.toJavaLocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class TrainingAdapter(
@@ -20,8 +23,10 @@ class TrainingAdapter(
         private val durationTextView: TextView = itemView.findViewById(R.id.trainingDuration)
         private val dataTextView: TextView = itemView.findViewById(R.id.trainingDate)
 
-        open fun bind(item: Training){
-            durationTextView.text = "Продолжительность: ${item.duration.inWholeMinutes} минут"
+        open fun bind(item: Training) {
+            val time = LocalTime.ofSecondOfDay(item.duration.inWholeSeconds)
+            val formatterTime = time.format(DateTimeFormatter.ofPattern("HH:mm:ss"))
+            durationTextView.text = "Продолжительность ${formatterTime}"
 
             val javaLocalDate = item.date.toJavaLocalDate()
             dataTextView.text = javaLocalDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
@@ -30,19 +35,19 @@ class TrainingAdapter(
 
     class YogaViewHolder(itemView: View) : ViewHolder(itemView)
     class PlankViewHolder(itemView: View) : ViewHolder(itemView)
-    class DistanceViewHolder(itemView: View): ViewHolder(itemView) {
+    class DistanceViewHolder(itemView: View) : ViewHolder(itemView) {
         private val distanceTextView = itemView.findViewById<TextView>(R.id.trainingDistance)
 
-        override fun bind(item: Training){
+        override fun bind(item: Training) {
             super.bind(item)
-            if(item is Training.Jogging) {
+            if (item is Training.Jogging) {
                 val meterDistance = item.distance.toLong()
                 distanceTextView.text = "Протяжённость: ${meterDistance} метров"
             }
         }
     }
 
-    private var items: List<Training>;
+    private var items: List<Training>
 
     init {
         items = trainingHistory.value?.value!!
@@ -67,12 +72,15 @@ class TrainingAdapter(
             YOGA_TYPE -> YogaViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_yoga, parent, false)
             )
+
             JOGGING_TYPE -> DistanceViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_jogging, parent, false)
             )
+
             PLANK_TYPE -> PlankViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.item_plank, parent, false)
             )
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }

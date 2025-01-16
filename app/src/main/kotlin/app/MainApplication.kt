@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +7,11 @@ import domain.Account
 import domain.User
 import domain.training.TrainingHistory
 import services.auth.AuthenticatorService
-import services.auth.AuthenticatorServiceStub
 import services.auth.GrpcAuthenticatorService
 import services.data.DataService
-import services.data.DataServiceStub
 import services.data.GrpcDataService
 import services.training.GrpcTrainingService
 import services.training.TrainingService
-import services.training.TrainingServiceStub
 import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator
@@ -26,22 +23,22 @@ import utils.XMLReader
 class MainApplication : Application() {
     val logger: CustomLogger = CustomLogger()
     lateinit var xmlReader: XMLReader
-    private set
+        private set
 
     val authenticator: AuthenticatorService = GrpcAuthenticatorService(
         BuildConfig.serverAddress,
         BuildConfig.serverPort.toInt()
     )
     var dataRequester: DataService? = null
-    private set
+        private set
 
     var trainingService: TrainingService? = null
-    private set
+        private set
 
     var user = User.empty()
     val validator = Validator()
     lateinit var userSerializer: UserSerializer
-    private set
+        private set
 
     val trainingHistory = MutableLiveData(TrainingHistory(emptyList()))
 
@@ -50,7 +47,8 @@ class MainApplication : Application() {
         xmlReader = XMLReader(this)
         userSerializer = UserSerializer(this)
     }
-    fun createServices(account: Account): Pair<DataService, TrainingService>{
+
+    fun createServices(account: Account): Pair<DataService, TrainingService> {
         dataRequester = GrpcDataService(
             account.login,
             account.password,

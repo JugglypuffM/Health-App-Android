@@ -38,6 +38,12 @@ class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
                         val status = Status.fromThrowable(it)
 
                         when (status.code) {
+                            Status.Code.UNAVAILABLE -> Result.failure(
+                                Exceptions.ServerConnectionException(
+                                    it.message.orEmpty()
+                                )
+                            )
+
                             Status.Code.UNAUTHENTICATED -> Result.failure(
                                 Exceptions.InvalidCredentialsException(
                                     "Invalid credentials passed"
@@ -65,6 +71,12 @@ class GrpcDataService(private val stub: DataServiceBlockingStub) : DataService,
                         val status = Status.fromThrowable(it)
 
                         when (status.code) {
+                            Status.Code.UNAVAILABLE -> Result.failure(
+                                Exceptions.ServerConnectionException(
+                                    it.message.orEmpty()
+                                )
+                            )
+
                             Status.Code.INVALID_ARGUMENT -> Result.failure(
                                 Exceptions.InvalidArgumentException(
                                     "No data provided"

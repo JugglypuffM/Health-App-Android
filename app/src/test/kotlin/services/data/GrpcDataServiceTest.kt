@@ -65,7 +65,7 @@ class GrpcDataServiceTest {
 
         val result = dataRequester.getUserData()
 
-        result.onFailure { assertTrue(it is Exceptions.UnexpectedError) }
+        result.onFailure { assertTrue(it is Exceptions.ServerConnectionException) }
         assertTrue(result.isFailure)
     }
 

@@ -21,9 +21,9 @@ sealed class Training(
      * Информация о йоге
      */
     class Yoga(date: LocalDate, duration: Duration) : Training(
-        date=date,
-        duration=duration
-    ){
+        date = date,
+        duration = duration
+    ) {
         constructor(yoga: TrainingProto.Yoga) : this(
             LocalDate.fromEpochDays(yoga.date.seconds.toInt()),
             yoga.duration.seconds.seconds
@@ -56,9 +56,9 @@ sealed class Training(
      * Информация о беге
      */
     class Jogging(date: LocalDate, duration: Duration, val distance: Double) : Training(
-        date=date,
-        duration=duration
-    ){
+        date = date,
+        duration = duration
+    ) {
         constructor(jogging: TrainingProto.Jogging) : this(
             LocalDate.fromEpochDays(jogging.date.seconds.toInt()),
             jogging.duration.seconds.seconds,
@@ -93,9 +93,9 @@ sealed class Training(
      * Информация о планке
      */
     class Plank(date: LocalDate, duration: Duration) : Training(
-        date=date,
-        duration=duration
-    ){
+        date = date,
+        duration = duration
+    ) {
         constructor(plank: TrainingProto.Plank) : this(
             LocalDate.fromEpochDays(plank.date.seconds.toInt()),
             plank.duration.seconds.seconds

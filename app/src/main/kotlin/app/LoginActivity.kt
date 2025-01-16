@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
         val loginButton: Button = findViewById(R.id.button)
         val textViewRegister: TextView = findViewById(R.id.textview_register)
 
-        val mainApplication: MainApplication = application as MainApplication;
+        val mainApplication: MainApplication = application as MainApplication
         val viewModel = LoginViewModel(
             mainApplication.authenticator,
             mainApplication.userSerializer,

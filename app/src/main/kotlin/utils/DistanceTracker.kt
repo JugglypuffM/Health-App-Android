@@ -3,8 +3,11 @@ package utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 
 class DistanceTracker(
     context: Context,
@@ -27,7 +30,7 @@ class DistanceTracker(
 
             lastLocation?.let { previousLocation ->
                 val distance = previousLocation.distanceTo(newLocation)
-                if(distance > MIN_DISTANCE_THREADHOLD) {
+                if (distance > MIN_DISTANCE_THREADHOLD) {
                     totalDistance += distance
                     onDistanceUpdated(totalDistance)
                 }

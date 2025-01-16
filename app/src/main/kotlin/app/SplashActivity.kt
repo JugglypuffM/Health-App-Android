@@ -1,10 +1,11 @@
-package KotlinAndroidApp
+package app
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
 import viewmodel.SplashViewModel
@@ -17,8 +18,9 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val mainApplication: MainApplication = application as MainApplication;
+        val mainApplication: MainApplication = application as MainApplication
         val viewModel = SplashViewModel(
             mainApplication.userSerializer,
             mainApplication.authenticator,

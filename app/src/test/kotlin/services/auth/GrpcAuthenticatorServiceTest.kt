@@ -33,7 +33,7 @@ class GrpcAuthenticatorServiceTest {
 
         `when`(mockStub.register(request)).thenReturn(Empty.getDefaultInstance())
 
-        val result = authenticator.register("Test User", "test_login", "password123")
+        val result = authenticator.register("test_login", "password123")
 
         assertTrue(result.isSuccess)
     }
@@ -47,7 +47,7 @@ class GrpcAuthenticatorServiceTest {
 
         `when`(mockStub.register(request)).thenThrow(Status.ALREADY_EXISTS.asRuntimeException())
 
-        val result = authenticator.register("Test User", "test_login", "password123")
+        val result = authenticator.register("test_login", "password123")
 
         assertTrue(result.isFailure)
         assertTrue(result.exceptionOrNull() is Exceptions.UserAlreadyExistsException)
@@ -88,7 +88,7 @@ class GrpcAuthenticatorServiceTest {
 
         val result = authenticator.login("test_login", "password123")
 
-        result.onFailure { assertTrue(it is Exceptions.UnexpectedError) }
+        result.onFailure { assertTrue(it is Exceptions.ServerConnectionException) }
         assertTrue(result.isFailure)
     }
 }

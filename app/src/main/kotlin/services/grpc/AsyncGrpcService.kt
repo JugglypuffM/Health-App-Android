@@ -1,7 +1,7 @@
 package services.grpc
 
-import io.grpc.StatusRuntimeException
 import io.grpc.Metadata
+import io.grpc.StatusRuntimeException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -23,7 +23,7 @@ interface AsyncGrpcService {
             }
         }
 
-    companion object{
+    companion object {
         fun createMetadata(login: String, password: String): Metadata {
             val metadata = Metadata()
             val usernameKey = Metadata.Key.of("login-bin", Metadata.BINARY_BYTE_MARSHALLER)

@@ -18,7 +18,7 @@ class UserSerializer(context: Application) {
     private val PASSWORD = "password"
 
     private fun getValue(key: String): Result<String> {
-        val value =  sharedPreferences.getString(key, null)
+        val value = sharedPreferences.getString(key, null)
         return if (value == null)
             Result.failure(UserNotFoundException("User has incorrect key: ${key}"))
         else
@@ -39,7 +39,7 @@ class UserSerializer(context: Application) {
     /**
      * Сохранить пользователя
      */
-    fun saveAccount(user: Account): Result<String>{
+    fun saveAccount(user: Account): Result<String> {
         val editor = sharedPreferences.edit()
 
         editor.apply {
@@ -54,10 +54,10 @@ class UserSerializer(context: Application) {
     /**
      * Удалить пользователя
      */
-    fun dropAccount(): Result<String>{
+    fun dropAccount(): Result<String> {
         val editor = sharedPreferences.edit()
 
-        editor.apply{
+        editor.apply {
             editor.clear()
             apply()
         }

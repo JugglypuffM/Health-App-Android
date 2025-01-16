@@ -27,11 +27,11 @@ suspend fun main() {
     val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
     println("Удачная регистрация")
-    println(authenticatorService.register("stas", "jpf", "123456"))
+    println(authenticatorService.register("jpf", "123456"))
     println()
 
     println("Неудачная повторная регистрация - пользователь уже существует")
-    println(authenticatorService.register("stas", "jpf", "123465"))
+    println(authenticatorService.register("jpf", "123465"))
     println()
 
     println("Удачный логин")
@@ -39,7 +39,7 @@ suspend fun main() {
     println()
 
     println("Неудачная регистрация - неподходящие данные")
-    println(authenticatorService.register("stas", "jpf2", "1234"))
+    println(authenticatorService.register("jpf2", "1234"))
     println()
 
     println("Неудачный логин - плохие креды")

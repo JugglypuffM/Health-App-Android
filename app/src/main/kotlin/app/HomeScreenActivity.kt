@@ -1,6 +1,5 @@
-package KotlinAndroidApp
+package app
 
-import TrainingAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.project.kotlin_android_app.R
 import domain.training.Icon
-import domain.training.Training
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import viewadapter.TrainingAdapter
+import viewmodel.HomeScreenViewModel
 
 class HomeScreenActivity : AppCompatActivity() {
 
@@ -83,6 +83,7 @@ class HomeScreenActivity : AppCompatActivity() {
                     startActivity(Intent(this, UserProfileActivity::class.java))
                     true
                 }
+
                 else -> false
             }
         }

@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +25,7 @@ class RegistrationActivity : AppCompatActivity() {
         val passwordField: EditText = findViewById(R.id.user_password2)
         val confirmPasswordField: EditText = findViewById(R.id.user_password3)
 
-        val mainApplication: MainApplication = application as MainApplication;
+        val mainApplication: MainApplication = application as MainApplication
         val viewModel = RegistrationViewModel(
             mainApplication.authenticator,
             mainApplication.userSerializer,
