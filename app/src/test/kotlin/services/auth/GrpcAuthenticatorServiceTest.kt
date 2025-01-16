@@ -88,7 +88,7 @@ class GrpcAuthenticatorServiceTest {
 
         val result = authenticator.login("test_login", "password123")
 
-        result.onFailure { assertTrue(it is Exceptions.UnexpectedError) }
+        result.onFailure { assertTrue(it is Exceptions.ServerConnectionException) }
         assertTrue(result.isFailure)
     }
 }
