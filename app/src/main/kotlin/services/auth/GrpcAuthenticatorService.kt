@@ -56,6 +56,11 @@ class GrpcAuthenticatorService(private val stub: AuthServiceBlockingStub) : Auth
                 val status = Status.fromThrowable(error)
 
                 when (status.code){
+                    Status.Code.UNAVAILABLE -> Result.failure(
+                        Exceptions.ServerConnectionException(
+                            error.message.orEmpty()
+                        )
+                    )
                     Status.Code.UNAUTHENTICATED ->
                         Result.failure(Exceptions.InvalidCredentialsException(error.message.orEmpty()))
                     Status.Code.INVALID_ARGUMENT ->
