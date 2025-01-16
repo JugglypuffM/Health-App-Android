@@ -47,6 +47,7 @@ class UserProfileActivity : AppCompatActivity() {
         }
 
         logoutButton.setOnClickListener {
+            mainApplication.trainingHistory.value?.clear()
             viewModel.logout()
         }
 

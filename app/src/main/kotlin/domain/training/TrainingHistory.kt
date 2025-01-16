@@ -18,4 +18,8 @@ class TrainingHistory(
         val newList = value + trainings
         return TrainingHistory(newList)
     }
+
+    fun clear(){
+        value = emptyList()
+    }
 }
