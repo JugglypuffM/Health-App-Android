@@ -25,22 +25,24 @@ class UserProfileActivity : AppCompatActivity() {
         val userNameTextView: TextView = findViewById(R.id.user_name)
         val userAgeTextView: TextView = findViewById(R.id.user_age)
         val userWeightTextView: TextView = findViewById(R.id.user_weight)
+        val userDistanceTextView: TextView = findViewById(R.id.user_distance)
         val logoutButton: Button = findViewById(R.id.btn_logout)
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         editUserButton = findViewById(R.id.btn_edit_user)
         bottomNavigationView.selectedItemId = R.id.profile
 
         val mainApplication = application as MainApplication
-        val (account, userInfo) = mainApplication.user
+        val (_, userInfo) = mainApplication.user
         val viewModel = UserProfileViewModel(
             mainApplication.userSerializer,
             mainApplication.user,
             mainApplication.logger
         )
 
-        userNameTextView.text = "Имя пользователя: ${userInfo.name}"
-        userAgeTextView.text = "Возраст: ${userInfo.age} лет"
-        userWeightTextView.text = "Вес: ${userInfo.weight} кг"
+        userNameTextView.text = "Имя пользователя: %s".format(userInfo.name)
+        userAgeTextView.text = "Возраст: %d лет".format(userInfo.age)
+        userWeightTextView.text = "Вес: %d кг".format(userInfo.weight)
+        userDistanceTextView.text = "Дистанция: %d метров".format(userInfo.distance)
 
         viewModel.onFinish.observe(this) {
             startActivity(Intent(this, LoginActivity::class.java))
