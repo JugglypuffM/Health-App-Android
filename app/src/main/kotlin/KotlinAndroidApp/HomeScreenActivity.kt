@@ -43,7 +43,6 @@ class HomeScreenActivity : AppCompatActivity() {
         btnNext = findViewById(R.id.btnNext)
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
-        // Устанавливаем активный пункт навигации
         bottomNavigationView.selectedItemId = R.id.home
 
         viewModel = HomeScreenViewModel(
@@ -87,8 +86,6 @@ class HomeScreenActivity : AppCompatActivity() {
                 else -> false
             }
         }
-    }
-
         val recyclerView: RecyclerView = findViewById(R.id.rvTrainings)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
