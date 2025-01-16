@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.project.kotlin_android_app.R
 import domain.training.Training
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class HomeScreenActivity : AppCompatActivity() {
 
@@ -19,6 +20,7 @@ class HomeScreenActivity : AppCompatActivity() {
     private lateinit var btnStartWorkout: Button
     private lateinit var btnPrevious: ImageButton
     private lateinit var btnNext: ImageButton
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     private lateinit var viewModel: HomeScreenViewModel
 
@@ -32,6 +34,10 @@ class HomeScreenActivity : AppCompatActivity() {
         btnStartWorkout = findViewById(R.id.btnStartWorkout)
         btnPrevious = findViewById(R.id.btnPrevious)
         btnNext = findViewById(R.id.btnNext)
+        bottomNavigationView = findViewById(R.id.bottomNavigationView)
+
+        // Устанавливаем активный пункт навигации
+        bottomNavigationView.selectedItemId = R.id.home
 
         viewModel = ViewModelProvider(this).get(HomeScreenViewModel::class.java)
 
@@ -52,6 +58,17 @@ class HomeScreenActivity : AppCompatActivity() {
 
         btnNext.setOnClickListener {
             viewModel.nextTraining()
+        }
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> true
+                R.id.profile -> {
+                    startActivity(Intent(this, UserProfileActivity::class.java))
+                    true
+                }
+                else -> false
+            }
         }
     }
 
