@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import UserFormViewModel
 import android.content.Intent

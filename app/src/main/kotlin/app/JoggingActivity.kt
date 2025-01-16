@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import android.Manifest
 import android.content.pm.PackageManager

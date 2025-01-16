@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package app
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -7,14 +7,11 @@ import domain.Account
 import domain.User
 import domain.training.TrainingHistory
 import services.auth.AuthenticatorService
-import services.auth.AuthenticatorServiceStub
 import services.auth.GrpcAuthenticatorService
 import services.data.DataService
-import services.data.DataServiceStub
 import services.data.GrpcDataService
 import services.training.GrpcTrainingService
 import services.training.TrainingService
-import services.training.TrainingServiceStub
 import utils.CustomLogger
 import utils.UserSerializer
 import utils.Validator

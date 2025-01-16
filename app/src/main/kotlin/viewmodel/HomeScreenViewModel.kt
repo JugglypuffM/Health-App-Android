@@ -1,4 +1,4 @@
-package KotlinAndroidApp
+package viewmodel
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import com.project.kotlin_android_app.R
 import domain.training.Containers
 import domain.training.Icon
-import domain.training.Training
 import domain.training.TrainingHistory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime

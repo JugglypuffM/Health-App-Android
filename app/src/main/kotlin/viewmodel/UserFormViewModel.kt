@@ -32,7 +32,7 @@ class UserFormViewModel(
                 val name = validator.validateName(rawName).bind()
                 val age = validator.validateAge(rawAge.toIntOrNull()).bind()
                 val weight = validator.validateWeight(rawWeight.toIntOrNull()).bind()
-                val userInfo = UserInfo(name, age, weight, 0)
+                val userInfo = UserInfo(name, age, weight, user.userInfo.distance)
 
                 dataService.updateUserData(userInfo).bind()
 

@@ -1,14 +1,22 @@
-package KotlinAndroidApp
+package app
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.project.kotlin_android_app.R
 import viewmodel.UserProfileViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Активность для отображения профиля пользователя.
@@ -32,17 +40,23 @@ class UserProfileActivity : AppCompatActivity() {
         bottomNavigationView.selectedItemId = R.id.profile
 
         val mainApplication = application as MainApplication
-        val (_, userInfo) = mainApplication.user
         val viewModel = UserProfileViewModel(
+            mainApplication.dataRequester,
             mainApplication.userSerializer,
-            mainApplication.user,
+            mainApplication.user.userInfo,
             mainApplication.logger
         )
 
-        userNameTextView.text = "Имя пользователя: %s".format(userInfo.name)
-        userAgeTextView.text = "Возраст: %d лет".format(userInfo.age)
-        userWeightTextView.text = "Вес: %d кг".format(userInfo.weight)
-        userDistanceTextView.text = "Дистанция: %d метров".format(userInfo.distance)
+        viewModel.userInfo.observe(this) { userInfo ->
+            userNameTextView.text = "Имя пользователя: %s".format(userInfo.name)
+            userAgeTextView.text = "Возраст: %d лет".format(userInfo.age)
+            userWeightTextView.text = "Вес: %d кг".format(userInfo.weight)
+            userDistanceTextView.text = "Дистанция: %d метров".format(userInfo.distance)
+        }
+
+        viewModel.errorMessage.observe(this) { message: String ->
+            Toast.makeText(this@UserProfileActivity, message, Toast.LENGTH_SHORT).show()
+        }
 
         viewModel.onFinish.observe(this) {
             startActivity(Intent(this, LoginActivity::class.java))

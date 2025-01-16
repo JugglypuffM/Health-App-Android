@@ -4,18 +4,18 @@
         <title>Йога</title>
         <description>Йога помогает улучшить гибкость, снять стресс и укрепить мышечный корсет</description>
         <imageResId>ic_yoga</imageResId>
-        <activityId>KotlinAndroidApp.YogaActivity</activityId>
+        <activityId>app.YogaActivity</activityId>
     </icon>
     <icon>
         <title>Бег</title>
         <description>Бег улучшает сердечно-сосудистую систему, укрепляет мышцы ног и способствует сжиганию калорий</description>
         <imageResId>ic_running</imageResId>
-        <activityId>KotlinAndroidApp.JoggingActivity</activityId>
+        <activityId>app.JoggingActivity</activityId>
     </icon>
     <icon>
         <title>Планка</title>
         <description>Планка укрепляет мышцы кора, улучшает осанку и повышает выносливость</description>
         <imageResId>ic_plank</imageResId>
-        <activityId>KotlinAndroidApp.PlankActivity</activityId>
+        <activityId>app.PlankActivity</activityId>
     </icon>
 </iconList>
